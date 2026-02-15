@@ -1,0 +1,24 @@
+{
+  "name": "honjoh.dev",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Global Automation Platform & Personal Identity Hub",
+  "scripts": {
+    "dev": "astro dev",
+    "dev:chat": "node src/server/chat-proxy.mjs",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honjoh0823/honjoh.dev.git"
+  },
+  "homepage": "https://github.com/honjoh0823/honjoh.dev#readme",
+  "dependencies": {
+    "astro": "^5.17.1"
+  },
+  "devDependencies": {
+    "wrangler": "^4.65.0"
+  }
+}

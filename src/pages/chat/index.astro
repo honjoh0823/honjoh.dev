@@ -1,0 +1,639 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout
+    title="Chat - honjoh.dev"
+    description="Talk to Honjoh's AI representative"
+>
+    <main class="terminal" id="terminal">
+        <!-- Scanline overlay -->
+        <div class="scanline"></div>
+
+        <!-- Header -->
+        <header class="page-header">
+            <a href="/" class="back-link" id="back-link" title="Back to home">
+                <span class="back-arrow">←</span>
+                <span class="breadcrumb-path">honjoh.dev</span>
+                <span class="breadcrumb-sep">/</span>
+                <span class="breadcrumb-current">chat</span>
+            </a>
+            <div class="status-indicator">
+                <span class="status-dot"></span>
+                <span class="status-text">online</span>
+            </div>
+        </header>
+
+        <!-- Chat area -->
+        <div class="chat-area" id="chat-area">
+            <!-- Welcome message -->
+            <div class="message message-system" id="welcome-msg">
+                <div class="message-content">
+                    <p class="welcome-line">
+                        Welcome to <span class="accent">honjoh.dev</span>
+                    </p>
+                    <p class="welcome-sub">
+                        You're now connected to Honjoh's AI representative.
+                    </p>
+                    <p class="welcome-sub">
+                        Feel free to ask anything — about my work, services, or
+                        ideas.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input area -->
+        <div class="input-area">
+            <div class="input-wrapper">
+                <span class="input-prompt">❯</span>
+                <input
+                    type="text"
+                    id="chat-input"
+                    class="chat-input"
+                    placeholder="Type a message..."
+                    autocomplete="off"
+                    autofocus
+                />
+                <button
+                    class="send-btn"
+                    id="send-btn"
+                    title="Send message"
+                    aria-label="Send"
+                >
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="M22 2L11 13"></path>
+                        <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="input-hint">
+                <span class="hint-item"><kbd>Enter</kbd> send</span>
+                <span class="hint-sep">│</span>
+                <span class="hint-item"><kbd>←</kbd> back</span>
+            </div>
+        </div>
+
+        <!-- Vignette (inherited from terminal theme) -->
+    </main>
+</Layout>
+
+<style>
+    /* === Terminal Theme (consistent with top page) === */
+    .terminal {
+        position: relative;
+        height: 100vh;
+        background: #0a0e14;
+        color: #b3b1ad;
+        font-family: "JetBrains Mono", "Consolas", "Monaco", monospace;
+        font-size: 14px;
+        line-height: 1.6;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    /* Scanline */
+    .scanline {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 100;
+        background: repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 0, 0, 0.03) 2px,
+            rgba(0, 0, 0, 0.03) 4px
+        );
+    }
+
+    /* Header */
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 20px;
+        background: #0d1117;
+        border-bottom: 1px solid #1a1f29;
+        flex-shrink: 0;
+        z-index: 10;
+    }
+
+    .back-link {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #b3b1ad;
+        text-decoration: none;
+        border: none;
+        font-family: inherit;
+        font-size: 13px;
+        transition: color 0.15s ease;
+    }
+
+    .back-link:hover {
+        color: #e6e1cf;
+        border: none;
+    }
+
+    .back-arrow {
+        color: #39bae6;
+        font-weight: 700;
+    }
+
+    .breadcrumb-path {
+        color: #39bae6;
+    }
+
+    .breadcrumb-sep {
+        color: #4a5568;
+        margin: 0 0.1em;
+    }
+
+    .breadcrumb-current {
+        color: #e6e1cf;
+    }
+
+    .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+    }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #7dd3a0;
+        box-shadow: 0 0 6px rgba(125, 211, 160, 0.5);
+        animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+        0%,
+        100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    .status-text {
+        color: #7dd3a0;
+        letter-spacing: 0.05em;
+    }
+
+    /* Chat area */
+    .chat-area {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        scroll-behavior: smooth;
+    }
+
+    .chat-area::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .chat-area::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .chat-area::-webkit-scrollbar-thumb {
+        background: #2a2f3a;
+        border-radius: 2px;
+    }
+
+    /* Messages */
+    .message {
+        display: flex;
+        max-width: 80%;
+        animation: msg-in 0.3s ease-out;
+    }
+
+    @keyframes msg-in {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .message-system {
+        max-width: 100%;
+        align-self: center;
+    }
+
+    .message-system .message-content {
+        background: transparent;
+        border: 1px solid #1a1f29;
+        border-radius: 8px;
+        padding: 20px 24px;
+        text-align: center;
+    }
+
+    .welcome-line {
+        font-size: 15px;
+        color: #e6e1cf;
+        margin-bottom: 8px;
+    }
+
+    .welcome-sub {
+        font-size: 12px;
+        color: #4a5568;
+        line-height: 1.8;
+    }
+
+    .accent {
+        color: #39bae6;
+        font-weight: 500;
+    }
+
+    /* User messages */
+    .message-user {
+        align-self: flex-end;
+    }
+
+    .message-user .message-content {
+        background: rgba(57, 186, 230, 0.12);
+        border: 1px solid rgba(57, 186, 230, 0.2);
+        border-radius: 12px 12px 4px 12px;
+        padding: 10px 14px;
+        color: #e6e1cf;
+        font-size: 13px;
+    }
+
+    /* AI messages */
+    .message-ai {
+        align-self: flex-start;
+    }
+
+    .message-ai .message-content {
+        background: #12161d;
+        border: 1px solid #1a1f29;
+        border-radius: 12px 12px 12px 4px;
+        padding: 10px 14px;
+        color: #b3b1ad;
+        font-size: 13px;
+    }
+
+    .message-ai .message-sender {
+        font-size: 11px;
+        color: #ffb454;
+        margin-bottom: 4px;
+        font-weight: 500;
+    }
+
+    /* Typing indicator */
+    .typing-indicator {
+        display: flex;
+        gap: 4px;
+        padding: 4px 0;
+    }
+
+    .typing-indicator span {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #4a5568;
+        animation: typing-bounce 1.2s ease-in-out infinite;
+    }
+
+    .typing-indicator span:nth-child(2) {
+        animation-delay: 0.15s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+
+    @keyframes typing-bounce {
+        0%,
+        60%,
+        100% {
+            transform: translateY(0);
+            opacity: 0.4;
+        }
+        30% {
+            transform: translateY(-4px);
+            opacity: 1;
+        }
+    }
+
+    /* Input area */
+    .input-area {
+        padding: 12px 20px;
+        background: #0d1117;
+        border-top: 1px solid #1a1f29;
+        flex-shrink: 0;
+    }
+
+    .input-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #161b22;
+        border: 1px solid #2a2f3a;
+        border-radius: 8px;
+        padding: 8px 12px;
+        transition: border-color 0.15s ease;
+    }
+
+    .input-wrapper:focus-within {
+        border-color: rgba(57, 186, 230, 0.4);
+    }
+
+    .input-prompt {
+        color: #39bae6;
+        font-weight: 700;
+        font-size: 14px;
+        user-select: none;
+        flex-shrink: 0;
+    }
+
+    .chat-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #e6e1cf;
+        font-family: inherit;
+        font-size: 13px;
+        line-height: 1.6;
+        caret-color: #39bae6;
+    }
+
+    .chat-input::placeholder {
+        color: #3a3f4a;
+    }
+
+    .send-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border: none;
+        border-radius: 6px;
+        background: rgba(57, 186, 230, 0.15);
+        color: #39bae6;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        flex-shrink: 0;
+    }
+
+    .send-btn:hover {
+        background: rgba(57, 186, 230, 0.25);
+        color: #73d0ff;
+    }
+
+    .send-btn:active {
+        transform: scale(0.95);
+    }
+
+    .input-hint {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 8px;
+        font-size: 11px;
+        color: #3a3f4a;
+        user-select: none;
+    }
+
+    .hint-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .hint-sep {
+        color: #2a2f3a;
+    }
+
+    kbd {
+        display: inline-block;
+        padding: 1px 5px;
+        background: #2a2f3a;
+        border: 1px solid #3a3f4a;
+        border-radius: 3px;
+        color: #b3b1ad;
+        font-family: inherit;
+        font-size: 10px;
+        line-height: 1.4;
+    }
+
+    /* Vignette */
+    .terminal::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 99;
+        background: radial-gradient(
+            ellipse at center,
+            transparent 50%,
+            rgba(0, 0, 0, 0.4) 100%
+        );
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+        .chat-area {
+            padding: 16px 12px;
+        }
+
+        .message {
+            max-width: 90%;
+        }
+
+        .message-system .message-content {
+            padding: 16px;
+        }
+
+        .welcome-sub {
+            font-size: 11px;
+        }
+
+        .input-hint {
+            display: none;
+        }
+    }
+</style>
+
+<script>
+    // --- OpenClaw Chat API ---
+    const isDev =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1";
+    const API_URL = isDev
+        ? "http://localhost:3001/api/chat"
+        : "https://api.honjoh.dev/api/chat";
+
+    // Session persistence (per browser tab)
+    let sessionId: string | null = sessionStorage.getItem("chat-session-id");
+
+    // Fallback mock for when API is unavailable
+    function getMockResponse(): string {
+        return "I'm currently in preview mode — the AI backend is starting up. Please try again shortly!";
+    }
+
+    async function callChatAPI(
+        message: string,
+    ): Promise<{ reply: string; sessionId: string }> {
+        const res = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message, sessionId }),
+        });
+
+        if (!res.ok) {
+            throw new Error(`API error: ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        // Persist session
+        if (data.sessionId && data.sessionId !== sessionId) {
+            sessionId = data.sessionId;
+            sessionStorage.setItem("chat-session-id", sessionId!);
+        }
+
+        return data;
+    }
+
+    // --- DOM elements ---
+    const chatArea = document.getElementById("chat-area") as HTMLDivElement;
+    const chatInput = document.getElementById("chat-input") as HTMLInputElement;
+    const sendBtn = document.getElementById("send-btn") as HTMLButtonElement;
+
+    // --- Message rendering ---
+    function addMessage(text: string, type: "user" | "ai") {
+        const msg = document.createElement("div");
+        msg.className = `message message-${type}`;
+
+        const content = document.createElement("div");
+        content.className = "message-content";
+
+        if (type === "ai") {
+            const sender = document.createElement("div");
+            sender.className = "message-sender";
+            sender.textContent = "honjoh.ai";
+            content.appendChild(sender);
+        }
+
+        const p = document.createElement("p");
+        p.textContent = text;
+        content.appendChild(p);
+
+        msg.appendChild(content);
+        chatArea.appendChild(msg);
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function showTyping(): HTMLDivElement {
+        const msg = document.createElement("div");
+        msg.className = "message message-ai";
+        msg.id = "typing-msg";
+
+        const content = document.createElement("div");
+        content.className = "message-content";
+
+        const sender = document.createElement("div");
+        sender.className = "message-sender";
+        sender.textContent = "honjoh.ai";
+        content.appendChild(sender);
+
+        const dots = document.createElement("div");
+        dots.className = "typing-indicator";
+        dots.innerHTML = "<span></span><span></span><span></span>";
+        content.appendChild(dots);
+
+        msg.appendChild(content);
+        chatArea.appendChild(msg);
+        chatArea.scrollTop = chatArea.scrollHeight;
+        return msg;
+    }
+
+    // --- Send message ---
+    let isProcessing = false;
+
+    async function sendMessage() {
+        const text = chatInput.value.trim();
+        if (!text || isProcessing) return;
+
+        isProcessing = true;
+        chatInput.value = "";
+
+        // Add user message
+        addMessage(text, "user");
+
+        // Show typing indicator
+        const typingMsg = showTyping();
+
+        try {
+            const data = await callChatAPI(text);
+            typingMsg.remove();
+            addMessage(data.reply, "ai");
+        } catch (err) {
+            typingMsg.remove();
+            addMessage(getMockResponse(), "ai");
+            console.error("[chat] API error:", err);
+        }
+
+        isProcessing = false;
+        chatInput.focus();
+    }
+
+    // --- Event listeners ---
+    chatInput.addEventListener("keydown", (e: KeyboardEvent) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    sendBtn.addEventListener("click", () => {
+        sendMessage();
+    });
+
+    // Keyboard navigation (← to go back, only when input is not focused or empty)
+    document.addEventListener("keydown", (e: KeyboardEvent) => {
+        const target = e.target as HTMLElement;
+        if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+        if (e.key === "ArrowLeft" || e.key === "Escape") {
+            // Only navigate back if input is empty
+            if (chatInput.value.trim() === "") {
+                e.preventDefault();
+                window.location.href = "/";
+            }
+        }
+    });
+
+    // Focus input on page load
+    chatInput.focus();
+</script>

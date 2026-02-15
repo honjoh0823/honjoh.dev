@@ -1,0 +1,366 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const workItems = [
+    {
+        key: "1",
+        label: "yamato-layout",
+        href: "/layout",
+        desc: "大和配列 — キーボード配列",
+    },
+    { key: "2", label: "manga", href: "#", desc: "漫画 — 準備中" },
+];
+---
+
+<Layout title="works — honjoh.dev" description="Honjoh Nobuhiro の創作物">
+    <main class="terminal" id="terminal">
+        <div class="scanline"></div>
+
+        <!-- Header -->
+        <header class="page-header">
+            <a href="/" class="back-link" title="Back to home">
+                <span class="back-arrow">←</span>
+                <span class="breadcrumb-path">honjoh.dev</span>
+                <span class="breadcrumb-sep">/</span>
+                <span class="breadcrumb-current">works</span>
+            </a>
+        </header>
+
+        <div class="terminal-body">
+            <h1 class="page-title">創作物</h1>
+
+            <nav class="nav-menu" id="nav-menu" aria-label="Works navigation">
+                {
+                    workItems.map((item, idx) => (
+                        <a
+                            class={`nav-item ${idx === 0 ? "nav-active" : ""}`}
+                            href={item.href}
+                            data-idx={idx}
+                            data-key={item.key}
+                            id={`nav-${idx}`}
+                        >
+                            <span class="nav-key">[{item.key}]</span>
+                            <span class="nav-label">{item.label}</span>
+                            <span class="nav-desc">{item.desc}</span>
+                        </a>
+                    ))
+                }
+            </nav>
+        </div>
+
+        <footer class="hint-bar" id="hint-bar">
+            <span class="hint-item"><kbd>←</kbd> 戻る</span>
+            <span class="hint-sep">│</span>
+            <span class="hint-item"><kbd>↑</kbd><kbd>↓</kbd> 移動</span>
+            <span class="hint-sep">│</span>
+            <span class="hint-item"><kbd>→</kbd> 決定</span>
+        </footer>
+    </main>
+</Layout>
+
+<style>
+    .terminal {
+        position: relative;
+        min-height: 100vh;
+        background: #0a0e14;
+        color: #b3b1ad;
+        font-family: "JetBrains Mono", "Consolas", "Monaco", monospace;
+        font-size: 14px;
+        line-height: 1.6;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .scanline {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 100;
+        background: repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 0, 0, 0.03) 2px,
+            rgba(0, 0, 0, 0.03) 4px
+        );
+    }
+
+    .terminal-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem 3rem;
+        max-width: 600px;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    /* Header */
+    .page-header {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        background: #0d1117;
+        border-bottom: 1px solid #1a1f29;
+        flex-shrink: 0;
+        z-index: 10;
+    }
+
+    .back-link {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #b3b1ad;
+        text-decoration: none;
+        border: none;
+        font-family: inherit;
+        font-size: 13px;
+        transition: color 0.15s ease;
+    }
+
+    .back-link:hover {
+        color: #e6e1cf;
+        border: none;
+    }
+
+    .back-arrow {
+        color: #39bae6;
+        font-weight: 700;
+    }
+
+    .breadcrumb-path {
+        color: #39bae6;
+    }
+
+    .breadcrumb-sep {
+        color: #4a5568;
+        margin: 0 0.1em;
+    }
+
+    .breadcrumb-current {
+        color: #e6e1cf;
+    }
+
+    .page-title {
+        font-size: clamp(1.5rem, 4vw, 2rem);
+        font-weight: 700;
+        color: #e6e1cf;
+        margin-bottom: 2rem;
+        font-family: inherit;
+        letter-spacing: 0.1em;
+    }
+
+    /* Navigation */
+    .nav-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        width: 100%;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 16px;
+        border-radius: 4px;
+        border: 1px solid transparent;
+        text-decoration: none;
+        color: #b3b1ad;
+        transition: all 0.15s ease;
+        cursor: pointer;
+    }
+
+    .nav-item:hover,
+    .nav-item.nav-active {
+        background: rgba(57, 186, 230, 0.08);
+        border-color: rgba(57, 186, 230, 0.25);
+        color: #e6e1cf;
+    }
+
+    .nav-item.nav-active {
+        border-left: 3px solid #39bae6;
+        padding-left: 13px;
+    }
+
+    .nav-key {
+        color: #ffb454;
+        font-weight: 700;
+        min-width: 2.5em;
+    }
+
+    .nav-label {
+        color: #39bae6;
+        font-weight: 500;
+        min-width: 10em;
+    }
+
+    .nav-item.nav-active .nav-label {
+        color: #73d0ff;
+    }
+
+    .nav-desc {
+        color: #4a5568;
+        font-size: 12px;
+    }
+
+    /* Hint bar */
+    .hint-bar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        padding: 10px 16px;
+        background: #1a1f29;
+        border-top: 1px solid #2a2f3a;
+        font-size: 12px;
+        color: #4a5568;
+        flex-shrink: 0;
+        user-select: none;
+    }
+
+    .hint-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .hint-sep {
+        color: #2a2f3a;
+    }
+
+    kbd {
+        display: inline-block;
+        padding: 1px 6px;
+        background: #2a2f3a;
+        border: 1px solid #3a3f4a;
+        border-radius: 3px;
+        color: #b3b1ad;
+        font-family: inherit;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    @media (max-width: 640px) {
+        .terminal-body {
+            padding: 1.5rem 1rem;
+        }
+        .nav-desc {
+            display: none;
+        }
+        .hint-bar {
+            gap: 10px;
+            font-size: 11px;
+        }
+    }
+
+    /* Fade-in */
+    .terminal-body > * {
+        opacity: 0;
+        transform: translateY(4px);
+        animation: fadeIn 0.3s ease forwards;
+    }
+    .terminal-body > :nth-child(1) {
+        animation-delay: 0.1s;
+    }
+    .terminal-body > :nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    .terminal-body > :nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .terminal::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 99;
+        background: radial-gradient(
+            ellipse at center,
+            transparent 50%,
+            rgba(0, 0, 0, 0.4) 100%
+        );
+    }
+</style>
+
+<script>
+    const navItems = document.querySelectorAll<HTMLAnchorElement>(".nav-item");
+    let activeIdx = 0;
+
+    function setActive(idx: number) {
+        if (idx < 0 || idx >= navItems.length) return;
+        navItems[activeIdx].classList.remove("nav-active");
+        activeIdx = idx;
+        navItems[activeIdx].classList.add("nav-active");
+        navItems[activeIdx].focus({ preventScroll: true });
+    }
+
+    function navigate() {
+        const href = navItems[activeIdx].getAttribute("href");
+        if (href && href !== "#") {
+            window.location.href = href;
+        }
+    }
+
+    document.addEventListener("keydown", (e: KeyboardEvent) => {
+        const tag = (e.target as HTMLElement).tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+        if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+        switch (e.key) {
+            case "ArrowDown":
+            case "j":
+                e.preventDefault();
+                setActive(activeIdx < navItems.length - 1 ? activeIdx + 1 : 0);
+                break;
+            case "ArrowUp":
+            case "k":
+                e.preventDefault();
+                setActive(activeIdx > 0 ? activeIdx - 1 : navItems.length - 1);
+                break;
+            case "ArrowRight":
+            case "Enter":
+                e.preventDefault();
+                navigate();
+                break;
+            case "ArrowLeft":
+                e.preventDefault();
+                window.location.href = "/";
+                break;
+            case "1":
+            case "2":
+                const idx = parseInt(e.key) - 1;
+                if (idx < navItems.length) {
+                    e.preventDefault();
+                    setActive(idx);
+                    navigate();
+                }
+                break;
+        }
+    });
+
+    navItems.forEach((item, idx) => {
+        item.addEventListener("mouseenter", () => {
+            navItems[activeIdx].classList.remove("nav-active");
+            activeIdx = idx;
+            item.classList.add("nav-active");
+        });
+    });
+</script>
