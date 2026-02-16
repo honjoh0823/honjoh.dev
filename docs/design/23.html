@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESIGN 23 // SESSION FOCUS</title>
+    <style>
+        :root {
+            --bg: #0f0b08;
+            --fg: #ddd3c2;
+            --dim: #7c6e58;
+            --accent: #e8c989;
+            --sel-bg: #ddd3c2;
+            --sel-fg: #0f0b08;
+            --line: #211a12;
+            --font: "JetBrains Mono", "Cascadia Mono", "SFMono-Regular", monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 100vh;
+            overflow: hidden;
+            background: var(--bg);
+            color: var(--fg);
+            font-family: var(--font);
+            font-size: 14px;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            padding: 2.2rem 3.2rem;
+            position: relative;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            left: 12%;
+            top: 22%;
+            width: 45vw;
+            height: 45vw;
+            background: radial-gradient(circle, rgba(232, 201, 137, 0.08) 0%, rgba(232, 201, 137, 0) 72%);
+            pointer-events: none;
+        }
+
+        .head {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2.1rem;
+            z-index: 1;
+        }
+
+        .head .name {
+            letter-spacing: 0.11em;
+            font-weight: 700;
+        }
+
+        .head .label {
+            color: var(--dim);
+            font-size: 0.78rem;
+        }
+
+        .layout {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 74ch;
+            z-index: 1;
+        }
+
+        .menu-line {
+            display: flex;
+            gap: 1ch;
+            flex-wrap: wrap;
+            margin-bottom: 1.3rem;
+        }
+
+        .entry {
+            color: var(--dim);
+            padding: 0.2rem 0.5rem;
+            cursor: pointer;
+            animation: rise 0.45s ease both;
+        }
+
+        .entry.active {
+            background: var(--sel-bg);
+            color: var(--sel-fg);
+        }
+
+        .entry:nth-child(1) { animation-delay: 0.03s; }
+        .entry:nth-child(2) { animation-delay: 0.06s; }
+        .entry:nth-child(3) { animation-delay: 0.09s; }
+        .entry:nth-child(4) { animation-delay: 0.12s; }
+        .entry:nth-child(5) { animation-delay: 0.15s; }
+
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .memo {
+            color: var(--dim);
+            margin-bottom: 1.5rem;
+        }
+
+        .focus-box {
+            margin-top: 0.5rem;
+            padding-left: 1.2rem;
+            min-height: 7.2rem;
+        }
+
+        .focus-box .who {
+            color: var(--accent);
+        }
+
+        .focus-box .line {
+            margin-top: 0.6rem;
+            color: var(--fg);
+        }
+
+        .prompt {
+            margin-top: auto;
+            border-top: 1px solid var(--line);
+            padding-top: 0.85rem;
+            display: flex;
+            gap: 1ch;
+            align-items: center;
+        }
+
+        .prompt .ps {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        #input {
+            flex: 1;
+            background: transparent;
+            border: 0;
+            outline: 0;
+            color: var(--fg);
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        #input::placeholder {
+            color: #5d503f;
+        }
+
+        .keys {
+            margin-top: 0.55rem;
+            color: #5d503f;
+            font-size: 0.72rem;
+        }
+
+        .tag {
+            position: fixed;
+            right: 1rem;
+            bottom: 0.7rem;
+            color: #31271c;
+            font-size: 0.62rem;
+            z-index: 1;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 1.2rem;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-height: 760px) {
+            body {
+                padding-top: 1.3rem;
+                padding-bottom: 1.1rem;
+            }
+
+            .head {
+                margin-bottom: 1rem;
+            }
+
+            .menu-line {
+                margin-bottom: 0.8rem;
+            }
+
+            .focus-box {
+                min-height: 5.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="head">
+        <div class="name">HONJOH.DEV</div>
+        <div class="label">SESSION FOCUS</div>
+    </div>
+
+    <div class="layout">
+        <div class="menu-line" id="menu">
+            <div class="entry active" data-note="project view" data-ai="I can show active projects and one-sentence summaries.">1 works</div>
+            <div class="entry" data-note="article archive" data-ai="I can find an article by topic in one step.">2 articles</div>
+            <div class="entry" data-note="short profile" data-ai="I can introduce Honjoh in 20 seconds.">3 about</div>
+            <div class="entry" data-note="direct chat" data-ai="Ask anything about Yamato layout or tools.">4 chat</div>
+            <div class="entry" data-note="preferences" data-ai="You can change language, tone, and keybindings here.">5 setting</div>
+        </div>
+
+        <div class="memo" id="memo">project view</div>
+
+        <div class="focus-box">
+            <div class="who">honjoh.ai</div>
+            <div class="line" id="ai">I can show active projects and one-sentence summaries.</div>
+        </div>
+    </div>
+
+    <div class="prompt">
+        <span class="ps">❯</span>
+        <input id="input" type="text" placeholder="ask anything..." aria-label="chat input">
+    </div>
+    <div class="keys">j/k: switch section   1-5: jump   enter: send   esc: blur</div>
+    <div class="tag">GPT-5 Codex // #23</div>
+
+    <script>
+        const items = [...document.querySelectorAll(".entry")];
+        const memo = document.getElementById("memo");
+        const ai = document.getElementById("ai");
+        const input = document.getElementById("input");
+        let index = 0;
+
+        function setActive(next) {
+            items[index].classList.remove("active");
+            index = next;
+            const selected = items[index];
+            selected.classList.add("active");
+            memo.textContent = selected.dataset.note;
+            ai.textContent = selected.dataset.ai;
+            if (document.activeElement !== input || input.value.trim() === "") {
+                input.value = "tell me about " + selected.textContent.slice(2);
+            }
+        }
+
+        document.addEventListener("keydown", (e) => {
+            const navKeys = ["ArrowUp", "ArrowDown", "j", "k", "Escape"];
+            if (document.activeElement === input && !navKeys.includes(e.key) && !/^[1-5]$/.test(e.key)) {
+                return;
+            }
+            if (e.key === "ArrowDown" || e.key === "j") {
+                e.preventDefault();
+                setActive((index + 1) % items.length);
+            } else if (e.key === "ArrowUp" || e.key === "k") {
+                e.preventDefault();
+                setActive((index - 1 + items.length) % items.length);
+            } else if (/^[1-5]$/.test(e.key)) {
+                e.preventDefault();
+                setActive(Number(e.key) - 1);
+            } else if (e.key === "Enter" && document.activeElement === input) {
+                e.preventDefault();
+                ai.textContent = "Received: " + input.value.trim();
+            } else if (e.key === "Escape") {
+                input.blur();
+            }
+        });
+
+        items.forEach((item, i) => {
+            item.addEventListener("mouseenter", () => setActive(i));
+            item.addEventListener("click", () => setActive(i));
+        });
+
+        setActive(0);
+    </script>
+</body>
+</html>

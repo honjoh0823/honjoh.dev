@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESIGN 26 // REVERSE FOCUS</title>
+    <style>
+        :root {
+            --bg: #0f0b08;
+            --fg: #ddd4c4;
+            --dim: #7d6f5a;
+            --accent: #e1c790;
+            --line: #241b12;
+            --rev-bg: #ddd4c4;
+            --rev-fg: #0f0b08;
+            --font: "JetBrains Mono", "Cascadia Mono", "SFMono-Regular", monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: var(--font);
+            font-size: 14px;
+            line-height: 1.6;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 2.2rem 3rem;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            left: 10%;
+            top: 16%;
+            width: 46vw;
+            height: 46vw;
+            background: radial-gradient(circle, rgba(225, 199, 144, 0.08) 0%, rgba(225, 199, 144, 0) 72%);
+            pointer-events: none;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.85rem;
+            z-index: 1;
+        }
+
+        .brand {
+            letter-spacing: 0.11em;
+            font-weight: 700;
+        }
+
+        .meta {
+            color: var(--dim);
+            font-size: 0.78rem;
+        }
+
+        .path {
+            color: var(--dim);
+            margin-bottom: 1.9rem;
+            z-index: 1;
+        }
+
+        main {
+            flex: 1;
+            max-width: 64ch;
+            z-index: 1;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            padding: 0.56rem 0.7rem;
+            cursor: pointer;
+        }
+
+        .row.active {
+            background: var(--rev-bg);
+            color: var(--rev-fg);
+        }
+
+        .k {
+            width: 3ch;
+            color: var(--dim);
+            font-weight: 700;
+        }
+
+        .row.active .k,
+        .row.active .type {
+            color: var(--rev-fg);
+        }
+
+        .name {
+            letter-spacing: 0.06em;
+            text-transform: lowercase;
+        }
+
+        .type {
+            margin-left: auto;
+            color: var(--dim);
+            font-size: 0.78rem;
+        }
+
+        .context {
+            min-height: 4rem;
+            color: var(--dim);
+            padding: 1rem 0 0 calc(3ch + 0.7rem);
+        }
+
+        .response {
+            margin-top: 0.6rem;
+            margin-left: calc(3ch + 0.7rem);
+            color: var(--fg);
+            max-width: 56ch;
+        }
+
+        .response .who {
+            color: var(--accent);
+            margin-bottom: 0.35rem;
+        }
+
+        .prompt {
+            margin-top: auto;
+            border-top: 1px solid var(--line);
+            padding-top: 0.9rem;
+            display: flex;
+            gap: 1ch;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .ps {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        #input {
+            flex: 1;
+            background: transparent;
+            border: 0;
+            outline: 0;
+            color: var(--fg);
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        #input::placeholder {
+            color: #62533f;
+        }
+
+        .keys {
+            margin-top: 0.5rem;
+            color: #62533f;
+            font-size: 0.72rem;
+            z-index: 1;
+        }
+
+        .tag {
+            position: fixed;
+            right: 1rem;
+            bottom: 0.7rem;
+            color: #33281d;
+            font-size: 0.62rem;
+            z-index: 1;
+        }
+
+        @media (max-width: 720px) {
+            body {
+                padding: 1.2rem;
+                font-size: 13px;
+            }
+
+            .type {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">HONJOH.DEV</div>
+        <div class="meta">REVERSE FOCUS</div>
+    </header>
+
+    <div class="path" id="path">home &gt; works</div>
+
+    <main>
+        <ul id="menu">
+            <li class="row active" data-path="home > works" data-note="Selected projects with short rationale." data-ai="I can explain one project in plain language in 30 seconds.">
+                <span class="k">1</span><span class="name">works</span><span class="type">projects</span>
+            </li>
+            <li class="row" data-path="home > articles" data-note="Readable notes and implementation posts." data-ai="Tell me a topic and I will map it to the right article.">
+                <span class="k">2</span><span class="name">articles</span><span class="type">writing</span>
+            </li>
+            <li class="row" data-path="home > about" data-note="Simple profile without technical noise." data-ai="I can introduce Honjoh for readers who are new here.">
+                <span class="k">3</span><span class="name">about</span><span class="type">profile</span>
+            </li>
+            <li class="row" data-path="home > chat" data-note="Direct question and answer session." data-ai="Ask directly from the prompt, no page switch needed.">
+                <span class="k">4</span><span class="name">chat</span><span class="type">assistant</span>
+            </li>
+            <li class="row" data-path="home > setting" data-note="Language and behavior defaults." data-ai="Settings can personalize this shell in one or two steps.">
+                <span class="k">5</span><span class="name">setting</span><span class="type">config</span>
+            </li>
+        </ul>
+
+        <div id="context" class="context">Selected projects with short rationale.</div>
+        <div class="response">
+            <div class="who">honjoh.ai</div>
+            <div id="answer">I can explain one project in plain language in 30 seconds.</div>
+        </div>
+    </main>
+
+    <div class="prompt">
+        <span class="ps">❯</span>
+        <input id="input" type="text" placeholder="ask anything..." aria-label="chat input">
+    </div>
+    <div class="keys">j/k: move   1-5: jump   enter: send   esc: blur</div>
+    <div class="tag">GPT-5 Codex // #26</div>
+
+    <script>
+        const rows = [...document.querySelectorAll(".row")];
+        const pathEl = document.getElementById("path");
+        const contextEl = document.getElementById("context");
+        const answerEl = document.getElementById("answer");
+        const input = document.getElementById("input");
+        let index = 0;
+
+        function update(next) {
+            rows[index].classList.remove("active");
+            index = next;
+            const row = rows[index];
+            row.classList.add("active");
+            pathEl.textContent = row.dataset.path;
+            contextEl.textContent = row.dataset.note;
+            answerEl.textContent = row.dataset.ai;
+            if (document.activeElement !== input || input.value.trim() === "") {
+                input.value = "tell me about " + row.querySelector(".name").textContent;
+            }
+        }
+
+        document.addEventListener("keydown", (e) => {
+            const nav = ["ArrowUp", "ArrowDown", "j", "k", "Escape"];
+            if (document.activeElement === input && !nav.includes(e.key) && !/^[1-5]$/.test(e.key) && e.key !== "Enter") {
+                return;
+            }
+            if (e.key === "ArrowDown" || e.key === "j") {
+                e.preventDefault();
+                update((index + 1) % rows.length);
+            } else if (e.key === "ArrowUp" || e.key === "k") {
+                e.preventDefault();
+                update((index - 1 + rows.length) % rows.length);
+            } else if (/^[1-5]$/.test(e.key)) {
+                e.preventDefault();
+                update(Number(e.key) - 1);
+            } else if (e.key === "Enter" && document.activeElement === input) {
+                e.preventDefault();
+                answerEl.textContent = "Received: " + input.value.trim();
+            } else if (e.key === "Escape") {
+                input.blur();
+            }
+        });
+
+        rows.forEach((row, i) => {
+            row.addEventListener("mouseenter", () => update(i));
+            row.addEventListener("click", () => update(i));
+        });
+
+        update(0);
+    </script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESIGN 01 // STANDARD</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --fg: #d4d4d4;
+            --dim: #505050;
+            --accent: #ffffff;
+            --selection-bg: #d4d4d4;
+            --selection-fg: #050505;
+            --font-mono: 'JetBrains Mono', 'Menlo', monospace;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-mono);
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+            padding: 4vh 4vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .dim {
+            color: var(--dim);
+        }
+
+        .header {
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* 1.html Specific: Minimal List with Auto-Preview */
+        .layout {
+            display: flex;
+            gap: 4rem;
+            align-items: flex-start;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            min-width: 200px;
+        }
+
+        li {
+            padding: 0 1ch;
+            margin-bottom: 2px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        li.active {
+            background-color: var(--selection-bg);
+            color: var(--selection-fg);
+        }
+
+        .preview {
+            border-left: 1px solid #222;
+            padding-left: 2rem;
+            flex-grow: 1;
+            opacity: 0;
+            transition: opacity 0.1s;
+            /* Micro-fade for softness */
+            opacity: 1;
+        }
+
+        .preview h2 {
+            margin-top: 0;
+            font-size: 1em;
+            /* No big headers, hierarchy via layout */
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .footer {
+            margin-top: auto;
+            border-top: 1px solid #222;
+            padding-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            color: var(--dim);
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <span>HONJOH.DEV</span>
+        <span class="dim">MODE: STANDARD_CLI</span>
+    </header>
+
+    <div class="layout">
+        <ul id="menu">
+            <li class="active" data-id="works">
+                <span>01 WORKS</span>
+                <span>[DIR]</span>
+            </li>
+            <li data-id="articles">
+                <span>02 ARTICLES</span>
+                <span>[TXT]</span>
+            </li>
+            <li data-id="contact">
+                <span>03 CONTACT</span>
+                <span>[CLI]</span>
+            </li>
+            <li data-id="settings">
+                <span>04 SETTINGS</span>
+                <span>[CFG]</span>
+            </li>
+        </ul>
+
+        <div class="preview" id="preview-pane">
+            <h2 id="p-title">01 WORKS</h2>
+            <p id="p-desc">Selected projects and experiments.</p>
+            <br>
+            <div class="dim">
+                > last_updated: 2026-02-15<br>
+                > items: 12<br>
+                > status: active
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div>
+            <span class="dim">user@honjoh:~$</span> <span id="cmd">cd works</span><span
+                style="animation:blink 1s infinite">_</span>
+        </div>
+        <div>
+            MODEL: Gemini 2.0 Pro (Antigravity)
+        </div>
+    </footer>
+
+    <script>
+        const content = {
+            works: { title: "01 WORKS", desc: "Selected projects and experiments.", cmd: "cd works" },
+            articles: { title: "02 ARTICLES", desc: "Technical logs and thoughts on CLI evolution.", cmd: "cd articles" },
+            contact: { title: "03 CONTACT", desc: "Direct line to AI agent & email.", cmd: "./contact.sh" },
+            settings: { title: "04 SETTINGS", desc: "Configure appearance and keybindings.", cmd: "vim .config" }
+        };
+
+        const items = document.querySelectorAll('li');
+        const pTitle = document.getElementById('p-title');
+        const pDesc = document.getElementById('p-desc');
+        const pCmd = document.getElementById('cmd');
+        let idx = 0;
+
+        function update(i) {
+            items.forEach(el => el.classList.remove('active'));
+            items[i].classList.add('active');
+            const key = items[i].dataset.id;
+            const data = content[key];
+
+            pTitle.innerText = data.title;
+            pDesc.innerText = data.desc;
+            pCmd.innerText = data.cmd;
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'j' || e.key === 'ArrowDown') {
+                idx = (idx + 1) % items.length;
+                update(idx);
+            }
+            if (e.key === 'k' || e.key === 'ArrowUp') {
+                idx = (idx - 1 + items.length) % items.length;
+                update(idx);
+            }
+        });
+
+        // Simple blink animation style injection
+        document.head.insertAdjacentHTML("beforeend", `<style>@keyframes blink{50%{opacity:0}}</style>`)
+    </script>
+</body>
+
+</html>

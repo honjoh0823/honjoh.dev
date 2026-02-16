@@ -1,328 +1,278 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import TerminalLayout from "../layouts/TerminalLayout.astro";
+import ChatInline from "../components/ChatInline.astro";
 
 const navItems = [
 	{
 		key: "1",
 		label: "works",
 		href: "/works",
-		desc: "創作物",
+		desc: "projects",
 		disabled: false,
 	},
-	{ key: "2", label: "about", href: "#", desc: "自己紹介", disabled: true },
 	{
-		key: "3",
+		key: "2",
+		label: "article",
+		href: "/article",
+		desc: "writing",
+		disabled: false,
+	},
+	{ key: "3", label: "about", href: "#", desc: "profile", disabled: true },
+	{
+		key: "4",
 		label: "chat",
 		href: "/chat",
-		desc: "AIと会話",
+		desc: "ai agent",
 		disabled: false,
 	},
-	{ key: "4", label: "setting", href: "#", desc: "設定", disabled: true },
+	{
+		key: "5",
+		label: "setting",
+		href: "/setting",
+		desc: "config",
+		disabled: false,
+	},
 ];
 ---
 
-<Layout title="honjoh.dev" description="Honjoh Nobuhiro - Personal Site">
-	<main class="terminal" id="terminal">
-		<!-- Scanline overlay -->
-		<div class="scanline"></div>
-
-		<!-- Terminal body -->
-		<div class="terminal-body">
-			<!-- Site title -->
-			<h1 class="site-title">honjoh.dev</h1>
-			<p class="site-subtitle">Honjoh Nobuhiro</p>
-
-			<!-- Navigation -->
-			<nav class="nav-menu" id="nav-menu" aria-label="Site navigation">
-				{
-					navItems.map((item, idx) => (
-						<a
-							class={`nav-item ${idx === 0 ? "nav-active" : ""}${item.disabled ? " nav-disabled" : ""}`}
-							href={item.href}
-							data-idx={idx}
-							data-key={item.key}
-							data-disabled={item.disabled ? "true" : undefined}
-							id={`nav-${idx}`}
-						>
-							<span class="nav-key">[{item.key}]</span>
-							<span class="nav-label">{item.label}</span>
-							<span class="nav-desc">{item.desc}</span>
-						</a>
-					))
-				}
-			</nav>
+<TerminalLayout
+	title="honjoh.dev"
+	description="Honjoh Nobuhiro - Personal Site"
+>
+	<header class="page-header" slot="header">
+		<div class="header-top">
+			<span class="site-name">honjoh.dev</span>
+			<span class="tagline">Honjoh Nobuhiro</span>
 		</div>
+		<div class="subtitle">Nobuhiro Honjoh</div>
+	</header>
 
-		<!-- Hint bar -->
-		<footer class="hint-bar" id="hint-bar">
-			<span class="hint-item"><kbd>↑</kbd><kbd>↓</kbd> 移動</span>
-			<span class="hint-sep">│</span>
-			<span class="hint-item"><kbd>→</kbd> 決定</span>
-			<span class="hint-sep">│</span>
-			<span class="hint-item"><kbd>1</kbd>-<kbd>4</kbd> ジャンプ</span>
-		</footer>
-	</main>
-</Layout>
+	<div class="page-body">
+		<nav class="nav-menu" id="menu" aria-label="Main navigation">
+			{
+				navItems.map((item, idx) => (
+					<a
+						class={`nav-item${item.disabled ? " nav-disabled" : ""}`}
+						href={item.href}
+						data-desc={item.desc}
+						data-idx={idx}
+						data-key={item.key}
+						data-disabled={item.disabled ? "true" : undefined}
+						id={`nav-${idx}`}
+					>
+						<span class="nav-key">{item.key}</span>
+						<span class="nav-label">{item.label}</span>
+						<span class="nav-desc">{item.desc}</span>
+					</a>
+				))
+			}
+		</nav>
+		<div class="nav-preview" id="preview">projects</div>
+	</div>
+
+	<div slot="footer">
+		<ChatInline />
+
+		<div class="hint-bar">
+			<span><kbd>↑</kbd><kbd>↓</kbd> move</span>
+			<span><kbd>→</kbd> open</span>
+			<span><kbd>1</kbd>-<kbd>5</kbd> jump</span>
+			<span><kbd>enter</kbd> chat</span>
+		</div>
+	</div>
+</TerminalLayout>
 
 <style>
-	/* === Terminal Theme === */
-	.terminal {
+	/* Top page header — inline since only used here */
+	.page-header {
 		position: relative;
-		min-height: 100vh;
-		background: #0a0e14;
-		color: #b3b1ad;
-		font-family: "JetBrains Mono", "Consolas", "Monaco", monospace;
-		font-size: 14px;
-		line-height: 1.6;
+		z-index: 1;
+	}
+
+	.header-top {
 		display: flex;
-		flex-direction: column;
-		overflow: hidden;
+		justify-content: space-between;
+		align-items: baseline;
+		margin-bottom: 1rem;
 	}
 
-	/* Scanline effect */
-	.scanline {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		pointer-events: none;
-		z-index: 100;
-		background: repeating-linear-gradient(
-			0deg,
-			transparent,
-			transparent 2px,
-			rgba(0, 0, 0, 0.03) 2px,
-			rgba(0, 0, 0, 0.03) 4px
-		);
-	}
-
-	/* Terminal body */
-	.terminal-body {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		padding: 2rem 3rem;
-		max-width: 600px;
-		width: 100%;
-		margin: 0 auto;
-	}
-
-	/* Site title */
-	.site-title {
-		font-size: clamp(1.8rem, 5vw, 2.4rem);
+	.site-name {
 		font-weight: 700;
-		color: #e6e1cf;
-		letter-spacing: 0.05em;
-		margin-bottom: 0.25rem;
-		font-family: inherit;
+		font-size: 1.1rem;
+		letter-spacing: 0.12em;
+		color: var(--fg-bright);
 	}
 
-	.site-subtitle {
-		color: #4a5568;
-		font-size: 0.85rem;
-		margin-bottom: 3rem;
-		letter-spacing: 0.1em;
+	.tagline {
+		color: var(--dim);
+		font-size: 0.8rem;
+		font-weight: 300;
 	}
 
-	/* Navigation */
-	.nav-menu {
-		display: flex;
-		flex-direction: column;
-		gap: 2px;
-		width: 100%;
+	.subtitle {
+		font-size: 0.8rem;
+		color: var(--dim);
+		margin-bottom: 2rem;
 	}
 
-	.nav-item {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		padding: 10px 16px;
-		border-radius: 4px;
-		border: 1px solid transparent;
-		text-decoration: none;
-		color: #b3b1ad;
-		transition: all 0.15s ease;
-		cursor: pointer;
-	}
-
-	.nav-item:hover,
-	.nav-item.nav-active {
-		background: rgba(57, 186, 230, 0.08);
-		border-color: rgba(57, 186, 230, 0.25);
-		color: #e6e1cf;
-	}
-
-	.nav-item.nav-active {
-		border-left: 3px solid #39bae6;
-		padding-left: 13px;
-	}
-
-	.nav-key {
-		color: #ffb454;
-		font-weight: 700;
-		min-width: 2.5em;
-	}
-
-	.nav-label {
-		color: #39bae6;
-		font-weight: 500;
-		min-width: 8em;
-	}
-
-	.nav-item.nav-active .nav-label {
-		color: #73d0ff;
-	}
-
-	.nav-desc {
-		color: #4a5568;
-		font-size: 12px;
-	}
-
-	/* Disabled (coming soon) */
-	.nav-item.nav-disabled {
-		opacity: 0.35;
-		cursor: default;
-	}
-	.nav-item.nav-disabled:hover,
-	.nav-item.nav-disabled.nav-active {
-		background: rgba(57, 186, 230, 0.03);
-		border-color: rgba(57, 186, 230, 0.1);
-	}
-
-	/* Hint bar */
+	/* Hint bar — inherits from HintBar pattern but inline here */
 	.hint-bar {
 		display: flex;
 		align-items: center;
-		justify-content: center;
-		gap: 16px;
-		padding: 10px 16px;
-		background: #1a1f29;
-		border-top: 1px solid #2a2f3a;
-		font-size: 12px;
-		color: #4a5568;
-		flex-shrink: 0;
+		gap: 2ch;
+		font-size: 0.7rem;
+		color: var(--dim-deep);
+		position: relative;
+		z-index: 1;
+		margin-top: 0.6rem;
 		user-select: none;
-	}
-
-	.hint-item {
-		display: flex;
-		align-items: center;
-		gap: 4px;
-	}
-
-	.hint-sep {
-		color: #2a2f3a;
-	}
-
-	kbd {
-		display: inline-block;
-		padding: 1px 6px;
-		background: #2a2f3a;
-		border: 1px solid #3a3f4a;
-		border-radius: 3px;
-		color: #b3b1ad;
-		font-family: inherit;
-		font-size: 11px;
-		line-height: 1.4;
-	}
-
-	/* Responsive */
-	@media (max-width: 640px) {
-		.terminal-body {
-			padding: 1.5rem 1rem;
-		}
-		.nav-desc {
-			display: none;
-		}
-		.hint-bar {
-			gap: 10px;
-			font-size: 11px;
-		}
-	}
-
-	/* Vignette */
-	.terminal::after {
-		content: "";
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		pointer-events: none;
-		z-index: 99;
-		background: radial-gradient(
-			ellipse at center,
-			transparent 50%,
-			rgba(0, 0, 0, 0.4) 100%
-		);
 	}
 </style>
 
 <script>
-	const navItems = document.querySelectorAll<HTMLAnchorElement>(".nav-item");
-	let activeIdx = 0;
+	const items = document.querySelectorAll<HTMLAnchorElement>(".nav-item");
+	const preview = document.getElementById("preview");
+	const chatInput = document.getElementById(
+		"chat-inline-input",
+	) as HTMLInputElement;
+	let idx = 0;
+	let inMenuMode = false; // Track if we're in menu navigation mode
 
-	function setActive(idx: number) {
-		if (idx < 0 || idx >= navItems.length) return;
-		navItems[activeIdx].classList.remove("nav-active");
-		activeIdx = idx;
-		navItems[activeIdx].classList.add("nav-active");
-		navItems[activeIdx].focus({ preventScroll: true });
+	function update(i: number) {
+		items.forEach((el) => el.classList.remove("nav-active"));
+		items[i].classList.add("nav-active");
+		if (preview) {
+			preview.textContent = (items[i] as HTMLElement).dataset.desc || "";
+		}
+		idx = i;
 	}
 
 	function navigate() {
-		if (navItems[activeIdx].dataset.disabled === "true") return;
-		const href = navItems[activeIdx].getAttribute("href");
+		const item = items[idx] as HTMLElement;
+		if (item.dataset.disabled === "true") return;
+		const href = item.getAttribute("href");
 		if (href && href !== "#") {
 			window.location.href = href;
 		}
 	}
 
-	// Keyboard navigation
+	function enterMenuMode() {
+		inMenuMode = true;
+		update(0); // Start at first item
+		if (chatInput) chatInput.blur();
+	}
+
+	function exitMenuMode() {
+		inMenuMode = false;
+		items.forEach((el) => el.classList.remove("nav-active"));
+		if (chatInput) chatInput.focus();
+	}
+
 	document.addEventListener("keydown", (e: KeyboardEvent) => {
-		const tag = (e.target as HTMLElement).tagName;
-		if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+		// Chat input is focused
+		if (document.activeElement === chatInput) {
+			if (e.key === "ArrowDown") {
+				e.preventDefault();
+				enterMenuMode();
+				return;
+			}
+			if (e.key === "ArrowUp") {
+				e.preventDefault();
+				inMenuMode = true;
+				update(items.length - 1); // Start at last item
+				if (chatInput) chatInput.blur();
+				return;
+			}
+			// Other keys handled by chat input
+			return;
+		}
+
+		// Menu mode navigation
+		if (inMenuMode) {
+			if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+			switch (e.key) {
+				case "ArrowDown":
+				case "j":
+					e.preventDefault();
+					if (idx === items.length - 1) {
+						// At last item, go back to chat
+						exitMenuMode();
+					} else {
+						update(idx + 1);
+					}
+					break;
+				case "ArrowUp":
+				case "k":
+					e.preventDefault();
+					if (idx === 0) {
+						// At first item, go back to chat
+						exitMenuMode();
+					} else {
+						update(idx - 1);
+					}
+					break;
+				case "ArrowRight":
+				case "Enter":
+					e.preventDefault();
+					navigate();
+					break;
+				case "Escape":
+					e.preventDefault();
+					exitMenuMode();
+					break;
+				case "/":
+					e.preventDefault();
+					exitMenuMode();
+					break;
+				default:
+					const num = parseInt(e.key);
+					if (num >= 1 && num <= items.length) {
+						e.preventDefault();
+						update(num - 1);
+						navigate();
+					}
+					break;
+			}
+			return;
+		}
+
+		// Global shortcuts (not in menu mode, not in chat)
 		if (e.ctrlKey || e.altKey || e.metaKey) return;
 
 		switch (e.key) {
 			case "ArrowDown":
-			case "j":
 				e.preventDefault();
-				setActive(activeIdx < navItems.length - 1 ? activeIdx + 1 : 0);
+				enterMenuMode();
 				break;
-			case "ArrowUp":
-			case "k":
+			case "/":
 				e.preventDefault();
-				setActive(activeIdx > 0 ? activeIdx - 1 : navItems.length - 1);
+				exitMenuMode();
 				break;
-			case "ArrowRight":
-			case "Enter":
-				e.preventDefault();
-				navigate();
-				break;
-			case "1":
-			case "2":
-			case "3":
-			case "4":
-				const idx = parseInt(e.key) - 1;
-				if (idx < navItems.length) {
+			default:
+				const num = parseInt(e.key);
+				if (num >= 1 && num <= items.length) {
 					e.preventDefault();
-					setActive(idx);
+					enterMenuMode();
+					update(num - 1);
 					navigate();
 				}
 				break;
 		}
 	});
 
-	// Mouse hover activation
-	navItems.forEach((item, idx) => {
+	items.forEach((item, i) => {
 		item.addEventListener("mouseenter", () => {
-			navItems[activeIdx].classList.remove("nav-active");
-			activeIdx = idx;
-			item.classList.add("nav-active");
+			if (!inMenuMode) {
+				enterMenuMode();
+			}
+			update(i);
 		});
+		item.addEventListener("click", () => navigate());
 	});
+
+	// Initial focus on chat input
+	if (chatInput) {
+		chatInput.focus();
+	}
 </script>

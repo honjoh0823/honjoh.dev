@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESIGN 20 // CHAT — A VARIATIONS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0c0a08;
+            --fg: #d5cbb8;
+            --dim: #6b6050;
+            --accent: #e8c47c;
+            --accent-dim: rgba(232, 196, 124, 0.15);
+            --border: #1e1a14;
+            --font: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: var(--font);
+            font-size: 14px;
+            min-height: 100vh;
+            padding: 2rem 3rem;
+        }
+
+        .proposal-title {
+            font-size: 0.7rem;
+            color: #4a4030;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .proposal-label {
+            font-size: 0.65rem;
+            color: var(--accent);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            opacity: 0.6;
+        }
+
+        .proposal-note {
+            font-size: 0.75rem;
+            color: var(--dim);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            padding: 0.8rem 1rem;
+            border-left: 2px solid var(--border);
+        }
+
+        .mockup-frame {
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            margin-bottom: 3rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .mockup-frame::before {
+            content: '';
+            position: absolute;
+            top: 40%;
+            left: 30%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(232, 196, 124, 0.025) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .mockup-inner {
+            display: flex;
+            flex-direction: column;
+            height: 560px;
+            padding: 3rem 4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Shared */
+        .site-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.12em;
+            color: #ede4d0;
+        }
+
+        .tagline {
+            color: var(--dim);
+            font-size: 0.8rem;
+            font-weight: 300;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 1rem;
+        }
+
+        .bc-line {
+            margin-bottom: 2rem;
+            font-size: 0.8rem;
+            color: var(--dim);
+        }
+
+        .hint-bar {
+            margin-top: 0.6rem;
+            font-size: 0.7rem;
+            color: #4a4030;
+            display: flex;
+            gap: 2ch;
+        }
+
+        .hint-bar kbd {
+            display: inline-block;
+            padding: 0 4px;
+            border: 1px solid #2a2418;
+            border-radius: 2px;
+            color: #5a503e;
+            font-family: inherit;
+            font-size: inherit;
+            margin: 0 0.3ch;
+            background: rgba(232, 196, 124, 0.03);
+        }
+
+        /* Shared chat area */
+        .chat-log {
+            flex: 1;
+            overflow-y: auto;
+            max-width: 60ch;
+        }
+
+        .chat-log::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-log::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-log::-webkit-scrollbar-thumb {
+            background: #2a2418;
+            border-radius: 2px;
+        }
+
+        .welcome {
+            color: var(--dim);
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .welcome .a {
+            color: var(--accent);
+        }
+
+        .prompt-area {
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1ch;
+            max-width: 60ch;
+        }
+
+        .prompt-area .ps {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .prompt-area input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--fg);
+            font-family: var(--font);
+            font-size: 14px;
+            caret-color: var(--accent);
+        }
+
+        .prompt-area input::placeholder {
+            color: #3d3628;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        /* A1: Prompt echo — ❯ for you, plain for AI     */
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .a1 .entry {
+            line-height: 1.7;
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .a1 .u::before {
+            content: '❯ ';
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .a1 .u {
+            color: var(--fg);
+        }
+
+        .a1 .ai {
+            color: var(--dim);
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        /* A2: Color contrast — you=accent, AI=fg          */
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .a2 .entry {
+            line-height: 1.7;
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .a2 .u::before {
+            content: '❯ ';
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .a2 .u {
+            color: var(--accent);
+        }
+
+        .a2 .ai {
+            color: var(--fg);
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        /* A3: You=fg bright, AI=dim, ❯ only on latest    */
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .a3 .entry {
+            line-height: 1.7;
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .a3 .u {
+            color: var(--fg);
+        }
+
+        .a3 .ai {
+            color: var(--dim);
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        /* A4: Inverted — AI=fg, you=dim + accent prompt   */
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .a4 .entry {
+            line-height: 1.7;
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .a4 .u::before {
+            content: '❯ ';
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .a4 .u {
+            color: var(--dim);
+        }
+
+        .a4 .ai {
+            color: var(--fg);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="proposal-title">DESIGN 20 — CHAT A-VARIATIONS</div>
+
+    <!-- ═══════════════════ A1 ═══════════════════ -->
+    <div class="proposal-label">A1 — You=fg, AI=dim</div>
+    <div class="proposal-note">
+        ユーザー入力は通常色（明るい）、AI応答はdim。<br>
+        自分が打ったものが目立ち、AIの返答は控えめに退く。対話のリズムが出る。
+    </div>
+    <div class="mockup-frame">
+        <div class="mockup-inner">
+            <header>
+                <span class="site-name">HONJOH.DEV</span>
+                <span class="tagline">Honjoh Nobuhiro</span>
+            </header>
+            <div class="bc-line">honjoh.dev &gt; chat</div>
+            <div class="chat-log a1">
+                <div class="welcome"><span class="a">honjoh.ai</span> — Honjoh Nobuhiro の AI です。お気軽にどうぞ。</div>
+                <div class="entry u">自己紹介をして</div>
+                <div class="entry ai">はじめまして。Honjoh Nobuhiro のAIアシスタントです。彼はソフトウェアエンジニアで、キーボード配列や自動化ツールの開発に取り組んでいます。
+                </div>
+                <div class="entry u">大和配列って何？</div>
+                <div class="entry ai">大和配列は、日本語入力に最適化されたキーボード配列です。ローマ字入力の効率を高めるため、使用頻度の高い文字を打ちやすい位置に配置しています。</div>
+            </div>
+            <div class="prompt-area">
+                <span class="ps">❯</span>
+                <input type="text" placeholder="ask anything..." disabled>
+            </div>
+            <div class="hint-bar">
+                <span><kbd>Enter</kbd> send</span>
+                <span><kbd>←</kbd> back</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════ A2 ═══════════════════ -->
+    <div class="proposal-label">A2 — You=accent, AI=fg</div>
+    <div class="proposal-note">
+        ユーザー入力はアクセント色で強調。AI応答は通常色。<br>
+        自分の発言がゴールド、相手の応答はニュートラル。コントラストが明確。
+    </div>
+    <div class="mockup-frame">
+        <div class="mockup-inner">
+            <header>
+                <span class="site-name">HONJOH.DEV</span>
+                <span class="tagline">Honjoh Nobuhiro</span>
+            </header>
+            <div class="bc-line">honjoh.dev &gt; chat</div>
+            <div class="chat-log a2">
+                <div class="welcome"><span class="a">honjoh.ai</span> — Honjoh Nobuhiro の AI です。お気軽にどうぞ。</div>
+                <div class="entry u">自己紹介をして</div>
+                <div class="entry ai">はじめまして。Honjoh Nobuhiro のAIアシスタントです。彼はソフトウェアエンジニアで、キーボード配列や自動化ツールの開発に取り組んでいます。
+                </div>
+                <div class="entry u">大和配列って何？</div>
+                <div class="entry ai">大和配列は、日本語入力に最適化されたキーボード配列です。ローマ字入力の効率を高めるため、使用頻度の高い文字を打ちやすい位置に配置しています。</div>
+            </div>
+            <div class="prompt-area">
+                <span class="ps">❯</span>
+                <input type="text" placeholder="ask anything..." disabled>
+            </div>
+            <div class="hint-bar">
+                <span><kbd>Enter</kbd> send</span>
+                <span><kbd>←</kbd> back</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════ A3 ═══════════════════ -->
+    <div class="proposal-label">A3 — No prompt prefix, pure text flow</div>
+    <div class="proposal-note">
+        <code>❯</code> を排除。色の濃淡だけで発言者を区別。<br>
+        you=fg、AI=dim。もっとも静かで、読み物のように流れる。
+    </div>
+    <div class="mockup-frame">
+        <div class="mockup-inner">
+            <header>
+                <span class="site-name">HONJOH.DEV</span>
+                <span class="tagline">Honjoh Nobuhiro</span>
+            </header>
+            <div class="bc-line">honjoh.dev &gt; chat</div>
+            <div class="chat-log a3">
+                <div class="welcome"><span class="a">honjoh.ai</span> — Honjoh Nobuhiro の AI です。お気軽にどうぞ。</div>
+                <div class="entry u">自己紹介をして</div>
+                <div class="entry ai">はじめまして。Honjoh Nobuhiro のAIアシスタントです。彼はソフトウェアエンジニアで、キーボード配列や自動化ツールの開発に取り組んでいます。
+                </div>
+                <div class="entry u">大和配列って何？</div>
+                <div class="entry ai">大和配列は、日本語入力に最適化されたキーボード配列です。ローマ字入力の効率を高めるため、使用頻度の高い文字を打ちやすい位置に配置しています。</div>
+            </div>
+            <div class="prompt-area">
+                <span class="ps">❯</span>
+                <input type="text" placeholder="ask anything..." disabled>
+            </div>
+            <div class="hint-bar">
+                <span><kbd>Enter</kbd> send</span>
+                <span><kbd>←</kbd> back</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════ A4 ═══════════════════ -->
+    <div class="proposal-label">A4 — Inverted: You=dim, AI=fg</div>
+    <div class="proposal-note">
+        逆転。自分の入力はdim（入力済みなので退く）、AIの応答が目立つ。<br>
+        「読みたいのはAIの回答」という実用的発想。❯プロンプトだけaccentで残す。
+    </div>
+    <div class="mockup-frame">
+        <div class="mockup-inner">
+            <header>
+                <span class="site-name">HONJOH.DEV</span>
+                <span class="tagline">Honjoh Nobuhiro</span>
+            </header>
+            <div class="bc-line">honjoh.dev &gt; chat</div>
+            <div class="chat-log a4">
+                <div class="welcome"><span class="a">honjoh.ai</span> — Honjoh Nobuhiro の AI です。お気軽にどうぞ。</div>
+                <div class="entry u">自己紹介をして</div>
+                <div class="entry ai">はじめまして。Honjoh Nobuhiro のAIアシスタントです。彼はソフトウェアエンジニアで、キーボード配列や自動化ツールの開発に取り組んでいます。
+                </div>
+                <div class="entry u">大和配列って何？</div>
+                <div class="entry ai">大和配列は、日本語入力に最適化されたキーボード配列です。ローマ字入力の効率を高めるため、使用頻度の高い文字を打ちやすい位置に配置しています。</div>
+            </div>
+            <div class="prompt-area">
+                <span class="ps">❯</span>
+                <input type="text" placeholder="ask anything..." disabled>
+            </div>
+            <div class="hint-bar">
+                <span><kbd>Enter</kbd> send</span>
+                <span><kbd>←</kbd> back</span>
+            </div>
+        </div>
+    </div>
+
+    <div style="font-size: 0.6rem; color: #2a2418; text-align: right; margin-top: 1rem;">
+        Claude Opus 4 — #20 CHAT A-VARIATIONS
+    </div>
+</body>
+
+</html>

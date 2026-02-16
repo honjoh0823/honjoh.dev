@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESIGN 08 // CHAT-OS</title>
+    <style>
+        :root {
+            /* Concept 0 Base, slightly warmer */
+            --bg: #101010;
+            --fg: #d4d4d4;
+            --dim: #555555;
+            --accent: #ffffff;
+            --selection-bg: #d4d4d4;
+            --selection-fg: #101010;
+            --font-mono: 'JetBrains Mono', 'Menlo', monospace;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-mono);
+            font-size: 15px;
+            margin: 0;
+            padding: 3rem 5rem;
+            height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            box-sizing: border-box;
+            overflow: hidden;
+            /* ABSOLUTE CONSTRAINT */
+        }
+
+        /* 1. Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #222;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* 2. Main Workspace (Split: Menu | Agent Output) */
+        .workspace {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        /* Menu */
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            padding: 0.5rem 1rem;
+            margin-bottom: 0.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            border-left: 2px solid transparent;
+        }
+
+        li.active {
+            background-color: var(--selection-bg);
+            color: var(--selection-fg);
+            border-left-color: var(--selection-fg);
+        }
+
+        .key {
+            width: 3ch;
+            opacity: 0.5;
+        }
+
+        .label {
+            flex-grow: 1;
+            font-weight: bold;
+        }
+
+        /* Agent Output (The Innovation) */
+        /* It looks like a terminal log, responding to your selection */
+        .agent-pane {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .log-entry {
+            margin-bottom: 1rem;
+            animation: fadeIn 0.2s;
+        }
+
+        .log-sys {
+            color: var(--dim);
+            font-size: 0.9em;
+            margin-bottom: 0.2rem;
+        }
+
+        .log-msg {
+            line-height: 1.5;
+        }
+
+        /* 3. The "Chat" Footer */
+        .footer {
+            border-top: 1px solid #222;
+            padding-top: 1rem;
+            margin-top: 2rem;
+        }
+
+        .input-line {
+            display: flex;
+            gap: 1rem;
+            font-size: 1.1rem;
+            align-items: center;
+        }
+
+        .prompt {
+            color: var(--dim);
+        }
+
+        .user-input {
+            color: #fff;
+            flex-grow: 1;
+            outline: none;
+            background: transparent;
+            border: none;
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        .cursor {
+            width: 1ch;
+            height: 1.2em;
+            background: var(--fg);
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <span>honjoh.dev</span>
+        <span class="dim">CONNECTED :: SESSION_08</span>
+    </header>
+
+    <div class="workspace">
+        <!-- Navigation -->
+        <ul>
+            <li class="active" data-key="works">
+                <span class="key">1</span>
+                <span class="label">WORKS</span>
+            </li>
+            <li data-key="articles">
+                <span class="key">2</span>
+                <span class="label">ARTICLES</span>
+            </li>
+            <li data-key="about">
+                <span class="key">3</span>
+                <span class="label">ABOUT</span>
+            </li>
+            <li data-key="chat">
+                <span class="key">4</span>
+                <span class="label">CHAT_AGENT</span>
+            </li>
+        </ul>
+
+        <!-- The "Live" Agent Pane -->
+        <div class="agent-pane" id="output">
+            <!-- Dynamic Content Here -->
+            <div class="log-entry">
+                <div class="log-sys">> SYSTEM_READY</div>
+                <div class="log-msg">Welcome. I am standing by for navigation or questions.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- The "Anytime" Chat Bar -->
+    <div class="footer">
+        <div class="input-line">
+            <span class="prompt">user@honjoh:~$</span>
+            <!-- Real input to feel the interaction -->
+            <input type="text" class="user-input" id="cmd-input" placeholder="Navigate via keys or type here..."
+                autofocus>
+        </div>
+    </div>
+
+    <script>
+        const content = {
+            works: "Load 'Works' module? I have 12 items archived from 2023-2026. <br><span class='dim'>Type 'ls' to list or 'search [query]' to filter.</span>",
+            articles: "Scanning for text logs... Found 3 drafts and 5 published articles.",
+            about: "Identity file loaded. <br>Nobuhiro Honjoh / Digital Engineer. <br>Based in Tokyo.",
+            chat: "Direct channel open. Ask me anything about this site or the author."
+        };
+
+        const items = document.querySelectorAll('li');
+        const output = document.getElementById('output');
+        const input = document.getElementById('cmd-input');
+        let idx = 0;
+
+        function log(msg) {
+            output.innerHTML = `
+                <div class="log-entry">
+                    <div class="log-sys">> SYSTEM_RESPONSE [${new Date().toLocaleTimeString('en-US', { hour12: false })}]</div>
+                    <div class="log-msg">${msg}</div>
+                </div>
+            `;
+        }
+
+        function update(i) {
+            items.forEach(el => el.classList.remove('active'));
+            items[i].classList.add('active');
+
+            const key = items[i].dataset.key;
+            log(content[key]);
+
+            // Suggest command
+            // input.placeholder = `cd ${key}`;
+        }
+
+        document.addEventListener('keydown', (e) => {
+            // If focused on input, allow typing unless arrow keys
+            const isTyping = document.activeElement === input;
+
+            if (e.key === 'ArrowDown' || (!isTyping && e.key === 'j')) {
+                idx = (idx + 1) % items.length;
+                update(idx);
+            }
+            if (e.key === 'ArrowUp' || (!isTyping && e.key === 'k')) {
+                idx = (idx - 1 + items.length) % items.length;
+                update(idx);
+            }
+            if (e.key === 'Enter') {
+                if (input.value) {
+                    log(`User Command: "${input.value}" <br> <span style='color: #f55'>[AI Mock Response]: I understand. Navigating...</span>`);
+                    input.value = '';
+                } else {
+                    // Navigate
+                    log("Executing selection...");
+                }
+            }
+        });
+
+        // Init
+        update(0);
+    </script>
+</body>
+
+</html>

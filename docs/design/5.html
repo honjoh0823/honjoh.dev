@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESIGN 05 // THE STREAM</title>
+    <style>
+        :root {
+            --bg: #0c0c0c;
+            --fg: #e0e0e0;
+            --dim: #505050;
+            --accent: #00ff9d;
+            /* Matrix-ish but cleaner */
+            --user-color: #ff9d00;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-mono);
+            margin: 0;
+            padding: 2rem 20vw;
+            /* Narrow reading column */
+            min-height: 100vh;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        /* The Stream Container */
+        .stream {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            padding-bottom: 4rem;
+        }
+
+        /* Blocks in the stream */
+        .block {
+            animation: slideIn 0.3s ease-out;
+            position: relative;
+        }
+
+        .block::before {
+            content: 'sys';
+            position: absolute;
+            left: -4ch;
+            color: var(--dim);
+            font-size: 0.8em;
+            opacity: 0.5;
+        }
+
+        .user-block::before {
+            content: 'usr';
+            color: var(--user-color);
+        }
+
+        .block-content {
+            border-left: 2px solid var(--dim);
+            padding-left: 1rem;
+        }
+
+        h2 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1em;
+            color: var(--accent);
+        }
+
+        p {
+            margin: 0 0 0.5rem 0;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        .keywords {
+            display: flex;
+            gap: 1ch;
+            margin-top: 1rem;
+        }
+
+        .keyword {
+            color: var(--bg);
+            background: var(--fg);
+            padding: 2px 8px;
+            cursor: pointer;
+            border-radius: 2px;
+            font-weight: bold;
+        }
+
+        .keyword:hover {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        /* Input Area (Sticky Bottom?) No, part of the flow */
+        .prompt-line {
+            display: flex;
+            gap: 1ch;
+            color: var(--user-color);
+            margin-top: 1rem;
+        }
+
+        .cursor {
+            width: 1ch;
+            background: var(--user-color);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="stream" id="stream">
+        <!-- Initial System Message -->
+        <div class="block">
+            <div class="block-content">
+                <h2>SESSION_START: 2026-02-15</h2>
+                <p>Welcome to honjoh.dev. This interface is a continuous stream.</p>
+                <p>There are no pages. Only history. What would you like to load?</p>
+                <div class="keywords">
+                    <span class="keyword" onclick="load('works')">WORKS</span>
+                    <span class="keyword" onclick="load('about')">ABOUT</span>
+                    <span class="keyword" onclick="load('help')">HELP</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- The Active Prompt -->
+    <div class="prompt-line">
+        <span>visitor@honjoh:~$</span>
+        <span id="input-buffer"></span><span class="cursor"></span>
+    </div>
+
+    <script>
+        const stream = document.getElementById('stream');
+        const inputBuffer = document.getElementById('input-buffer');
+
+        const data = {
+            works: {
+                title: "LOADING MODULE: WORKS...",
+                body: "Found 12 projects.<br>- <b>Project Alpha</b>: React/Three.js experiment.<br>- <b>Project Beta</b>: CLI-based e-commerce.<br>- <b>Project Gamma</b>: Generative art collection.",
+                options: ['Project Alpha', 'Back']
+            },
+            about: {
+                title: "IDENTITY_CHECK",
+                body: "Subject: Nobuhiro Honjoh.<br>Role: Digital Engineer.<br>Location: Tokyo, Japan.<br>Status: Online and ready to code.",
+                options: ['Contact', 'Back']
+            },
+            help: {
+                title: "SYSTEM_HELP",
+                body: "You can type keywords or click suggestions. Navigation adds to the log.",
+                options: ['Clear', 'Back']
+            }
+        };
+
+        function createBlock(type, html) {
+            const div = document.createElement('div');
+            div.className = 'block ' + (type === 'user' ? 'user-block' : '');
+            div.innerHTML = `<div class="block-content">${html}</div>`;
+            return div;
+        }
+
+        function load(key) {
+            // 1. Add User Command to Stream
+            stream.appendChild(createBlock('user', `<p style="color:var(--user-color)">> execution_request: ${key}</p>`));
+
+            // 2. Simulate Processing Delay
+            setTimeout(() => {
+                // 3. Add System Response
+                const content = data[key] || { title: "ERROR", body: "Unknown command.", options: [] };
+
+                let optsHtml = '';
+                if (content.options && content.options.length) {
+                    optsHtml = `<div class="keywords">` +
+                        content.options.map(o => `<span class="keyword" onclick="alert('Demo only')">${o.toUpperCase()}</span>`).join('') +
+                        `</div>`;
+                }
+
+                stream.appendChild(createBlock('sys', `<h2>${content.title}</h2><p>${content.body}</p>${optsHtml}`));
+
+                // Auto-scroll
+                window.scrollTo(0, document.body.scrollHeight);
+            }, 300);
+        }
+
+        // Typing simulation
+        document.addEventListener('keydown', (e) => {
+            if (e.key.length === 1) inputBuffer.innerText += e.key;
+            if (e.key === 'Backspace') inputBuffer.innerText = inputBuffer.innerText.slice(0, -1);
+            if (e.key === 'Enter') {
+                const cmd = inputBuffer.innerText.toLowerCase();
+                inputBuffer.innerText = '';
+                if (data[cmd]) load(cmd);
+                else if (cmd === 'clear') stream.innerHTML = '';
+                else load('help');
+            }
+        });
+    </script>
+</body>
+
+</html>

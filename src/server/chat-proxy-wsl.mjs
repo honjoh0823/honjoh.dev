@@ -10,6 +10,8 @@ const OPENCLAW_TIMEOUT = 60;
 const ALLOWED_ORIGINS = [
     "https://honjoh.dev",
     "https://www.honjoh.dev",
+    "http://localhost:4321",
+    "http://localhost:3000",
 ];
 const RATE_LIMIT_WINDOW = 60_000; // 1 minute
 const RATE_LIMIT_MAX = 5;

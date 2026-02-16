@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESIGN 03 // SPOTLIGHT</title>
+    <style>
+        :root {
+            --bg: #000000;
+            --overlay: #111111;
+            --fg: #f0f0f0;
+            --dim: #555555;
+            --highlight: #00ffaa;
+            /* Cyberpunk accent */
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-mono);
+            font-size: 16px;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            /* Center everything */
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            /* Background Grid Pattern */
+            background-image: linear-gradient(#111 1px, transparent 1px), linear-gradient(90deg, #111 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* The Modal / Palette */
+        .palette {
+            width: 600px;
+            background-color: var(--overlay);
+            border: 1px solid #333;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header / Search Bar */
+        .search-bar {
+            padding: 1.5rem;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+
+        .search-icon {
+            margin-right: 1rem;
+            color: var(--highlight);
+        }
+
+        .input-cursor {
+            width: 1ch;
+            height: 1.2rem;
+            background: var(--highlight);
+            animation: blink 1s infinite;
+        }
+
+        /* Results List */
+        .results {
+            padding: 0.5rem 0;
+        }
+
+        .result-item {
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--dim);
+            cursor: pointer;
+        }
+
+        .result-item.active {
+            background-color: #222;
+            color: var(--fg);
+            border-left: 3px solid var(--highlight);
+        }
+
+        .shortcut {
+            font-size: 0.8em;
+            border: 1px solid #444;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .active .shortcut {
+            border-color: var(--fg);
+            background: #333;
+        }
+
+        /* Footer Context */
+        .footer {
+            padding: 0.5rem 1.5rem;
+            background: #080808;
+            border-top: 1px solid #333;
+            font-size: 0.8em;
+            color: var(--dim);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="palette">
+        <div class="search-bar">
+            <span class="search-icon">></span>
+            <span>Navigate to...</span>
+            <span class="input-cursor"></span>
+        </div>
+
+        <div class="results" id="list">
+            <div class="result-item active" data-cmd="go works">
+                <span>Works</span>
+                <span class="shortcut">↵</span>
+            </div>
+            <div class="result-item" data-cmd="read articles">
+                <span>Articles</span>
+                <span class="shortcut">A</span>
+            </div>
+            <div class="result-item" data-cmd="open contact">
+                <span>Contact</span>
+                <span class="shortcut">C</span>
+            </div>
+            <div class="result-item" data-cmd="sys settings">
+                <span>Settings</span>
+                <span class="shortcut">S</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>Arrow Keys to Select</span>
+            <span>MODEL: Gemini 2.0 Pro (Antigravity)</span>
+        </div>
+    </div>
+
+    <script>
+        const items = document.querySelectorAll('.result-item');
+        let idx = 0;
+
+        function update(i) {
+            items.forEach(el => el.classList.remove('active'));
+            items[i].classList.add('active');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'j') {
+                idx = (idx + 1) % items.length;
+                update(idx);
+            }
+            if (e.key === 'ArrowUp' || e.key === 'k') {
+                idx = (idx - 1 + items.length) % items.length;
+                update(idx);
+            }
+        });
+    </script>
+
+</body>
+
+</html>

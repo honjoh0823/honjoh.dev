@@ -1,79 +1,33 @@
-# AIチャット本番デプロイ
+# 下層ページ — Design 20 breadcrumb 実装 + リファクタリング
 
-## 前提（調査結果）
+## 概要
+承認済みモックアップ（B3: ヘッダー直下に `honjoh.dev > works` をdim色で表示）を実装。
+同時に、下層ページのレイアウトをトップページと同じ Design 20 テイストに統一する。
 
-- OpenClaw GatewayはWebSocket通信 → REST APIなし
-- Cloudflare Workers/Pages FunctionsからCLIは呼べない
-- **最も現実的**: chat-proxyをWSL2上で直接動かし、Cloudflare Tunnelで公開
+## 変更方針
 
-## アーキテクチャ
+### 削除するもの（装飾の排除）
+- `TerminalLayout.astro` — scanline, vignette（`::after`）を削除
+- `Header.astro` — 現在の背景色・border-bottom・矢印アイコン付きヘッダーを廃止
+- `global.css` — `.terminal`, `.scanline`, `.terminal::after` の装飾CSS削除
 
-```
-ブラウザ → honjoh.dev/chat → api.honjoh.dev/api/chat
-                                  ↓ (Cloudflare Tunnel)
-                              WSL2: chat-proxy (port 3001)
-                                  ↓ (OpenClaw CLI)
-                              OpenClaw Gateway (port 18789)
-```
+### 作るもの
+- **`Header.astro` を書き換え** — トップと同じ `HONJOH.DEV` + `Honjoh Nobuhiro` ヘッダー + breadcrumb行
+  - breadcrumb: `honjoh.dev > {path}` （dim色テキストのみ）
+  - ヘッダー直下に1行
 
-## 変更内容
+### レイアウト統一
+- `TerminalLayout.astro` を簡素化 — scanline div 削除、ambient glow追加
+- 下層ページの padding/spacing をトップページと揃える（`3rem 4rem`）
+- `.terminal-body` の center寄せ → 左寄せ（トップと同じ配置）
 
-### 1. WSL2にchat-proxyを移設
-
-#### [NEW] `~/openclaw/chat-proxy.mjs`（WSL2上）
-- 現在の `src/server/chat-proxy.mjs` をWSL2用にリライト
-- `wsl -e bash -c "openclaw ..."` → 直接 `openclaw agent ...` 呼び出し
-- CORS: `honjoh.dev` のみ許可
-- レート制限: IP単位、1分5リクエスト
-- ログ出力（JSON形式、後でD1連携可能）
-
-### 2. Cloudflare Tunnel設定（WSL2で手動実行）
-
-- `cloudflared` インストール
-- `cloudflared login` でCloudflare認証
-- トンネル作成: `api.honjoh.dev` → `localhost:3001`
-- systemdサービス化（永続起動）
-
-### 3. フロントエンド修正
-
-#### [MODIFY] `src/pages/chat/index.astro`
-- `API_URL` を環境変数切り替えに変更
-  - dev: `http://localhost:3001/api/chat`
-  - prod: `https://api.honjoh.dev/api/chat`
-
-### 4. D1テーブル作成
-
-#### [MODIFY] `wrangler.toml`
-- D1データベースバインディング追加
-
-#### [NEW] D1スキーマ
-- `conversations` テーブル（session_id, role, message, timestamp, ip）
-- ※Phase 1ではchat-proxy側でファイルログ、D1連携はPhase 2
-
-> [!IMPORTANT]
-> D1への書き込みはCloudflare Workers/Pages Functions内からのみ可能。
-> chat-proxyはWSL2上で動作するため、直接D1にはアクセスできない。
-> Phase 1ではWSL2側でファイルログ保存、Phase 2でWorkers経由のD1連携を検討。
-
-### 5. DNSレコード
-
-- `api.honjoh.dev` のCNAMEレコード（Tunnel作成時に自動設定）
+### 各ページへの影響
+- `works/index.astro` — Header props そのまま、見た目が変わる
+- `article/index.astro` — 同上
+- `article/[slug].astro` — 同上
+- `setting/index.astro` — 同上
+- `chat/index.astro` — 同上
 
 ## 検証
-
-### ブラウザテスト（手動）
-1. `https://honjoh.dev/chat` を開く
-2. メッセージを送信 → OpenClawから応答が返る
-3. セッション永続性確認（同じ会話が続く）
-4. WSL2のchat-proxyログにリクエストが記録される
-
-### セキュリティテスト（手動）
-1. CORSテスト: 別ドメインからのリクエストが拒否される
-2. レート制限: 連続送信でブロックされる
-
-## 実行順序
-
-1. WSL2でchat-proxy.mjsを作成・テスト
-2. cloudflaredインストール・認証・トンネル作成
-3. フロントエンドAPI_URL切り替え
-4. デプロイ・動作検証
+- localhost でトップページと下層ページを行き来し、デザインの一貫性を目視確認
+- breadcrumb のパス表示が各ページで正しいことを確認

@@ -6,6 +6,12 @@ interface Props {
 
 const { title, description = "Honjoh Nobuhiro - Global Automation Platform" } =
   Astro.props;
+
+import "../styles/tokens.css";
+import "../styles/theme-tokens.css";
+import "../styles/global.css";
+import "../styles/components/nav-menu.css";
+import "../styles/components/prompt.css";
 ---
 
 <!doctype html>
@@ -22,73 +28,19 @@ const { title, description = "Honjoh Nobuhiro - Global Automation Platform" } =
       rel="stylesheet"
     />
     <title>{title}</title>
+    <script>
+      // Initialize theme before page render to prevent flash
+      (function () {
+        const stored = localStorage.getItem("theme-preference");
+        const sys = window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+        const theme = stored === "dark" || stored === "light" ? stored : sys;
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
   </head>
   <body>
     <slot />
   </body>
 </html>
-
-<style is:global>
-  :root {
-    /* Washi (和紙) Theme - Warm, natural, Japanese paper texture feel */
-    --color-bg: #f5f0e8;
-    --color-bg-alt: #ebe5d8;
-    --color-surface: #faf7f0;
-    --color-text: #2c2418;
-    --color-text-muted: #6b5e4f;
-    --color-accent: #8b4513;
-    --color-accent-light: #c4956a;
-    --color-ink: #1a1a2e;
-    --color-sumi: #2d2d2d;
-    --color-border: #d4c9b8;
-
-    --font-sans: "Noto Sans JP", sans-serif;
-    --font-serif: "Noto Serif JP", serif;
-
-    --max-width: 860px;
-    --spacing-xs: 0.5rem;
-    --spacing-sm: 1rem;
-    --spacing-md: 2rem;
-    --spacing-lg: 4rem;
-    --spacing-xl: 6rem;
-  }
-
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
-  html {
-    scroll-behavior: smooth;
-  }
-
-  body {
-    font-family: var(--font-sans);
-    font-weight: 400;
-    color: var(--color-text);
-    background-color: var(--color-bg);
-    line-height: 1.8;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  h1,
-  h2,
-  h3 {
-    font-family: var(--font-serif);
-    line-height: 1.4;
-  }
-
-  a {
-    color: var(--color-accent);
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.2s;
-  }
-
-  a:hover {
-    border-bottom-color: var(--color-accent);
-  }
-</style>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESIGN 20 // AMBER</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0c0a08;
+            --fg: #d5cbb8;
+            --dim: #6b6050;
+            --accent: #e8c47c;
+            --accent-dim: rgba(232, 196, 124, 0.15);
+            --border: #1e1a14;
+            --font: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: var(--font);
+            font-size: 14px;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 3rem 4rem;
+        }
+
+        /* Subtle warm ambient */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 40%;
+            left: 30%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(232, 196, 124, 0.025) 0%, transparent 70%);
+            animation: breathe 8s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scale(0.95);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 3.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .site-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.12em;
+            color: #ede4d0;
+        }
+
+        .tagline {
+            color: var(--dim);
+            font-size: 0.8rem;
+            font-weight: 300;
+        }
+
+        .container {
+            flex: 1;
+            max-width: 60ch;
+            position: relative;
+            z-index: 1;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.65rem 1rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border-left: 2px solid transparent;
+        }
+
+        .menu-item.active {
+            background: var(--accent-dim);
+            border-left-color: var(--accent);
+        }
+
+        .menu-item.active .item-label {
+            color: var(--accent);
+        }
+
+        .menu-item.active .item-key {
+            color: var(--accent);
+        }
+
+        .item-key {
+            width: 2.5ch;
+            color: var(--dim);
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-right: 1.5ch;
+        }
+
+        .item-label {
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: lowercase;
+            transition: color 0.15s;
+            color: var(--fg);
+        }
+
+        .item-desc {
+            margin-left: auto;
+            color: var(--dim);
+            font-size: 0.8rem;
+            font-weight: 300;
+        }
+
+        .preview {
+            color: var(--dim);
+            font-size: 0.85rem;
+            padding: 1.5rem 0 0 calc(2.5ch + 1.5ch + 1rem);
+            line-height: 1.7;
+        }
+
+        /* Prompt */
+        .prompt-area {
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1ch;
+            position: relative;
+            z-index: 1;
+        }
+
+        .prompt-symbol {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .prompt-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--fg);
+            font-family: var(--font);
+            font-size: 14px;
+            caret-color: var(--accent);
+        }
+
+        .prompt-input::placeholder {
+            color: #3d3628;
+        }
+
+        /* Key hint bar */
+        .hint-bar {
+            position: relative;
+            z-index: 1;
+            margin-top: 0.6rem;
+            font-size: 0.7rem;
+            color: #4a4030;
+            display: flex;
+            gap: 2ch;
+        }
+
+        .hint-bar kbd {
+            display: inline-block;
+            padding: 0 4px;
+            border: 1px solid #2a2418;
+            border-radius: 2px;
+            color: #5a503e;
+            font-family: inherit;
+            font-size: inherit;
+            margin: 0 0.3ch;
+            background: rgba(232, 196, 124, 0.03);
+        }
+
+        .model-tag {
+            position: fixed;
+            bottom: 1rem;
+            right: 1.5rem;
+            font-size: 0.6rem;
+            color: #2a2418;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <span class="site-name">HONJOH.DEV</span>
+        <span class="tagline">Honjoh Nobuhiro</span>
+    </header>
+
+    <div class="container">
+        <ul class="menu" id="menu">
+            <li class="menu-item active" data-desc="Selected projects and creative experiments.">
+                <span class="item-key">1</span>
+                <span class="item-label">works</span>
+                <span class="item-desc">projects</span>
+            </li>
+            <li class="menu-item" data-desc="Technical articles, thoughts, and development logs.">
+                <span class="item-key">2</span>
+                <span class="item-label">articles</span>
+                <span class="item-desc">writing</span>
+            </li>
+            <li class="menu-item" data-desc="About Honjoh Nobuhiro — engineer, creator, builder.">
+                <span class="item-key">3</span>
+                <span class="item-label">about</span>
+                <span class="item-desc">profile</span>
+            </li>
+            <li class="menu-item" data-desc="Talk to honjoh.ai — a knowledgeable AI representative.">
+                <span class="item-key">4</span>
+                <span class="item-label">chat</span>
+                <span class="item-desc">ai agent</span>
+            </li>
+            <li class="menu-item" data-desc="Configure preferences — language, theme, keybindings.">
+                <span class="item-key">5</span>
+                <span class="item-label">setting</span>
+                <span class="item-desc">config</span>
+            </li>
+        </ul>
+        <div class="preview" id="preview">Selected projects and creative experiments.</div>
+    </div>
+
+    <div class="prompt-area">
+        <span class="prompt-symbol">❯</span>
+        <input class="prompt-input" id="input" type="text" placeholder="ask anything..." autofocus>
+    </div>
+
+    <div class="hint-bar">
+        <span><kbd>↑</kbd><kbd>↓</kbd> move</span>
+        <span><kbd>→</kbd> open</span>
+        <span><kbd>1</kbd>-<kbd>5</kbd> jump</span>
+        <span>type to chat</span>
+    </div>
+
+    <div class="model-tag">Claude Opus 4 — #20 AMBER</div>
+
+    <script>
+        const items = document.querySelectorAll('.menu-item');
+        const preview = document.getElementById('preview');
+        const input = document.getElementById('input');
+        let idx = 0;
+
+        function update(i) {
+            items.forEach(el => el.classList.remove('active'));
+            items[i].classList.add('active');
+            preview.textContent = items[i].dataset.desc;
+            idx = i;
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (document.activeElement === input && !['ArrowDown', 'ArrowUp', 'Escape'].includes(e.key)) return;
+            switch (e.key) {
+                case 'ArrowDown': case 'j':
+                    e.preventDefault(); update((idx + 1) % items.length); break;
+                case 'ArrowUp': case 'k':
+                    e.preventDefault(); update((idx - 1 + items.length) % items.length); break;
+                case 'Escape': input.blur(); break;
+                default:
+                    const n = parseInt(e.key);
+                    if (n >= 1 && n <= items.length) { e.preventDefault(); update(n - 1); }
+            }
+        });
+
+        items.forEach((item, i) => {
+            item.addEventListener('mouseenter', () => update(i));
+            item.addEventListener('click', () => update(i));
+        });
+    </script>
+</body>
+
+</html>

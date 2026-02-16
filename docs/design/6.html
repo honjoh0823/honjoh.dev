@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESIGN 06 // THE HUD</title>
+    <style>
+        :root {
+            --bg: #000;
+            --border: #444;
+            --text: #ddd;
+            --highlight: #fff;
+            --font: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            margin: 0;
+            height: 100vh;
+            padding: 2rem;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            grid-template-rows: auto 1fr 1fr;
+            gap: 1px;
+            /* The gap creates the borders */
+            background-color: var(--border);
+            /* Acts as border color */
+            overflow: hidden;
+        }
+
+        /* Cells */
+        .cell {
+            background: var(--bg);
+            padding: 1rem;
+            position: relative;
+        }
+
+        /* Header spans full width */
+        .header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Main Viewport */
+        .viewport {
+            grid-column: 2 / -1;
+            grid-row: 2 / -1;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        /* Sidebar items */
+        .nav-item {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: #111;
+            color: var(--highlight);
+        }
+
+        .nav-item::after {
+            content: ' [OPEN]';
+            opacity: 0;
+            float: right;
+            font-size: 0.8em;
+        }
+
+        .nav-item:hover::after,
+        .nav-item.active::after {
+            opacity: 1;
+        }
+
+        /* Typography */
+        h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .label {
+            font-size: 0.7em;
+            color: #666;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        /* Decor */
+        .corner-deco {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 10px;
+            height: 10px;
+            border-bottom: 2px solid #666;
+            border-right: 2px solid #666;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Top Header -->
+    <div class="cell header">
+        <h1>HONJOH.DEV // HUD_SYSTEM</h1>
+        <div style="font-size: 0.8em">UPTIME: 99.9% | LOC: TOKYO</div>
+    </div>
+
+    <!-- Sidebar Navigation Grid -->
+    <div class="cell nav-item active" onclick="view('works')">
+        <span class="label">MODULE_01</span>
+        WORKS
+        <div class="corner-deco"></div>
+    </div>
+
+    <div class="cell nav-item" onclick="view('articles')">
+        <span class="label">MODULE_02</span>
+        ARTICLES
+        <div class="corner-deco"></div>
+    </div>
+
+    <div class="cell nav-item" onclick="view('contact')">
+        <span class="label">MODULE_03</span>
+        CONTACT
+        <div class="corner-deco"></div>
+    </div>
+
+    <div class="cell nav-item" onclick="view('settings')">
+        <span class="label">MODULE_04</span>
+        CONFIG
+        <div class="corner-deco"></div>
+    </div>
+
+    <!-- Small Stat Blocks (Sidebar bottom) -->
+    <div class="cell">
+        <span class="label">TOTAL_WORKS</span>
+        <span class="stat">24</span>
+    </div>
+
+    <div class="cell">
+        <span class="label">LATEST_UPDATE</span>
+        <span class="stat" style="font-size: 1.2em">Today</span>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="cell viewport" id="main-view">
+        <span class="label">VIEWPORT_RENDER</span>
+        <h2 style="font-size: 3em; margin: 0;">WORKS_ARCHIVE</h2>
+        <p style="max-width: 60ch; margin-top: 2rem; line-height: 1.8;">
+            Accessing project database...<br>
+            ----------------<br>
+            [1] <b>Personal Portfolio</b>: Astro-based CLI simulation.<br>
+            [2] <b>Chat Bot Proxy</b>: WebSocket gateway for AI agents.<br>
+            [3] <b>Typing Game</b>: Yamato Layout practice tool.
+        </p>
+    </div>
+
+    <script>
+        const views = {
+            works: "<h2>WORKS_ARCHIVE</h2><p>Accessing project database...<br>----------------<br>[1] <b>Personal Portfolio</b><br>[2] <b>Chat Bot Proxy</b></p>",
+            articles: "<h2>KNOWLEDGE_BASE</h2><p>Fetching text logs...<br>----------------<br>[1] The death of GUI<br>[2] Astro optimizations</p>",
+            contact: "<h2>COMM_LINK</h2><p>Open channel...<br>----------------<br>Email: hello@honjoh.dev<br>Twitter: @honjoh</p>",
+            settings: "<h2>SYSTEM_CONFIG</h2><p>Adjust parameters...<br>----------------<br>Theme: Dark<br>Font: JetBrains Mono</p>"
+        };
+
+        const navs = document.querySelectorAll('.nav-item');
+        const viewport = document.getElementById('main-view');
+
+        function view(key) {
+            navs.forEach(n => n.classList.remove('active'));
+            // Find the clicked one logic omitted for brevity in demo, just clearing all
+
+            // Simple render
+            viewport.innerHTML = `<span class="label">VIEWPORT_RENDER</span>` + views[key];
+        }
+
+        // Just highlight logic for demo
+        navs.forEach(n => {
+            n.addEventListener('click', function () {
+                navs.forEach(x => x.classList.remove('active'));
+                this.classList.add('active');
+            })
+        });
+    </script>
+</body>
+
+</html>

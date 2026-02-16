@@ -2,57 +2,53 @@
 import TerminalLayout from "../../layouts/TerminalLayout.astro";
 import Header from "../../components/Header.astro";
 import HintBar from "../../components/HintBar.astro";
+import { getCollection } from "astro:content";
 
-const workItems = [
-    {
-        key: "1",
-        label: "yamato-layout",
-        href: "/layout",
-        desc: "大和配列 — キーボード配列",
-    },
-    { key: "2", label: "manga", href: "#", desc: "漫画 — 準備中" },
-    { key: "3", label: "game", href: "#", desc: "ゲーム — 準備中" },
-];
+const posts = (await getCollection("article")).sort(
+    (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
+);
 ---
 
 <TerminalLayout
-    title="works — honjoh.dev"
-    description="Honjoh Nobuhiro の制作物"
+    title="article — honjoh.dev"
+    description="Honjoh Nobuhiro のブログ"
 >
-    <Header slot="header" path={["works"]} />
+    <Header slot="header" path={["article"]} />
 
     <div class="page-body">
-        <nav class="nav-menu" id="nav-menu" aria-label="Works navigation">
+        <nav class="nav-menu" id="nav-menu" aria-label="Article navigation">
             {
-                workItems.map((item, idx) => (
+                posts.map((post, idx) => (
                     <a
                         class={`nav-item ${idx === 0 ? "nav-active" : ""}`}
-                        href={item.href}
+                        href={`/article/${post.id}`}
                         data-idx={idx}
-                        data-key={item.key}
+                        data-key={String(idx + 1)}
                         id={`nav-${idx}`}
                     >
-                        <span class="nav-key">{item.key}</span>
-                        <span class="nav-label">{item.label}</span>
-                        <span class="nav-desc">{item.desc}</span>
+                        <span class="nav-key">{idx + 1}</span>
+                        <span class="nav-label">{post.data.title}</span>
+                        <span class="nav-date">{post.data.date}</span>
                     </a>
                 ))
             }
         </nav>
-        <div class="nav-preview" id="preview">大和配列 — キーボード配列</div>
     </div>
 
     <HintBar slot="footer">
         <span><kbd>←</kbd> back</span>
         <span><kbd>↑</kbd><kbd>↓</kbd> move</span>
         <span><kbd>→</kbd> open</span>
-        <span><kbd>1</kbd>-<kbd>3</kbd> jump</span>
     </HintBar>
 </TerminalLayout>
 
 <style>
     .nav-label {
-        min-width: 10em;
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 </style>
 
@@ -66,12 +62,6 @@ const workItems = [
         activeIdx = idx;
         navItems[activeIdx].classList.add("nav-active");
         navItems[activeIdx].focus({ preventScroll: true });
-
-        const preview = document.getElementById("preview");
-        if (preview) {
-            const desc = navItems[activeIdx].querySelector(".nav-desc");
-            preview.textContent = desc?.textContent || "";
-        }
     }
 
     function navigate() {
@@ -123,12 +113,6 @@ const workItems = [
             navItems[activeIdx].classList.remove("nav-active");
             activeIdx = idx;
             item.classList.add("nav-active");
-
-            const preview = document.getElementById("preview");
-            if (preview) {
-                const desc = item.querySelector(".nav-desc");
-                preview.textContent = desc?.textContent || "";
-            }
         });
     });
 </script>

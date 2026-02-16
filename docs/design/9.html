@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESIGN 09 // SHELL_POWER</title>
+    <style>
+        :root {
+            --bg: #0d0d0d;
+            --fg: #cccccc;
+            --dim: #555555;
+            --accent: #00ffcc;
+            /* Cyber-ish Teal */
+            --warn: #ffcc00;
+            --font-mono: 'JetBrains Mono', 'Menlo', monospace;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-mono);
+            font-size: 15px;
+            margin: 0;
+            padding: 3rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        /* The Shell Header */
+        header {
+            display: flex;
+            gap: 2rem;
+            border-bottom: 1px solid #222;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            font-size: 0.9em;
+        }
+
+        .env-var {
+            color: var(--dim);
+        }
+
+        /* The Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+            flex-grow: 1;
+        }
+
+        /* Nav (The Filesystem) */
+        .nav-item {
+            padding: 4px 0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .nav-item.active::before {
+            content: './';
+            margin-right: 5px;
+            color: var(--dim);
+        }
+
+        /* Viewer (The Stdout) */
+        .viewer {
+            border: 1px dashed #333;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .viewer-header {
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: var(--bg);
+            padding: 0 10px;
+            color: var(--dim);
+            font-size: 0.8em;
+        }
+
+        /* Power User Features overlay */
+        .cmd-hint {
+            margin-top: 1rem;
+            font-size: 0.8em;
+            color: var(--dim);
+        }
+
+        .key {
+            border: 1px solid #444;
+            padding: 0 4px;
+            border-radius: 2px;
+            color: #888;
+        }
+
+        /* The Command Bar */
+        .footer {
+            margin-top: 2rem;
+            border-top: 1px solid #222;
+            padding-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .prompt {
+            color: var(--accent);
+        }
+
+        #input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            flex-grow: 1;
+            outline: none;
+            font-family: inherit;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <span class="env-var">USER=guest</span>
+        <span class="env-var">SHELL=zsh</span>
+        <span class="env-var">PWD=~/honjoh.dev</span>
+        <span class="env-var" style="color: var(--warn)">MODE=INTERACTIVE</span>
+    </header>
+
+    <div class="grid">
+        <!-- Sidebar -->
+        <div class="nav">
+            <div style="margin-bottom: 1rem; color: #444;">./content</div>
+            <div class="nav-item active" onclick="sel(0)">works</div>
+            <div class="nav-item" onclick="sel(1)">articles</div>
+            <div class="nav-item" onclick="sel(2)">about.md</div>
+            <div class="nav-item" onclick="sel(3)">config.json</div>
+        </div>
+
+        <!-- Main Output -->
+        <div class="viewer" id="output">
+            <span class="viewer-header">STDOUT (fd:1)</span>
+            <div id="content-body">
+                [LOADING...]
+            </div>
+
+            <div class="cmd-hint">
+                <span style="color: var(--accent)">TIP:</span>
+                Try adding flags: <span class="key">-v</span> (verbose) or piping: <span class="key">| grep
+                    "react"</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <span class="prompt">➜</span>
+        <input id="input" type="text" value="cat works" autofocus>
+    </div>
+
+    <script>
+        const db = {
+            works: {
+                base: "Project List: [Alpha], [Beta], [Gamma]",
+                verbose: "Project List:\n- Alpha (2025): React/Three.js\n- Beta (2024): E-commerce CLI\n- Gamma (2023): Generative Art"
+            },
+            articles: {
+                base: "Recent: 'Death of GUI', 'Astro Tips'",
+                verbose: "Recent:\n- Death of GUI (200 views)\n- Astro Tips (150 views)"
+            },
+            "about.md": { base: "Nobuhiro Honjoh. Digital Engineer.", verbose: "Nobuhiro Honjoh.\nRole: Digital Engineer\nLoc: Tokyo\nStack: React, Astro, Rust" },
+            "config.json": { base: "{ check_updates: true }", verbose: "{\n  check_updates: true,\n  theme: 'dark',\n  font: 'JetBrains Mono'\n}" }
+        };
+
+        const navs = document.querySelectorAll('.nav-item');
+        const input = document.getElementById('input');
+        const content = document.getElementById('content-body');
+        let currentKey = 'works';
+
+        function sel(idx) {
+            navs.forEach(n => n.classList.remove('active'));
+            navs[idx].classList.add('active');
+            currentKey = navs[idx].innerText.trim();
+            input.value = `cat ${currentKey}`;
+            exec();
+        }
+
+        function exec() {
+            const cmd = input.value.trim();
+            const args = cmd.split(' ');
+            const file = args[1] || currentKey;
+
+            // Mock Parsing
+            let out = (db[file] || {}).base || "File not found";
+
+            // 1. Argument Handling (-v)
+            if (cmd.includes(' -v')) {
+                out = (db[file] || {}).verbose || out;
+            }
+
+            // 2. Piping Handling (|)
+            if (cmd.includes('|')) {
+                const pipeParts = cmd.split('|');
+                const pipeCmd = pipeParts[1].trim();
+                out = `[PIPED TO PROCESS '${pipeCmd}']<br>>> AI Generating Context for: "${out.replace(/\n/g, ' ')}"...`;
+            }
+
+            // 3. Redirection Handling (>)
+            if (cmd.includes('>')) {
+                out = `[REDIRECT SUCCESS] content written to clipboard/file.`;
+            }
+
+            content.innerHTML = out.replace(/\n/g, '<br>');
+        }
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') exec();
+        });
+
+        // Init
+        exec();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,262 @@
+---
+export interface Props {
+    autofocus?: boolean;
+}
+
+const { autofocus = true } = Astro.props;
+---
+
+<div class="chat-inline-wrapper">
+    <div class="chat-inline-log" id="chat-inline-log"></div>
+    <div class="chat-prompt-area">
+        <span class="prompt-symbol">❯</span>
+        <input
+            type="text"
+            id="chat-inline-input"
+            class="prompt-input"
+            placeholder="ask anything..."
+            autocomplete="off"
+            autofocus={autofocus}
+        />
+    </div>
+</div>
+
+<style>
+    .chat-inline-wrapper {
+        position: relative;
+        width: 100%;
+    }
+
+    .chat-inline-log {
+        max-height: 200px;
+        overflow-y: auto;
+        margin-bottom: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .chat-inline-log:empty {
+        display: none;
+    }
+
+    .chat-inline-log::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .chat-inline-log::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .chat-inline-log::-webkit-scrollbar-thumb {
+        background: var(--border-strong);
+        border-radius: 2px;
+    }
+
+    /* Chat messages */
+    :global(.chat-msg) {
+        line-height: 1.7;
+        font-size: 0.85rem;
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    :global(.chat-msg-user) {
+        color: var(--fg);
+    }
+
+    :global(.chat-msg-ai) {
+        color: var(--dim);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(4px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Typing indicator */
+    :global(.typing-indicator) {
+        display: inline-flex;
+        gap: 5px;
+        align-items: center;
+    }
+
+    :global(.typing-indicator .dot) {
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--accent);
+        animation: dotPulse 1.4s ease-in-out infinite;
+    }
+
+    :global(.typing-indicator .dot:nth-child(1)) {
+        animation-delay: 0s;
+    }
+
+    :global(.typing-indicator .dot:nth-child(2)) {
+        animation-delay: 0.2s;
+    }
+
+    :global(.typing-indicator .dot:nth-child(3)) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes dotPulse {
+        0%,
+        100% {
+            opacity: 0.3;
+        }
+        50% {
+            opacity: 1;
+        }
+    }
+
+    .chat-prompt-area {
+        display: flex;
+        align-items: center;
+        gap: 1ch;
+    }
+</style>
+
+<script>
+    // Chat API configuration
+    const isDev =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1";
+    const BASE_URL = isDev ? "http://localhost:3002" : "https://api.honjoh.dev";
+
+    let sessionId: string | null = sessionStorage.getItem("chat-session-id");
+    let isProcessing = false;
+
+    const chatLog = document.getElementById(
+        "chat-inline-log",
+    ) as HTMLDivElement;
+    const chatInput = document.getElementById(
+        "chat-inline-input",
+    ) as HTMLInputElement;
+
+    if (!chatLog || !chatInput) {
+        console.error("[ChatInline] Required elements not found");
+    }
+
+    // API call
+    async function callChatAPI(
+        message: string,
+    ): Promise<{ reply: string; sessionId: string }> {
+        const res = await fetch(`${BASE_URL}/api/chat`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message, sessionId }),
+        });
+        if (!res.ok) throw new Error(`API error: ${res.status}`);
+        const data = await res.json();
+        if (data.sessionId && data.sessionId !== sessionId) {
+            sessionId = data.sessionId;
+            sessionStorage.setItem("chat-session-id", sessionId!);
+        }
+        return data;
+    }
+
+    // Add message to log
+    function addMessage(text: string, type: "user" | "ai") {
+        const el = document.createElement("div");
+        el.className = `chat-msg chat-msg-${type}`;
+        el.textContent = text;
+        chatLog.appendChild(el);
+        chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    // Show typing indicator
+    function showTyping(): HTMLDivElement {
+        const el = document.createElement("div");
+        el.className = "chat-msg chat-msg-ai";
+        el.id = "typing-indicator-msg";
+        el.innerHTML =
+            '<span class="typing-indicator"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';
+        chatLog.appendChild(el);
+        chatLog.scrollTop = chatLog.scrollHeight;
+        return el;
+    }
+
+    // Send message
+    async function sendMessage() {
+        if (!chatInput || !chatLog) return;
+
+        const text = chatInput.value.trim();
+        if (!text || isProcessing) return;
+
+        chatInput.value = "";
+        isProcessing = true;
+
+        addMessage(text, "user");
+        const typingMsg = showTyping();
+
+        try {
+            const data = await callChatAPI(text);
+            typingMsg.remove();
+            addMessage(data.reply, "ai");
+        } catch (err) {
+            typingMsg.remove();
+            addMessage(
+                "申し訳ございません。現在チャット機能を利用できません。",
+                "ai",
+            );
+            console.error("[ChatInline] API error:", err);
+        }
+
+        isProcessing = false;
+        chatInput.focus();
+    }
+
+    // Event listener
+    if (chatInput) {
+        chatInput.addEventListener("keydown", (e: KeyboardEvent) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Auto-focus when typing anywhere on page
+        document.addEventListener("keydown", (e: KeyboardEvent) => {
+            // Skip if already focused or if modifier keys
+            if (
+                document.activeElement === chatInput ||
+                e.ctrlKey ||
+                e.altKey ||
+                e.metaKey
+            ) {
+                return;
+            }
+
+            // Skip if in another input/textarea
+            const activeTag = document.activeElement?.tagName.toLowerCase();
+            if (activeTag === "input" || activeTag === "textarea") {
+                return;
+            }
+
+            // Skip arrow keys and special keys
+            if (
+                [
+                    "ArrowUp",
+                    "ArrowDown",
+                    "ArrowLeft",
+                    "ArrowRight",
+                    "Enter",
+                    "Escape",
+                    "Tab",
+                ].includes(e.key)
+            ) {
+                return;
+            }
+
+            // Focus chat input and let the character through
+            chatInput.focus();
+        });
+    }
+</script>
