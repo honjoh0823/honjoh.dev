@@ -1,7 +1,7 @@
 ---
 import TerminalLayout from "../../layouts/TerminalLayout.astro";
 import Header from "../../components/Header.astro";
-import HintBar from "../../components/HintBar.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
 import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
@@ -17,7 +17,7 @@ const { Content } = await render(post);
 ---
 
 <TerminalLayout
-    title={`${post.data.title} — honjoh.dev`}
+    title={`${post.data.title} | honjoh.dev`}
     description={post.data.description}
 >
     <Header slot="header" path={["article", post.id]} />
@@ -51,9 +51,9 @@ const { Content } = await render(post);
         </article>
     </div>
 
-    <HintBar slot="footer">
+    <SiteFooter slot="footer">
         <span><kbd>←</kbd> back</span>
-    </HintBar>
+    </SiteFooter>
 </TerminalLayout>
 
 <style>

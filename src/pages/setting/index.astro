@@ -1,7 +1,7 @@
 ---
 import TerminalLayout from "../../layouts/TerminalLayout.astro";
 import Header from "../../components/Header.astro";
-import HintBar from "../../components/HintBar.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
 
 const langItems = [
     { key: "1", label: "日本語", value: "ja" },
@@ -9,7 +9,7 @@ const langItems = [
 ];
 ---
 
-<TerminalLayout title="Setting - honjoh.dev" description="Site settings">
+<TerminalLayout title="Setting | honjoh.dev" description="Site settings">
     <Header slot="header" path={["setting"]} />
 
     <div class="page-body">
@@ -75,11 +75,11 @@ const langItems = [
         </section>
     </div>
 
-    <HintBar slot="footer">
+    <SiteFooter slot="footer">
         <span><kbd>←</kbd> back</span>
         <span><kbd>↑</kbd><kbd>↓</kbd> move</span>
         <span><kbd>→</kbd><kbd>Enter</kbd> select</span>
-    </HintBar>
+    </SiteFooter>
 </TerminalLayout>
 
 <style>

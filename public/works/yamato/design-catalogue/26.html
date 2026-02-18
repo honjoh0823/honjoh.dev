@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>#1 First View — Color Pattern Variations v3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0
+        }
+
+        body {
+            min-height: 100vh;
+            background: #0a0a0c;
+            color: #ccc;
+            font-family: "Outfit", sans-serif;
+            padding: 24px 20px 80px;
+        }
+
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 2px
+        }
+
+        .sub {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 20px
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+            gap: 20px;
+        }
+
+        .mini-page {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, .04);
+            position: relative;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            background-size: 256px 256px;
+        }
+
+        .mini-page:hover {
+            border-color: rgba(255, 255, 255, .1);
+        }
+
+        .mini-page .page-inner {
+            padding: 16px 18px 14px;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .page-quest {
+            font-size: 9px;
+            font-weight: 400;
+            letter-spacing: .04em;
+            opacity: .5;
+        }
+
+        .page-quest em {
+            font-style: normal;
+            opacity: .8;
+        }
+
+        .page-tagline {
+            font-size: 8px;
+            font-weight: 300;
+            opacity: .3;
+        }
+
+        .page-progress {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 10px;
+        }
+
+        .page-progress .seg {
+            flex: 1;
+            height: 2px;
+            border-radius: 1px;
+        }
+
+        .page-content {
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            margin-bottom: 3px;
+        }
+
+        .page-body {
+            font-size: 8px;
+            line-height: 1.6;
+            opacity: .4;
+            margin-bottom: 10px;
+        }
+
+        .kb {
+            display: grid;
+            gap: 3px;
+        }
+
+        .kb .row {
+            display: flex;
+            justify-content: center;
+            gap: 3px;
+        }
+
+        .kb .row:nth-child(2) {
+            padding-left: 10px
+        }
+
+        .kb .row:nth-child(3) {
+            padding-left: 20px
+        }
+
+        .key {
+            width: 30px;
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Outfit", sans-serif;
+            font-size: 10px;
+            font-weight: 400;
+            position: relative;
+        }
+
+        .key.home::after {
+            content: "";
+            position: absolute;
+            bottom: 3px;
+            width: 6px;
+            height: 1px;
+            border-radius: 1px;
+            background: currentColor;
+            opacity: .3;
+        }
+
+        .page-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            padding-top: 6px;
+        }
+
+        .page-footer-hint {
+            font-size: 7px;
+            opacity: .2;
+        }
+
+        .page-footer-brand {
+            font-size: 7px;
+            opacity: .3;
+        }
+
+        .page-footer-brand em {
+            font-style: normal;
+        }
+
+        .pattern-label {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, .5);
+            z-index: 2;
+        }
+
+        .pattern-desc {
+            font-size: 10px;
+            color: #555;
+            text-align: center;
+            padding: 6px 12px 10px;
+            line-height: 1.5;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #1a1a1c;
+            margin: 28px 0 16px;
+        }
+
+        .section-title {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: #555;
+            margin-bottom: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <h1>#1 First View — Finalists v3</h1>
+        <p class="sub">好み選抜 8パターン。背景をブルー寄りの黒に調整。テクスチャ維持。</p>
+        <div id="app"></div>
+    </div>
+
+    <script>
+        const ROWS = [
+            ['M', 'Y', 'R', 'W', 'P', 'X', 'L', 'Q', 'C', "'", '[', ']'],
+            ['K', 'S', 'T', 'N', 'H', 'F', 'A', 'O', 'I', 'E', '/'],
+            ['Z', 'D', 'B', 'G', 'J', 'V', 'U', '-', ',', '.']
+        ];
+        const SIDES = [
+            ['l', 'l', 'l', 'l', 'l', 'n', 'n', 'n', 'n', 'n', 'n', 'n'],
+            ['l', 'l', 'l', 'l', 'l', 'n', 'r', 'r', 'r', 'r', 'n'],
+            ['l', 'l', 'l', 'l', 'l', 'n', 'r', 'n', 'n', 'n']
+        ];
+        const HOME_IDX = { 1: [3, 6] };
+        const VOWELS = new Set(['A', 'O', 'I', 'E', 'U']);
+        const RN_KEYS = {
+            '0-5': 1, '0-6': 1, '0-7': 1, '0-8': 1, '0-9': 1, '0-10': 1, '0-11': 1,
+            '1-5': 1, '1-10': 1,
+            '2-5': 1, '2-7': 1, '2-8': 1, '2-9': 1
+        };
+
+        function hsl(h, s, l, a) {
+            return a !== undefined ? `hsl(${h} ${s}% ${l}% / ${a})` : `hsl(${h} ${s}% ${l}%)`;
+        }
+
+        const PATTERNS = [
+            {
+                section: '桜 SAKURA — Pink 345°',
+                patterns: [
+                    {
+                        id: '01', name: '桜鼠 × 縹',
+                        desc: '桜色のくすみピンク + 縹色の古典青。穏やかで上品。',
+                        lH: 210, rH: 345, nH: 230,
+                        lBg: [45, 25], lTx: [50, 86],
+                        rBg: [38, 22], rTx: [42, 84],
+                        rvBg: [48, 28], rvTx: [52, 90],
+                        nBg: [5, 13], nTx: [5, 34],
+                        pageBg: 'hsl(220 20% 6%)',
+                        accent: '#6890b8',
+                    },
+                    {
+                        id: '02', name: '桜鼠 × 縹 Vivid',
+                        desc: '01 の彩度を上げた版。より華やかに。',
+                        lH: 210, rH: 345, nH: 230,
+                        lBg: [55, 27], lTx: [60, 88],
+                        rBg: [48, 24], rTx: [52, 86],
+                        rvBg: [58, 30], rvTx: [62, 92],
+                        nBg: [5, 12], nTx: [5, 32],
+                        pageBg: 'hsl(222 22% 5.5%)',
+                        accent: '#5888c8',
+                    },
+                    {
+                        id: '03', name: '桜 × 花浅葱',
+                        desc: '桜色 + 花浅葱（明るい青緑寄りの青）。爽やか。',
+                        lH: 205, rH: 345, nH: 220,
+                        lBg: [48, 26], lTx: [55, 87],
+                        rBg: [40, 23], rTx: [45, 85],
+                        rvBg: [50, 28], rvTx: [55, 90],
+                        nBg: [5, 13], nTx: [5, 34],
+                        pageBg: 'hsl(218 18% 6%)',
+                        accent: '#5890b0',
+                    },
+                ]
+            },
+            {
+                section: '薄紅 USUKURENAI — Pink 350°',
+                patterns: [
+                    {
+                        id: '04', name: '薄紅 × 藍鼠',
+                        desc: 'わずかに赤味の薄紅 + 渋い藍鼠。日本的な対比。',
+                        lH: 215, rH: 350, nH: 230,
+                        lBg: [42, 24], lTx: [48, 84],
+                        rBg: [36, 22], rTx: [40, 82],
+                        rvBg: [46, 27], rvTx: [50, 88],
+                        nBg: [4, 13], nTx: [4, 34],
+                        pageBg: 'hsl(220 18% 6%)',
+                        accent: '#6888a8',
+                    },
+                    {
+                        id: '05', name: '薄紅 × 藍鼠 Bright',
+                        desc: '04 をより明るく。文字はほぼ白。',
+                        lH: 215, rH: 350, nH: 230,
+                        lBg: [50, 28], lTx: [40, 90],
+                        rBg: [42, 25], rTx: [35, 88],
+                        rvBg: [52, 31], rvTx: [42, 93],
+                        nBg: [4, 14], nTx: [4, 36],
+                        pageBg: 'hsl(222 20% 5.5%)',
+                        accent: '#6090b8',
+                    },
+                    {
+                        id: '06', name: '薄紅 × 紺碧',
+                        desc: '赤味ピンク + やや深い紺碧。コントラスト強め。',
+                        lH: 222, rH: 350, nH: 235,
+                        lBg: [52, 26], lTx: [58, 86],
+                        rBg: [44, 24], rTx: [48, 84],
+                        rvBg: [54, 29], rvTx: [58, 90],
+                        nBg: [5, 12], nTx: [5, 32],
+                        pageBg: 'hsl(225 22% 5.5%)',
+                        accent: '#5080c0',
+                    },
+                ]
+            },
+            {
+                section: '推薦 BEST MIX',
+                patterns: [
+                    {
+                        id: '13', name: '推薦B: 縹 × 薄紅 High Bright',
+                        desc: '明度最大。インパクト重視。文字はほぼ白。',
+                        lH: 212, rH: 348, nH: 228,
+                        lBg: [52, 30], lTx: [35, 92],
+                        rBg: [44, 27], rTx: [30, 90],
+                        rvBg: [54, 33], rvTx: [38, 95],
+                        nBg: [5, 14], nTx: [4, 38],
+                        pageBg: 'hsl(220 22% 5%)',
+                        accent: '#5088c0',
+                    },
+                    {
+                        id: '14', name: '推薦C: 鴇 × 藍 Deep Kusumi',
+                        desc: '深いくすみ。落ち着きと品格。大人っぽい。',
+                        lH: 220, rH: 340, nH: 235,
+                        lBg: [40, 24], lTx: [48, 82],
+                        rBg: [35, 21], rTx: [40, 80],
+                        rvBg: [45, 27], rvTx: [50, 86],
+                        nBg: [4, 13], nTx: [4, 34],
+                        pageBg: 'hsl(222 18% 6%)',
+                        accent: '#6888a8',
+                    },
+                ]
+            },
+        ];
+
+        function renderMiniPage(p) {
+            let kbHtml = '<div class="kb">';
+            ROWS.forEach((row, ri) => {
+                let rowHtml = '<div class="row">';
+                row.forEach((letter, ci) => {
+                    const side = SIDES[ri][ci];
+                    const rnKey = RN_KEYS[`${ri}-${ci}`];
+                    const isVowel = VOWELS.has(letter) && side === 'r';
+                    const isHome = HOME_IDX[ri]?.includes(ci);
+                    let bg, tx;
+                    if (rnKey) {
+                        bg = hsl(p.nH, p.nBg[0], p.nBg[1]);
+                        tx = hsl(p.nH, p.nTx[0], p.nTx[1]);
+                    } else if (isVowel) {
+                        bg = hsl(p.rH, p.rvBg[0], p.rvBg[1]);
+                        tx = hsl(p.rH, p.rvTx[0], p.rvTx[1]);
+                    } else if (side === 'r') {
+                        bg = hsl(p.rH, p.rBg[0], p.rBg[1]);
+                        tx = hsl(p.rH, p.rTx[0], p.rTx[1]);
+                    } else if (side === 'l') {
+                        bg = hsl(p.lH, p.lBg[0], p.lBg[1]);
+                        tx = hsl(p.lH, p.lTx[0], p.lTx[1]);
+                    } else {
+                        bg = hsl(p.nH, p.nBg[0], p.nBg[1]);
+                        tx = hsl(p.nH, p.nTx[0], p.nTx[1]);
+                    }
+                    const hm = isHome ? ' home' : '';
+                    rowHtml += `<div class="key${hm}" style="background:${bg};color:${tx}">${letter}</div>`;
+                });
+                rowHtml += '</div>';
+                kbHtml += rowHtml;
+            });
+            kbHtml += '</div>';
+
+            return `
+            <div class="mini-page" style="background-color:${p.pageBg}">
+                <span class="pattern-label" style="color:${p.accent}">${p.id}</span>
+                <div class="page-inner">
+                    <div class="page-header">
+                        <span class="page-quest" style="color:${hsl(0, 0, 60)}"><em>大和配列</em> Yamato Layout</span>
+                        <span class="page-tagline" style="color:${hsl(0, 0, 50)}">1日でマスター, 1ヶ月で入力速度を2倍に。</span>
+                    </div>
+                    <div class="page-progress">
+                        <div class="seg" style="background:${p.accent}"></div>
+                        <div class="seg" style="background:rgba(255,255,255,.06)"></div>
+                        <div class="seg" style="background:rgba(255,255,255,.06)"></div>
+                        <div class="seg" style="background:rgba(255,255,255,.06)"></div>
+                    </div>
+                    <div class="page-content">
+                        <div class="page-title" style="color:${hsl(0, 0, 88)}">大和配列</div>
+                        <div class="page-body" style="color:${hsl(0, 0, 50)}">日本語入力に最適化された、新しいキーボード配列。<br>覚えやすく、疲れず、ミスが少なく入力ができます。</div>
+                        ${kbHtml}
+                    </div>
+                    <div class="page-footer" style="border-top:1px solid rgba(255,255,255,.06)">
+                        <span class="page-footer-hint" style="color:${hsl(0, 0, 40)}">← → で操作</span>
+                        <span class="page-footer-brand" style="color:${hsl(0, 0, 40)}"><em>Yamato Layout</em> | honjoh.dev</span>
+                    </div>
+                </div>
+                <div class="pattern-desc">${p.name} — ${p.desc}</div>
+            </div>`;
+        }
+
+        const app = document.getElementById('app');
+        let html = '';
+        PATTERNS.forEach((section, si) => {
+            if (si > 0) html += '<hr>';
+            html += `<div class="section-title">${section.section}</div>`;
+            html += '<div class="grid">';
+            section.patterns.forEach(p => { html += renderMiniPage(p); });
+            html += '</div>';
+        });
+        app.innerHTML = html;
+    </script>
+</body>
+
+</html>

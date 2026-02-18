@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
 
 // Yamato layout mapping: QWERTY key -> Yamato output
 const yamatoMap: Record<string, string> = {
@@ -225,12 +226,6 @@ const quests = [
       <div class="particle-container" id="particle-container"></div>
     </div>
 
-    <p class="hint" id="hint">
-      <kbd>←</kbd> 戻る &nbsp; <kbd>→</kbd> 次のクエスト &nbsp; <kbd>1</kbd><kbd
-        >2</kbd
-      > クエスト切替 &nbsp; <kbd>Space</kbd> リセット &nbsp; <kbd>Esc</kbd> スキップ
-    </p>
-
     <!-- Footer links -->
     <footer class="page-footer">
       <a
@@ -241,6 +236,14 @@ const quests = [
       <span class="footer-sep">|</span>
       <a href="/layout/yamato.ahk" download>AHKダウンロード</a>
     </footer>
+
+    <SiteFooter>
+      <span><kbd>←</kbd> 戻る</span>
+      <span><kbd>→</kbd> 次のクエスト</span>
+      <span><kbd>1</kbd><kbd>2</kbd> クエスト切替</span>
+      <span><kbd>Space</kbd> リセット</span>
+      <span><kbd>Esc</kbd> スキップ</span>
+    </SiteFooter>
   </main>
 </Layout>
 
@@ -944,24 +947,6 @@ const quests = [
       transform: translate(var(--dx), var(--dy)) scale(0);
       opacity: 0;
     }
-  }
-
-  /* Hint */
-  .hint {
-    text-align: center;
-    font-size: 0.7rem;
-    color: var(--color-text-muted);
-    margin-bottom: 0.5rem;
-  }
-  .hint kbd {
-    display: inline-block;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 3px;
-    padding: 0.1em 0.4em;
-    font-size: 0.65rem;
-    font-family: inherit;
-    color: var(--color-ink);
   }
 
   /* Footer */

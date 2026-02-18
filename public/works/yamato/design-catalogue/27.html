@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QWERTY Color Proposals — #2 Slide Patterns</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0
+        }
+
+        body {
+            min-height: 100vh;
+            background: #0a0a0c;
+            color: #ccc;
+            font-family: "Outfit", sans-serif;
+            padding: 24px 20px 80px;
+        }
+
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 2px
+        }
+
+        .sub {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+            gap: 20px;
+        }
+
+        .mini-page {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, .04);
+            position: relative;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            background-size: 256px 256px;
+            background-color: hsl(230 20% 5.5%);
+        }
+
+        .mini-page:hover {
+            border-color: rgba(255, 255, 255, .1);
+        }
+
+        .mini-page .page-inner {
+            padding: 16px 18px 14px;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .page-quest {
+            font-size: 9px;
+            font-weight: 400;
+            letter-spacing: .04em;
+            opacity: .5;
+        }
+
+        .page-quest em {
+            font-style: normal;
+            opacity: .8;
+        }
+
+        .page-tagline {
+            font-size: 8px;
+            font-weight: 300;
+            opacity: .3;
+        }
+
+        .page-progress {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 10px;
+        }
+
+        .page-progress .seg {
+            flex: 1;
+            height: 2px;
+            border-radius: 1px;
+        }
+
+        .page-content {
+            text-align: center;
+        }
+
+        .page-h3 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .page-body {
+            font-size: 8px;
+            line-height: 1.6;
+            opacity: .4;
+            margin-bottom: 10px;
+        }
+
+        .kb {
+            display: grid;
+            gap: 3px;
+        }
+
+        .kb .row {
+            display: flex;
+            justify-content: center;
+            gap: 3px;
+        }
+
+        .kb .row:nth-child(2) {
+            padding-left: 10px
+        }
+
+        .kb .row:nth-child(3) {
+            padding-left: 20px
+        }
+
+        .key {
+            width: 30px;
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Outfit", sans-serif;
+            font-size: 10px;
+            font-weight: 400;
+            position: relative;
+        }
+
+        .key.home::after {
+            content: "";
+            position: absolute;
+            bottom: 3px;
+            width: 6px;
+            height: 1px;
+            border-radius: 1px;
+            background: currentColor;
+            opacity: .3;
+        }
+
+        .page-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            padding-top: 6px;
+        }
+
+        .page-footer-hint {
+            font-size: 7px;
+            opacity: .2;
+        }
+
+        .page-footer-brand {
+            font-size: 7px;
+            opacity: .3;
+        }
+
+        .page-footer-brand em {
+            font-style: normal;
+        }
+
+        .pattern-label {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, .5);
+            z-index: 2;
+        }
+
+        .pattern-desc {
+            font-size: 10px;
+            color: #555;
+            text-align: center;
+            padding: 6px 12px 10px;
+            line-height: 1.5;
+        }
+
+        .color-vals {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: #444;
+            text-align: center;
+            padding: 0 12px 8px;
+            line-height: 1.6;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #1a1a1c;
+            margin: 28px 0 16px;
+        }
+
+        .section-title {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: #555;
+            margin-bottom: 14px;
+        }
+
+        /* color swatches */
+        .swatches {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 8px;
+        }
+
+        .swatch {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 8px;
+            color: #555;
+        }
+
+        .swatch-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <h1>QWERTY Color Proposals</h1>
+        <p class="sub">
+            確定済: キー=#02 桜鼠×縹 Vivid / 背景=H230 hsl(230 20% 5.5%)<br>
+            A.html#2「QWERTYとは」— 茶系ベース + 上段6文字ハイライトの2パターン配色。
+        </p>
+        <div id="app"></div>
+    </div>
+
+    <script>
+        // ── QWERTY Layout ──
+        const QWERTY = [
+            ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']'],
+            ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', "'"],
+            ['Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/']
+        ];
+        const Q_HOME = { 1: [3, 6] };
+        const HIGHLIGHT = { '0-0': 1, '0-1': 1, '0-2': 1, '0-3': 1, '0-4': 1, '0-5': 1 };
+
+        // ── Yamato Layout (confirmed #1) ──
+        const YAMATO = [
+            ['M', 'Y', 'R', 'W', 'P', 'X', 'L', 'Q', 'C', "'", '[', ']'],
+            ['K', 'S', 'T', 'N', 'H', 'F', 'A', 'O', 'I', 'E', '/'],
+            ['Z', 'D', 'B', 'G', 'J', 'V', 'U', '-', ',', '.']
+        ];
+        const Y_SIDES = [
+            ['l', 'l', 'l', 'l', 'l', 'n', 'n', 'n', 'n', 'n', 'n', 'n'],
+            ['l', 'l', 'l', 'l', 'l', 'n', 'r', 'r', 'r', 'r', 'n'],
+            ['l', 'l', 'l', 'l', 'l', 'n', 'r', 'n', 'n', 'n']
+        ];
+        const Y_HOME = { 1: [3, 6] };
+        const VOWELS = new Set(['A', 'O', 'I', 'E', 'U']);
+        const RN_KEYS = {
+            '0-5': 1, '0-6': 1, '0-7': 1, '0-8': 1, '0-9': 1, '0-10': 1, '0-11': 1,
+            '1-5': 1, '1-10': 1, '2-5': 1, '2-7': 1, '2-8': 1, '2-9': 1
+        };
+
+        // Confirmed #02 key colors
+        const YK = {
+            lBg: [210, 55, 27], lTx: [210, 60, 88],
+            rBg: [345, 48, 24], rTx: [345, 52, 86],
+            rvBg: [345, 58, 30], rvTx: [345, 62, 92],
+            nBg: [230, 5, 12], nTx: [230, 5, 32],
+        };
+
+        function hsl(h, s, l) { return `hsl(${h} ${s}% ${l}%)`; }
+
+        // ── Render confirmed #1 Yamato reference ──
+        function renderYamatoRef() {
+            let kbHtml = '<div class="kb">';
+            YAMATO.forEach((row, ri) => {
+                let rowHtml = '<div class="row">';
+                row.forEach((letter, ci) => {
+                    const side = Y_SIDES[ri][ci];
+                    const rn = RN_KEYS[`${ri}-${ci}`];
+                    const isVowel = VOWELS.has(letter) && side === 'r';
+                    const isHome = Y_HOME[ri]?.includes(ci);
+                    let bg, tx;
+                    if (rn) { bg = hsl(...YK.nBg); tx = hsl(...YK.nTx); }
+                    else if (isVowel) { bg = hsl(...YK.rvBg); tx = hsl(...YK.rvTx); }
+                    else if (side === 'r') { bg = hsl(...YK.rBg); tx = hsl(...YK.rTx); }
+                    else if (side === 'l') { bg = hsl(...YK.lBg); tx = hsl(...YK.lTx); }
+                    else { bg = hsl(...YK.nBg); tx = hsl(...YK.nTx); }
+                    const hm = isHome ? ' home' : '';
+                    rowHtml += `<div class="key${hm}" style="background:${bg};color:${tx}">${letter}</div>`;
+                });
+                rowHtml += '</div>'; kbHtml += rowHtml;
+            });
+            kbHtml += '</div>';
+
+            return `
+            <div class="mini-page">
+                <span class="pattern-label" style="color:#5888c8">CONFIRMED</span>
+                <div class="page-inner">
+                    <div class="page-header">
+                        <span class="page-quest" style="color:hsl(0 0% 60%)"><em>大和配列</em> Yamato Layout</span>
+                        <span class="page-tagline" style="color:hsl(0 0% 50%)">1日でマスター, 1ヶ月で入力速度を2倍に。</span>
+                    </div>
+                    <div class="page-progress">
+                        <div class="seg" style="background:#5888c8"></div>
+                        <div class="seg" style="background:rgba(255,255,255,.06)"></div>
+                        <div class="seg" style="background:rgba(255,255,255,.06)"></div>
+                        <div class="seg" style="background:rgba(255,255,255,.06)"></div>
+                    </div>
+                    <div class="page-content">
+                        <div class="page-h3" style="color:hsl(0 0% 88%)">大和配列</div>
+                        <div class="page-body" style="color:hsl(0 0% 50%)">日本語入力に最適化された、新しいキーボード配列。<br>覚えやすく、疲れず、ミスが少なく入力ができます。</div>
+                        ${kbHtml}
+                    </div>
+                    <div class="page-footer" style="border-top:1px solid rgba(255,255,255,.06)">
+                        <span class="page-footer-hint" style="color:hsl(0 0% 40%)">← → で操作</span>
+                        <span class="page-footer-brand" style="color:hsl(0 0% 40%)"><em>Yamato Layout</em> | honjoh.dev</span>
+                    </div>
+                </div>
+                <div class="pattern-desc">#1 確定 — 02 桜鼠 × 縹 Vivid</div>
+            </div>`;
+        }
+
+        // ═══════════════════════════════════════════
+        // QWERTY color proposals
+        // ═══════════════════════════════════════════
+
+        const PROPOSALS = [
+            {
+                section: 'h=16°～32° — 古色・焦茶〜狐色 集中探索（10パターン）',
+                items: [
+                    {
+                        id: 'A', name: 'h=18° 低彩度', desc: '煉瓦の渋さ。最も暗く沈んだ古色。',
+                        bH: 18, bBg: [16, 10], bTx: [12, 24], hH: 18, hBg: [32, 16], hTx: [38, 48]
+                    },
+                    {
+                        id: 'B', name: 'h=20° くすみ茶', desc: '焦茶。QWERTY の古臭さをストレートに表現。',
+                        bH: 20, bBg: [20, 11], bTx: [15, 26], hH: 20, hBg: [40, 18], hTx: [46, 54]
+                    },
+                    {
+                        id: 'C', name: 'h=22° やや赤味', desc: '小豆に近い茶。和の古色。',
+                        bH: 22, bBg: [22, 11], bTx: [16, 27], hH: 22, hBg: [42, 19], hTx: [48, 56]
+                    },
+                    {
+                        id: 'D', name: 'h=24° 栗皮', desc: '栗皮色。深い落ち着き。中間的な印象。',
+                        bH: 24, bBg: [22, 11], bTx: [16, 28], hH: 24, hBg: [44, 19], hTx: [50, 56]
+                    },
+                    {
+                        id: 'E', name: 'h=26° 弁柄寄り', desc: '弁柄に近い茶。土・陶器のような質感。',
+                        bH: 26, bBg: [22, 12], bTx: [16, 28], hH: 26, hBg: [44, 20], hTx: [50, 58]
+                    },
+                    {
+                        id: 'F', name: 'h=28° 狐色 標準', desc: 'W28の標準。暖炉の火。明暗バランス良し。',
+                        bH: 28, bBg: [22, 12], bTx: [16, 30], hH: 28, hBg: [44, 20], hTx: [50, 58]
+                    },
+                    {
+                        id: 'G', name: 'h=24° 高コントラスト', desc: '栗色＋ハイライト強め。説明スライド向き。',
+                        bH: 24, bBg: [16, 10], bTx: [12, 24], hH: 24, hBg: [50, 24], hTx: [56, 66]
+                    },
+                    {
+                        id: 'H', name: 'h=20° 深くすみ', desc: '焦茶＋極低彩度。ほぼグレーに沈む古さ。',
+                        bH: 20, bBg: [12, 10], bTx: [8, 22], hH: 20, hBg: [26, 15], hTx: [32, 44]
+                    },
+                    {
+                        id: 'I', name: 'h=28° 明るめ', desc: '狐色＋明度アップ。温もりがはっきり伝わる。',
+                        bH: 28, bBg: [24, 13], bTx: [18, 32], hH: 28, hBg: [48, 22], hTx: [54, 64]
+                    },
+                    {
+                        id: 'J', name: 'h=32° 朽葉 参考', desc: '比較用。やや黄味が出始める境界。',
+                        bH: 32, bBg: [22, 12], bTx: [16, 30], hH: 32, hBg: [44, 20], hTx: [52, 60]
+                    },
+                ]
+            },
+        ];
+
+        // ── Render QWERTY proposal ──
+        function renderQwertyPage(p) {
+            let kbHtml = '<div class="kb">';
+            QWERTY.forEach((row, ri) => {
+                let rowHtml = '<div class="row">';
+                row.forEach((letter, ci) => {
+                    const isHi = HIGHLIGHT[`${ri}-${ci}`];
+                    const isHome = Q_HOME[ri]?.includes(ci);
+                    const bg = isHi ? hsl(p.hH, p.hBg[0], p.hBg[1]) : hsl(p.bH, p.bBg[0], p.bBg[1]);
+                    const tx = isHi ? hsl(p.hH, p.hTx[0], p.hTx[1]) : hsl(p.bH, p.bTx[0], p.bTx[1]);
+                    const hm = isHome ? ' home' : '';
+                    rowHtml += `<div class="key${hm}" style="background:${bg};color:${tx}">${letter}</div>`;
+                });
+                rowHtml += '</div>'; kbHtml += rowHtml;
+            });
+            kbHtml += '</div>';
+
+            return `
+            <div class="mini-page">
+                <span class="pattern-label" style="color:hsl(${p.hH} 50% 55%)">${p.id}</span>
+                <div class="page-inner">
+                    <div class="page-header">
+                        <span class="page-quest" style="color:hsl(0 0% 60%)"><em>大和配列</em> Yamato Layout</span>
+                        <span class="page-tagline" style="color:hsl(0 0% 50%)">1日でマスター, 1ヶ月で入力速度を2倍に。</span>
+                    </div>
+                    <div class="page-progress">
+                        <div class="seg" style="background:rgba(255,255,255,.06)"></div>
+                        <div class="seg" style="background:#5888c8"></div>
+                        <div class="seg" style="background:rgba(255,255,255,.06)"></div>
+                        <div class="seg" style="background:rgba(255,255,255,.06)"></div>
+                    </div>
+                    <div class="page-content">
+                        <div class="page-h3" style="color:hsl(0 0% 85%)">QWERTY配列とは</div>
+                        <div class="page-body" style="color:hsl(0 0% 50%)">1870年代、タイプライターの機械的な都合で生まれた配列。</div>
+                        ${kbHtml}
+                        <div class="swatches">
+                            <div class="swatch"><div class="swatch-dot" style="background:${hsl(p.bH, p.bBg[0], p.bBg[1])}"></div>Base</div>
+                            <div class="swatch"><div class="swatch-dot" style="background:${hsl(p.hH, p.hBg[0], p.hBg[1])}"></div>Highlight</div>
+                        </div>
+                    </div>
+                    <div class="page-footer" style="border-top:1px solid rgba(255,255,255,.06)">
+                        <span class="page-footer-hint" style="color:hsl(0 0% 40%)">← → で操作</span>
+                        <span class="page-footer-brand" style="color:hsl(0 0% 40%)"><em>Yamato Layout</em> | honjoh.dev</span>
+                    </div>
+                </div>
+                <div class="pattern-desc">${p.name} — ${p.desc}</div>
+                <div class="color-vals">base: hsl(${p.bH} ${p.bBg[0]}% ${p.bBg[1]}%) / hi: hsl(${p.hH} ${p.hBg[0]}% ${p.hBg[1]}%)</div>
+            </div>`;
+        }
+
+        // ── Build: each section = Yamato ref + QWERTY proposals ──
+        const yamatoRefHtml = renderYamatoRef();
+        const app = document.getElementById('app');
+        let html = '';
+        PROPOSALS.forEach((group, gi) => {
+            if (gi > 0) html += '<hr>';
+            html += `<div class="section-title">${group.section}</div><div class="grid">`;
+            group.items.forEach((p, pi) => {
+                // Show Yamato ref as first item in each section
+                if (pi === 0) html += yamatoRefHtml;
+                html += renderQwertyPage(p);
+            });
+            html += '</div>';
+        });
+        app.innerHTML = html;
+    </script>
+</body>
+
+</html>

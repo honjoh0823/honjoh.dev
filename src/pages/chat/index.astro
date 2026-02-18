@@ -1,11 +1,11 @@
 ---
 import TerminalLayout from "../../layouts/TerminalLayout.astro";
 import Header from "../../components/Header.astro";
-import HintBar from "../../components/HintBar.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
 ---
 
 <TerminalLayout
-    title="Chat - honjoh.dev"
+    title="Chat | honjoh.dev"
     description="Talk to Honjoh's AI representative"
     class="chat-page"
 >
@@ -16,25 +16,25 @@ import HintBar from "../../components/HintBar.astro";
 
     <!-- Input -->
     <div class="chat-input-area" slot="footer">
-        <div class="prompt-area">
-            <span class="prompt-symbol">❯</span>
-            <input
-                type="text"
-                id="chat-input"
-                class="prompt-input"
-                placeholder="ask anything..."
-                autocomplete="off"
-                autofocus
-            />
-            <div class="cmd-palette" id="cmd-palette" style="display:none">
-                <!-- populated by JS -->
+        <SiteFooter>
+            <div class="prompt-area" slot="prompt">
+                <span class="prompt-symbol">❯</span>
+                <input
+                    type="text"
+                    id="chat-input"
+                    class="prompt-input"
+                    placeholder="ask anything..."
+                    autocomplete="off"
+                    autofocus
+                />
+                <div class="cmd-palette" id="cmd-palette" style="display:none">
+                    <!-- populated by JS -->
+                </div>
             </div>
-        </div>
-        <HintBar>
             <span><kbd>Enter</kbd> send</span>
             <span><kbd>/</kbd> command</span>
             <span><kbd>←</kbd> back</span>
-        </HintBar>
+        </SiteFooter>
     </div>
 </TerminalLayout>
 

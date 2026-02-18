@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>カラー方式・根本見直し — 鮮やかな色を活かすアプローチ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0e0e10;
+            --ink: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg);
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            background-size: 256px 256px;
+            color: var(--ink);
+            font-family: "Outfit", sans-serif;
+            padding: 32px 24px 80px;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px
+        }
+
+        .sub {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 12px;
+            line-height: 1.6
+        }
+
+        .insight {
+            padding: 14px 18px;
+            border-radius: 8px;
+            background: rgba(104, 152, 200, .06);
+            border: 1px solid rgba(104, 152, 200, .12);
+            font-size: 13px;
+            color: #8ab;
+            line-height: 1.7;
+            margin-bottom: 36px;
+        }
+
+        .insight strong {
+            color: #acd
+        }
+
+        /* ── color ref strip ── */
+        .ref-strip {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 36px;
+            align-items: center
+        }
+
+        .ref-strip-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            white-space: nowrap
+        }
+
+        .ref-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: inline-block
+        }
+
+        .ref-pair {
+            display: flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        .ref-pair span {
+            font-size: 11px;
+            color: #666
+        }
+
+        /* ── proposal card ── */
+        .proposal {
+            margin-bottom: 44px;
+            padding: 24px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .015);
+            border: 1px solid rgba(255, 255, 255, .04);
+        }
+
+        .proposal.rec {
+            border-color: rgba(104, 200, 140, .25);
+            background: rgba(104, 200, 140, .015);
+        }
+
+        .proposal-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 4px
+        }
+
+        .proposal-num {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            color: #555;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, .04);
+        }
+
+        .proposal-title {
+            font-size: 16px;
+            font-weight: 600
+        }
+
+        .proposal-desc {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 16px;
+            line-height: 1.6
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-left: 4px
+        }
+
+        .tag.rec {
+            background: rgba(80, 200, 120, .12);
+            color: #60c080
+        }
+
+        .tag.bad {
+            background: rgba(200, 80, 80, .12);
+            color: #e06060
+        }
+
+        /* ── hue groups ── */
+        .hue-groups {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap
+        }
+
+        .hue-group {
+            flex: 1;
+            min-width: 260px
+        }
+
+        .hue-label {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: .04em;
+            margin-bottom: 6px
+        }
+
+        .keys {
+            display: flex;
+            gap: 3px
+        }
+
+        .key {
+            width: 50px;
+            height: 54px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: "Outfit", sans-serif;
+            border: none;
+            position: relative;
+        }
+
+        .key .label {
+            font-size: 15px;
+            font-weight: 400;
+            line-height: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .key .lvl {
+            font-size: 8px;
+            opacity: .55;
+            margin-top: 2px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .notes {
+            margin-top: 14px;
+            padding: 10px 14px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, .02);
+            font-size: 12px;
+            color: #666;
+            line-height: 1.7
+        }
+
+        .notes strong {
+            color: #999
+        }
+
+        .notes .g {
+            color: #60c080
+        }
+
+        .notes .r {
+            color: #e06060
+        }
+
+        .code-block {
+            margin-top: 10px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, .3);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #888;
+            overflow-x: auto;
+            white-space: pre;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>カラー方式・根本見直し</h1>
+    <p class="sub">
+        問題: これまでの方式は全て「暗い色を計算で作る」→ 必然的にくすむ。<br>
+        発想転換: <strong>鮮やかな色そのものを使い、透明度だけでレベルを制御する。</strong>
+    </p>
+
+    <div class="insight">
+        <strong>根本的な気づき:</strong>
+        今までのアプローチは「暗い背景色の中に色を混ぜる」計算をしていた。<br>
+        だから暗い色 + 少しの彩度 = くすんだ泥色になる。<br><br>
+        <strong>新アプローチ:</strong>
+        「鮮やかな色そのもの」を100%の美しさで定義し、<strong>透明度（alpha）だけ</strong>でレベルを表現する。<br>
+        色自体は常にきれいなまま。見え方はalphaで暗い背景に馴染むだけ。
+    </div>
+
+    <!-- reference colors -->
+    <div class="ref-strip">
+        <span class="ref-strip-label">ベースカラー（この色のイメージを維持したい）→</span>
+        <div class="ref-pair">
+            <div class="ref-dot" style="background:hsl(40 80% 60%)"></div>
+            <span>アンバー</span>
+        </div>
+        <div class="ref-pair">
+            <div class="ref-dot" style="background:hsl(212 70% 60%)"></div>
+            <span>ブルー</span>
+        </div>
+        <div class="ref-pair">
+            <div class="ref-dot" style="background:hsl(330 70% 60%)"></div>
+            <span>ピンク</span>
+        </div>
+    </div>
+
+    <div id="proposals"></div>
+
+    <script>
+        const LETTERS = ['Z', 'D', 'B', 'G', 'K', 'S', 'T', 'N', 'H', 'A'];
+
+        const BASE = {
+            amber: { h: 40, label: 'QWERTY（アンバー）' },
+            blue: { h: 212, label: '左手 / 子音（ブルー）' },
+            pink: { h: 330, label: '右手 / 母音（ピンク）' },
+        };
+
+        function labelColor(h) {
+            return `hsl(${h} 70% 60%)`;
+        }
+
+        // ─────────────────────────────────────────
+        // 案1: 鮮やかカラー × alpha
+        // 色自体は完全に鮮やか (hsl(h 70% 60%))
+        // レベルに応じてalphaだけ変える
+        // ─────────────────────────────────────────
+        function renderVividAlpha(el, h) {
+            el.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const t = i / 10;
+                const alpha = 0.06 + t * 0.55;   // 0.06 → 0.61
+                const txAlpha = 0.25 + t * 0.75;  // 0.25 → 1.0
+                const k = document.createElement('div');
+                k.className = 'key';
+                k.style.background = `hsl(${h} 70% 55% / ${alpha})`;
+                k.style.color = `hsl(${h} 70% 70% / ${txAlpha})`;
+                k.innerHTML = `<span class="label">${LETTERS[i - 1]}</span><span class="lvl">${i}</span>`;
+                el.appendChild(k);
+            }
+        }
+
+        // ─────────────────────────────────────────
+        // 案2: ネオン方式
+        // 背景は鮮やかカラー×alpha、テキストは明るくハイコントラスト
+        // 高レベルにグロー効果
+        // ─────────────────────────────────────────
+        function renderNeon(el, h) {
+            el.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const t = i / 10;
+                const bgA = 0.05 + t * 0.5;
+                const txL = 75 + t * 20;       // always bright text
+                const txA = 0.3 + t * 0.7;
+                const glowA = Math.max(0, (t - 0.3) * 0.5);
+                const k = document.createElement('div');
+                k.className = 'key';
+                k.style.background = `hsl(${h} 75% 50% / ${bgA})`;
+                k.style.color = `hsl(${h} 60% ${txL}% / ${txA})`;
+                if (glowA > 0) {
+                    k.style.boxShadow = `0 0 ${4 + t * 16}px hsl(${h} 80% 55% / ${glowA})`;
+                }
+                k.innerHTML = `<span class="label">${LETTERS[i - 1]}</span><span class="lvl">${i}</span>`;
+                el.appendChild(k);
+            }
+        }
+
+        // ─────────────────────────────────────────
+        // 案3: color-mix() でベースカラーと背景を混合
+        // 色の美しさを保ったままレベルで混合比率を変える
+        // ─────────────────────────────────────────
+        function renderColorMix(el, h) {
+            el.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const t = i / 10;
+                const pct = 8 + t * 52;  // 8% → 60%
+                const txPct = 25 + t * 75; // 25% → 100%
+                const k = document.createElement('div');
+                k.className = 'key';
+                k.style.background = `color-mix(in oklch, hsl(${h} 75% 55%) ${pct}%, #0e0e10)`;
+                k.style.color = `color-mix(in oklch, hsl(${h} 65% 75%) ${txPct}%, #333)`;
+                k.innerHTML = `<span class="label">${LETTERS[i - 1]}</span><span class="lvl">${i}</span>`;
+                el.appendChild(k);
+            }
+        }
+
+        // ─────────────────────────────────────────
+        // 案4: 高明度・高彩度ベース（大胆）
+        // レベル10はほぼ原色そのまま。背景が明るくても怖がらない。
+        // ─────────────────────────────────────────
+        function renderBold(el, h) {
+            el.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const t = i / 10;
+                const bgL = 8 + t * 38;   // 8% → 46%  (思い切って明るく)
+                const bgS = 50 + t * 30;   // 50% → 80%
+                const txL = 60 + t * 35;   // 60% → 95%
+                const txS = 30 + t * 50;
+                const k = document.createElement('div');
+                k.className = 'key';
+                k.style.background = `hsl(${h} ${bgS}% ${bgL}%)`;
+                k.style.color = `hsl(${h} ${txS}% ${txL}%)`;
+                k.innerHTML = `<span class="label">${LETTERS[i - 1]}</span><span class="lvl">${i}</span>`;
+                el.appendChild(k);
+            }
+        }
+
+        // ─────────────────────────────────────────
+        // 案5: 原色alpha + ニュートラルベース + グロー
+        // 背景 = ニュートラル暗色。原色をbox-shadow insetで重ねる。
+        // テキストは原色。グロー追加。
+        // ─────────────────────────────────────────
+        function renderPureOverlay(el, h) {
+            el.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const t = i / 10;
+                const baseGray = 8 + t * 4;  // very subtle gray shift
+                const colorA = 0.08 + t * 0.6;
+                const txA = 0.3 + t * 0.7;
+                const glowA = Math.max(0, (t - 0.35) * 0.45);
+                const k = document.createElement('div');
+                k.className = 'key';
+                k.style.background = `hsl(0 0% ${baseGray}%)`;
+                k.style.boxShadow = `inset 0 0 0 50px hsl(${h} 75% 50% / ${colorA})`
+                    + (glowA > 0 ? `, 0 0 ${6 + t * 14}px hsl(${h} 80% 55% / ${glowA})` : '');
+                k.style.color = `hsl(${h} 70% 70% / ${txA})`;
+                k.innerHTML = `<span class="label">${LETTERS[i - 1]}</span><span class="lvl">${i}</span>`;
+                el.appendChild(k);
+            }
+        }
+
+        // ─────────────────────────────────────────
+        // 案6: 原色グラデーション（上から下にフェード）
+        // 原色が上部に光り、下部に向かって暗くなるグラデーション
+        // ─────────────────────────────────────────
+        function renderGradient(el, h) {
+            el.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const t = i / 10;
+                const topA = 0.05 + t * 0.55;
+                const botA = topA * 0.3;
+                const txA = 0.25 + t * 0.75;
+                const k = document.createElement('div');
+                k.className = 'key';
+                k.style.background = `linear-gradient(180deg, hsl(${h} 75% 50% / ${topA}), hsl(${h} 60% 30% / ${botA}))`;
+                k.style.color = `hsl(${h} 65% 72% / ${txA})`;
+                k.innerHTML = `<span class="label">${LETTERS[i - 1]}</span><span class="lvl">${i}</span>`;
+                el.appendChild(k);
+            }
+        }
+
+        // ─── Proposal definitions ───
+        const PROPOSALS = [
+            {
+                id: 'vivid-alpha',
+                num: '案1',
+                title: '鮮やかカラー × 透明度のみ',
+                desc: '色は hsl(h 70% 55%) を固定。レベルはalphaだけで制御。<br>色そのものは一切劣化しない。暗い背景に自然に溶け込む。',
+                tag: { cls: 'rec', text: '推奨' },
+                render: renderVividAlpha,
+                notes: '<strong class="g">鮮やか。</strong>色自体を計算で作らないので、くすみが構造的に発生しない。<br>レベル1〜3は非常に薄いが、元の色のイメージは保たれる。',
+                cls: 'rec',
+                code: `/* CSS変数: たった3色 */\n--hm-amber: hsl(40 70% 55%);\n--hm-blue: hsl(212 70% 55%);\n--hm-pink: hsl(330 70% 55%);\n\n/* レベル別: alphaだけ変える */\n.key-lv3 { background: hsl(40 70% 55% / 0.22); }\n.key-lv7 { background: hsl(40 70% 55% / 0.45); }`
+            },
+            {
+                id: 'neon',
+                num: '案2',
+                title: 'ネオンスタイル（alpha + グロー）',
+                desc: '案1にグロー効果を追加。高レベルキーが光って見える。',
+                render: renderNeon,
+                notes: '<strong class="g">華やか。</strong>案1の色の美しさ + 高レベルキーの発光感。ヒートマップとして最も直感的。<br>ただしグロー過多だとうるさくなる可能性。',
+                cls: '',
+                code: null
+            },
+            {
+                id: 'color-mix',
+                num: '案3',
+                title: 'color-mix() でOKLCH空間混合',
+                desc: '原色と背景色をOKLCH空間でブレンド。HSLのくすみを回避しつつ自然なグラデーション。',
+                render: renderColorMix,
+                notes: '<strong class="g">自然で上品。</strong>OKLCH空間での混合なので中間色もクリーン。<br>color-mix() 対応: Chrome 111+, Safari 16.2+, Firefox 113+。',
+                cls: '',
+                code: `/* color-mix()による段階生成 */\n.key-lv3 {\n  background: color-mix(in oklch, hsl(40 75% 55%) 24%, #0e0e10);\n}\n.key-lv8 {\n  background: color-mix(in oklch, hsl(40 75% 55%) 52%, #0e0e10);\n}`
+            },
+            {
+                id: 'bold',
+                num: '案4',
+                title: '大胆・高明度（Level10 ≒ 原色）',
+                desc: '高レベルキーはほぼ原色の明るさまで到達。ダークテーマでも色を恐れない。',
+                render: renderBold,
+                notes: '<strong class="g">インパクト最大。</strong>レベル8〜10は本当に色が見える。プレゼンテーション向き。<br><span class="r">日常遣いでは明るすぎる可能性。</span>全体のダークテーマとの調和が課題。',
+                cls: '',
+                code: null
+            },
+            {
+                id: 'pure-overlay',
+                num: '案5',
+                title: 'ニュートラル + 原色オーバーレイ + グロー',
+                desc: '背景はクリーンなグレー固定。原色をbox-shadow insetで重ねるので色が濁らない。',
+                tag: { cls: 'rec', text: 'おすすめ' },
+                render: renderPureOverlay,
+                notes: '<strong class="g">バランスが良い。</strong>グレーベースなので安定感があり、原色のオーバーレイで色が綺麗。グロー効果で段階感も出る。<br>案1よりやや落ち着いた印象で、日常遣い向き。',
+                cls: 'rec',
+                code: `/* 実装イメージ */\n.key {\n  background: hsl(0 0% 10%);\n  box-shadow: inset 0 0 0 50px hsl(40 75% 50% / var(--heat-alpha));\n}\n/* --heat-alpha: レベルに応じて 0.08 → 0.68 */`
+            },
+            {
+                id: 'gradient',
+                num: '案6',
+                title: '原色グラデーション（上部に光）',
+                desc: 'キー上部に原色の光が当たり、下部に向かって暗くなるグラデーション。立体感。',
+                render: renderGradient,
+                notes: '<strong class="g">奥行き感がある。</strong>キーが「光を受けている」ような表現で、フラットでありながら立体的。<br>レベルが上がると光の強さが増す、直感的な表現。',
+                cls: '',
+                code: null
+            },
+        ];
+
+        // ─── Build Page ───
+        const root = document.getElementById('proposals');
+
+        PROPOSALS.forEach(p => {
+            const card = document.createElement('div');
+            card.className = `proposal ${p.cls}`;
+            const tagHtml = p.tag ? `<span class="tag ${p.tag.cls}">${p.tag.text}</span>` : '';
+            const codeHtml = p.code ? `<div class="code-block">${p.code}</div>` : '';
+
+            card.innerHTML = `
+                <div class="proposal-header">
+                    <span class="proposal-num">${p.num}</span>
+                    <span class="proposal-title">${p.title}</span>
+                    ${tagHtml}
+                </div>
+                <p class="proposal-desc">${p.desc}</p>
+                <div class="hue-groups">
+                    ${Object.entries(BASE).map(([key, b]) => `
+                        <div class="hue-group">
+                            <div class="hue-label" style="color:${labelColor(b.h)}">${b.label}</div>
+                            <div class="keys" id="${p.id}-${key}"></div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="notes">${p.notes}${codeHtml}</div>
+            `;
+
+            root.appendChild(card);
+
+            Object.entries(BASE).forEach(([key, b]) => {
+                p.render(document.getElementById(`${p.id}-${key}`), b.h);
+            });
+        });
+    </script>
+</body>
+
+</html>

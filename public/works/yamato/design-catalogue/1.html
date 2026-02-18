@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Design Catalog — Yamato</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0e0e10;
+            --ink: #e0e0e0;
+            --soft: #787878;
+            --accent: #6898c8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--ink);
+            font-family: "Outfit", sans-serif;
+            padding: 40px 24px 80px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px;
+            letter-spacing: .04em;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: var(--soft);
+            margin-bottom: 48px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #1e1e22;
+        }
+
+        .preview {
+            height: 280px;
+            position: relative;
+            display: grid;
+            place-items: center;
+        }
+
+        .preview .sample-text {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            color: var(--ink);
+            text-shadow: 0 2px 12px rgba(0, 0, 0, .5);
+            z-index: 2;
+            position: relative;
+        }
+
+        .preview .sample-sub {
+            position: absolute;
+            bottom: 20px;
+            font-size: 13px;
+            color: var(--soft);
+            z-index: 2;
+        }
+
+        .info {
+            padding: 16px 20px;
+            background: #111114;
+            border-top: 1px solid #1e1e22;
+        }
+
+        .info .name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .info .desc {
+            font-size: 13px;
+            color: var(--soft);
+            line-height: 1.6;
+        }
+
+        .info .tags {
+            margin-top: 8px;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .info .tag {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(104, 152, 200, .1);
+            color: var(--accent);
+            font-weight: 400;
+        }
+
+        /* ============ BACKGROUNDS ============ */
+
+        /* 1. Subtle Noise Texture */
+        .bg-1 {
+            background: #0e0e10;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        }
+
+        /* 2. Radial Glow */
+        .bg-2 {
+            background:
+                radial-gradient(ellipse 600px 400px at 50% 60%, rgba(104, 152, 200, .08) 0%, transparent 70%),
+                radial-gradient(ellipse 300px 300px at 80% 30%, rgba(200, 104, 152, .05) 0%, transparent 60%),
+                #0e0e10;
+        }
+
+        /* 3. Dot Grid */
+        .bg-3 {
+            background:
+                radial-gradient(circle 1px, rgba(255, 255, 255, .06) 1px, transparent 1px),
+                #0e0e10;
+            background-size: 24px 24px;
+        }
+
+        /* 4. Fine Diagonal Lines */
+        .bg-4 {
+            background:
+                repeating-linear-gradient(135deg,
+                    transparent,
+                    transparent 10px,
+                    rgba(255, 255, 255, .015) 10px,
+                    rgba(255, 255, 255, .015) 11px),
+                #0e0e10;
+        }
+
+        /* 5. Topographic Contour */
+        .bg-5 {
+            background: #0e0e10;
+            position: relative;
+        }
+
+        .bg-5::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 500px 500px at 30% 50%, transparent 38%, rgba(104, 152, 200, .04) 40%, transparent 42%),
+                radial-gradient(ellipse 400px 400px at 30% 50%, transparent 28%, rgba(104, 152, 200, .03) 30%, transparent 32%),
+                radial-gradient(ellipse 600px 600px at 70% 40%, transparent 48%, rgba(200, 104, 152, .03) 50%, transparent 52%),
+                radial-gradient(ellipse 500px 500px at 70% 40%, transparent 38%, rgba(200, 104, 152, .025) 40%, transparent 42%),
+                radial-gradient(ellipse 400px 400px at 70% 40%, transparent 28%, rgba(200, 104, 152, .02) 30%, transparent 32%);
+        }
+
+        /* 6. Gradient Mesh */
+        .bg-6 {
+            background:
+                radial-gradient(at 20% 80%, rgba(104, 152, 200, .06) 0%, transparent 50%),
+                radial-gradient(at 80% 20%, rgba(200, 104, 152, .05) 0%, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(104, 200, 152, .03) 0%, transparent 50%),
+                #0e0e10;
+        }
+
+        /* 7. Cross Grid */
+        .bg-7 {
+            background:
+                linear-gradient(to right, rgba(255, 255, 255, .02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, .02) 1px, transparent 1px),
+                #0e0e10;
+            background-size: 48px 48px;
+        }
+
+        /* 8. Washi / Japanese paper texture */
+        .bg-8 {
+            background: #0e0e10;
+            background-image:
+                url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.02 0.06' numOctaves='5' seed='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23f)' opacity='0.03'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+        }
+
+        /* 9. Vignette Focus */
+        .bg-9 {
+            background:
+                radial-gradient(ellipse 80% 70% at 50% 45%, #0e0e10 0%, #060608 100%);
+        }
+
+        /* 10. Circuit Trace */
+        .bg-10 {
+            background: #0e0e10;
+            position: relative;
+        }
+
+        .bg-10::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(to right, transparent 47px, rgba(104, 152, 200, .03) 47px, rgba(104, 152, 200, .03) 48px, transparent 48px),
+                linear-gradient(to bottom, transparent 47px, rgba(104, 152, 200, .03) 47px, rgba(104, 152, 200, .03) 48px, transparent 48px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 0%, transparent 70%);
+            -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 0%, transparent 70%);
+        }
+
+        /* ============ 和 THEMED BACKGROUNDS ============ */
+
+        /* 11. Seigaiha (Blue Wave) */
+        .bg-11 {
+            background-color: #0e0e10;
+            background-image:
+                radial-gradient(circle at 50% 100%, transparent 56%, rgba(104, 152, 200, .04) 57%, transparent 58%),
+                radial-gradient(circle at 50% 100%, transparent 46%, rgba(104, 152, 200, .03) 47%, transparent 48%),
+                radial-gradient(circle at 50% 100%, transparent 36%, rgba(104, 152, 200, .025) 37%, transparent 38%);
+            background-size: 40px 40px;
+        }
+
+        /* 12. Asanoha (Hemp Leaf) */
+        .bg-12 {
+            background-color: #0e0e10;
+            background-image:
+                linear-gradient(30deg, rgba(255, 255, 255, .02) 12%, transparent 12.5%, transparent 87%, rgba(255, 255, 255, .02) 87.5%),
+                linear-gradient(150deg, rgba(255, 255, 255, .02) 12%, transparent 12.5%, transparent 87%, rgba(255, 255, 255, .02) 87.5%),
+                linear-gradient(30deg, rgba(255, 255, 255, .02) 12%, transparent 12.5%, transparent 87%, rgba(255, 255, 255, .02) 87.5%),
+                linear-gradient(150deg, rgba(255, 255, 255, .02) 12%, transparent 12.5%, transparent 87%, rgba(255, 255, 255, .02) 87.5%),
+                linear-gradient(60deg, rgba(255, 255, 255, .015) 25%, transparent 25.5%, transparent 75%, rgba(255, 255, 255, .015) 75%),
+                linear-gradient(60deg, rgba(255, 255, 255, .015) 25%, transparent 25.5%, transparent 75%, rgba(255, 255, 255, .015) 75%);
+            background-size: 40px 70px;
+            background-position: 0 0, 0 0, 20px 35px, 20px 35px, 0 0, 20px 35px;
+        }
+
+        /* 13. Sashiko Stitch */
+        .bg-13 {
+            background-color: #0e0e10;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(200, 104, 152, .025) 3px, rgba(200, 104, 152, .025) 4px, transparent 4px, transparent 8px),
+                repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(104, 152, 200, .025) 3px, rgba(104, 152, 200, .025) 4px, transparent 4px, transparent 8px);
+            background-size: 32px 32px;
+        }
+
+        /* 14. Kumiko Diamond */
+        .bg-14 {
+            background-color: #0e0e10;
+            background-image:
+                linear-gradient(45deg, rgba(255, 255, 255, .02) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(255, 255, 255, .02) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, .02) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, .02) 75%);
+            background-size: 36px 36px;
+            background-position: 0 0, 0 18px, 18px -18px, -18px 0;
+        }
+
+        /* 15. Tatami Texture */
+        .bg-15 {
+            background-color: #0e0e10;
+            background-image:
+                linear-gradient(0deg, rgba(255, 255, 255, .012) 50%, transparent 50%),
+                linear-gradient(90deg, rgba(255, 255, 255, .012) 50%, transparent 50%);
+            background-size: 4px 4px;
+        }
+
+        /* 16. Sumi-e Ink Wash */
+        .bg-16 {
+            background: #0e0e10;
+            position: relative;
+        }
+
+        .bg-16::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 300px 120px at 25% 70%, rgba(255, 255, 255, .025) 0%, transparent 70%),
+                radial-gradient(ellipse 200px 80px at 65% 30%, rgba(255, 255, 255, .018) 0%, transparent 70%),
+                radial-gradient(ellipse 150px 200px at 80% 80%, rgba(255, 255, 255, .012) 0%, transparent 60%);
+            filter: blur(20px);
+        }
+
+        /* 17. Sakura Scatter */
+        .bg-17 {
+            background-color: #0e0e10;
+            background-image:
+                radial-gradient(circle 2px at 15% 20%, rgba(200, 104, 152, .08) 0%, transparent 100%),
+                radial-gradient(circle 1.5px at 45% 65%, rgba(200, 104, 152, .06) 0%, transparent 100%),
+                radial-gradient(circle 2px at 72% 15%, rgba(200, 104, 152, .07) 0%, transparent 100%),
+                radial-gradient(circle 1px at 88% 55%, rgba(200, 104, 152, .05) 0%, transparent 100%),
+                radial-gradient(circle 1.5px at 30% 85%, rgba(200, 104, 152, .06) 0%, transparent 100%),
+                radial-gradient(circle 2px at 60% 40%, rgba(200, 104, 152, .04) 0%, transparent 100%),
+                radial-gradient(circle 1px at 8% 50%, rgba(200, 104, 152, .05) 0%, transparent 100%),
+                radial-gradient(circle 1.5px at 92% 80%, rgba(200, 104, 152, .06) 0%, transparent 100%);
+        }
+
+        /* 18. Shippo (Seven Treasures / Interlocking Circles) */
+        .bg-18 {
+            background-color: #0e0e10;
+            background-image:
+                radial-gradient(circle 20px at 0% 50%, transparent 45%, rgba(104, 152, 200, .03) 47%, transparent 49%),
+                radial-gradient(circle 20px at 100% 50%, transparent 45%, rgba(104, 152, 200, .03) 47%, transparent 49%),
+                radial-gradient(circle 20px at 50% 0%, transparent 45%, rgba(200, 104, 152, .025) 47%, transparent 49%),
+                radial-gradient(circle 20px at 50% 100%, transparent 45%, rgba(200, 104, 152, .025) 47%, transparent 49%);
+            background-size: 40px 40px;
+        }
+
+        /* 19. Sayagata (Manji chain) */
+        .bg-19 {
+            background-color: #0e0e10;
+            background-image:
+                linear-gradient(45deg, rgba(255, 255, 255, .018) 10%, transparent 10%, transparent 40%, rgba(255, 255, 255, .018) 40%, rgba(255, 255, 255, .018) 50%, transparent 50%, transparent 90%, rgba(255, 255, 255, .018) 90%),
+                linear-gradient(-45deg, rgba(255, 255, 255, .018) 10%, transparent 10%, transparent 40%, rgba(255, 255, 255, .018) 40%, rgba(255, 255, 255, .018) 50%, transparent 50%, transparent 90%, rgba(255, 255, 255, .018) 90%);
+            background-size: 24px 24px;
+        }
+
+        /* 20. Kumogasumi (Cloud Haze) */
+        .bg-20 {
+            background: #0e0e10;
+            position: relative;
+        }
+
+        .bg-20::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(180deg, transparent 0%, transparent 18%, rgba(104, 152, 200, .025) 20%, rgba(104, 152, 200, .03) 22%, transparent 26%, transparent 44%, rgba(200, 104, 152, .02) 46%, rgba(200, 104, 152, .025) 48%, transparent 52%, transparent 72%, rgba(104, 152, 200, .02) 74%, rgba(104, 152, 200, .025) 76%, transparent 80%, transparent 100%);
+            filter: blur(8px);
+        }
+
+        .section-divider {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 32px 0 8px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--soft);
+            letter-spacing: .06em;
+            border-top: 1px solid #1e1e22;
+        }
+
+        @media (max-width: 560px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .preview {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Background Design Catalog</h1>
+    <p class="subtitle">Yamato Layout page — dark background variations (click to enlarge)</p>
+
+    <div class="grid">
+
+        <div class="card">
+            <div class="preview bg-1">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">1. Subtle Noise Texture</div>
+                <div class="desc">SVGノイズフィルタで超微細な粒子感を追加。フラットすぎるベタ塗りに有機的な質感を与える。</div>
+                <div class="tags"><span class="tag">テクスチャ</span><span class="tag">控えめ</span><span class="tag">CSS +
+                        SVG</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="preview bg-2">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">2. Dual Radial Glow</div>
+                <div class="desc">Blue（左手/子音）とPink（右手/母音）の淡いグロウを背景に配置。Yamatoの左右分離コンセプトを暗示。</div>
+                <div class="tags"><span class="tag">グラデーション</span><span class="tag">コンセプト連動</span><span
+                        class="tag">CSS</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="preview bg-3">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">3. Dot Grid</div>
+                <div class="desc">等間隔のドットグリッド。キーボードの規則的な配置と呼応するミニマルなパターン。</div>
+                <div class="tags"><span class="tag">パターン</span><span class="tag">ミニマル</span><span class="tag">CSS</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="preview bg-4">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">4. Fine Diagonal Lines</div>
+                <div class="desc">極細の斜線パターン。モニター越しでかすかに見える程度の繊維感。印刷物のような品のある質感。</div>
+                <div class="tags"><span class="tag">パターン</span><span class="tag">上品</span><span class="tag">CSS</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="preview bg-5">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">5. Topographic Contour</div>
+                <div class="desc">等高線のような同心楕円リング。地形図的な抽象パターンで、テック＋和のイメージ。</div>
+                <div class="tags"><span class="tag">抽象パターン</span><span class="tag">和テック</span><span
+                        class="tag">CSS</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="preview bg-6">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">6. Gradient Mesh</div>
+                <div class="desc">Blue / Pink / Green の3色が溶け合うメッシュグラデーション。Apple的なプレミアム感。</div>
+                <div class="tags"><span class="tag">グラデーション</span><span class="tag">プレミアム</span><span
+                        class="tag">CSS</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="preview bg-7">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">7. Blueprint Grid</div>
+                <div class="desc">設計図のようなクロスグリッド。「配列設計」というコンテキストに合致。エンジニアリング感。</div>
+                <div class="tags"><span class="tag">パターン</span><span class="tag">設計モチーフ</span><span
+                        class="tag">CSS</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="preview bg-8">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">8. Washi Paper Texture</div>
+                <div class="desc">和紙のような繊維質テクスチャ。「大和」の名にふさわしい和の質感を暗い背景に重ねる。</div>
+                <div class="tags"><span class="tag">テクスチャ</span><span class="tag">和モチーフ</span><span
+                        class="tag">SVG</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="preview bg-9">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">9. Vignette Focus</div>
+                <div class="desc">中央が明るく四隅が暗い穏やかなビネット。コンテンツに自然に視線を集める効果。</div>
+                <div class="tags"><span class="tag">グラデーション</span><span class="tag">フォーカス</span><span
+                        class="tag">CSS</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="preview bg-10">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">10. Circuit Trace (Faded Grid)</div>
+                <div class="desc">中央から放射状にフェードするグリッド線。回路基板のような技術的イメージ。外周に向かって消える。</div>
+                <div class="tags"><span class="tag">パターン</span><span class="tag">テック</span><span class="tag">CSS +
+                        mask</span></div>
+            </div>
+        </div>
+
+        <div class="section-divider">— 「和」テーマ —</div>
+
+        <div class="card">
+            <div class="preview bg-11">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">11. 青海波（Seigaiha）</div>
+                <div class="desc">波が重なり合う伝統紋様。同心円の連続で穏やかな海を表現。ブルー系のアクセントカラーと調和。</div>
+                <div class="tags"><span class="tag">和紋様</span><span class="tag">波</span><span class="tag">CSS</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="preview bg-12">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">12. 麻の葉（Asanoha）</div>
+                <div class="desc">六角形ベースの幾何学紋様。成長・繁栄の象徴。レギュラーな繰り返しがキーボードグリッドと呼応。</div>
+                <div class="tags"><span class="tag">和紋様</span><span class="tag">幾何学</span><span class="tag">CSS</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="preview bg-13">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">13. 刺し子（Sashiko）</div>
+                <div class="desc">縦横の刺し子ステッチ。ブルー（子音）とピンク（母音）の糸が交差する十字刺し。手仕事の温かみ。</div>
+                <div class="tags"><span class="tag">和テクスチャ</span><span class="tag">コンセプト連動</span><span
+                        class="tag">CSS</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="preview bg-14">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">14. 組子（Kumiko）</div>
+                <div class="desc">障子や欄間に使われる組子細工のダイヤモンド格子。釘を使わない精緻な木工の美。</div>
+                <div class="tags"><span class="tag">和紋様</span><span class="tag">木工</span><span class="tag">CSS</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="preview bg-15">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">15. 畳目（Tatami）</div>
+                <div class="desc">畳のイ草を模した極細の市松模様。非常に控えめだが、拡大すると畳の織目が浮かぶ。</div>
+                <div class="tags"><span class="tag">和テクスチャ</span><span class="tag">超控えめ</span><span
+                        class="tag">CSS</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="preview bg-16">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">16. 墨絵（Sumi-e Ink Wash）</div>
+                <div class="desc">墨の濃淡をブラーのかかったグラデーションで表現。水墨画の余白と濃淡の美。</div>
+                <div class="tags"><span class="tag">和アート</span><span class="tag">ぼかし</span><span class="tag">CSS</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="preview bg-17">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">17. 桜散らし（Sakura Scatter）</div>
+                <div class="desc">散りばめられた桜の花弁をピンクのドットで暗示。薄くランダムに配置され、和の華やかさを演出。</div>
+                <div class="tags"><span class="tag">和モチーフ</span><span class="tag">桜</span><span class="tag">CSS</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="preview bg-18">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">18. 七宝（Shippo）</div>
+                <div class="desc">円が重なり合い無限に連鎖する吉祥紋様。ブルーとピンクの二色で子音・母音の調和を表現。</div>
+                <div class="tags"><span class="tag">和紋様</span><span class="tag">吉祥</span><span class="tag">CSS</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="preview bg-19">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">19. 紗綾形（Sayagata）</div>
+                <div class="desc">卍を斜めに連鎖させた文様。繊維・陶磁器に多用される格式高い幾何学パターン。</div>
+                <div class="tags"><span class="tag">和紋様</span><span class="tag">格式</span><span class="tag">CSS</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="preview bg-20">
+                <span class="sample-text">大和配列</span>
+                <span class="sample-sub">Yamato Layout</span>
+            </div>
+            <div class="info">
+                <div class="name">20. 霞（Kumogasumi）</div>
+                <div class="desc">横に流れる霞のグラデーション帯。絵巻物の場面転換に用いられる表現。ブルーとピンクの霞が交互に。</div>
+                <div class="tags"><span class="tag">和アート</span><span class="tag">絵巻</span><span class="tag">CSS</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

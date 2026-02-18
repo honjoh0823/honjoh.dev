@@ -1,7 +1,7 @@
 ---
 import TerminalLayout from "../../layouts/TerminalLayout.astro";
 import Header from "../../components/Header.astro";
-import HintBar from "../../components/HintBar.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
 import { getCollection } from "astro:content";
 
 const posts = (await getCollection("article")).sort(
@@ -10,7 +10,7 @@ const posts = (await getCollection("article")).sort(
 ---
 
 <TerminalLayout
-    title="article — honjoh.dev"
+    title="article | honjoh.dev"
     description="Honjoh Nobuhiro のブログ"
 >
     <Header slot="header" path={["article"]} />
@@ -35,11 +35,11 @@ const posts = (await getCollection("article")).sort(
         </nav>
     </div>
 
-    <HintBar slot="footer">
+    <SiteFooter slot="footer">
         <span><kbd>←</kbd> back</span>
         <span><kbd>↑</kbd><kbd>↓</kbd> move</span>
         <span><kbd>→</kbd> open</span>
-    </HintBar>
+    </SiteFooter>
 </TerminalLayout>
 
 <style>

@@ -1,6 +1,6 @@
 ---
 import TerminalLayout from "../layouts/TerminalLayout.astro";
-import ChatInline from "../components/ChatInline.astro";
+import SiteFooter from "../components/SiteFooter.astro";
 
 const navItems = [
 	{
@@ -42,7 +42,7 @@ const navItems = [
 	<header class="page-header" slot="header">
 		<div class="header-top">
 			<span class="site-name">honjoh.dev</span>
-			<span class="tagline">Honjoh Nobuhiro</span>
+			<span class="tagline"><span class="status-dot" aria-hidden="true"></span>Online</span>
 		</div>
 		<div class="subtitle">Nobuhiro Honjoh</div>
 	</header>
@@ -67,19 +67,24 @@ const navItems = [
 				))
 			}
 		</nav>
-		<div class="nav-preview" id="preview">projects</div>
 	</div>
 
-	<div slot="footer">
-		<ChatInline />
-
-		<div class="hint-bar">
-			<span><kbd>↑</kbd><kbd>↓</kbd> move</span>
-			<span><kbd>→</kbd> open</span>
-			<span><kbd>1</kbd>-<kbd>5</kbd> jump</span>
-			<span><kbd>enter</kbd> chat</span>
+	<SiteFooter slot="footer">
+		<div class="prompt-area home-prompt-area" slot="prompt">
+			<span class="prompt-symbol">❯</span>
+			<input
+				type="text"
+				id="chat-inline-input"
+				class="prompt-input"
+				placeholder="こんにちは！"
+				autocomplete="off"
+				autofocus
+			/>
 		</div>
-	</div>
+		<span><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> 移動</span>
+		<span><kbd>enter</kbd> open</span>
+		<span>入力 + <kbd>enter</kbd> chat</span>
+	</SiteFooter>
 </TerminalLayout>
 
 <style>
@@ -107,6 +112,17 @@ const navItems = [
 		color: var(--dim);
 		font-size: 0.8rem;
 		font-weight: 300;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5ch;
+	}
+
+	.status-dot {
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 50%;
+		background: #39c26a;
+		box-shadow: 0 0 0 1px color-mix(in srgb, #39c26a 45%, transparent);
 	}
 
 	.subtitle {
@@ -115,23 +131,26 @@ const navItems = [
 		margin-bottom: 2rem;
 	}
 
-	/* Hint bar — inherits from HintBar pattern but inline here */
-	.hint-bar {
-		display: flex;
-		align-items: center;
-		gap: 2ch;
-		font-size: 0.7rem;
-		color: var(--dim-deep);
-		position: relative;
-		z-index: 1;
-		margin-top: 0.6rem;
-		user-select: none;
+	.page-body .nav-item {
+		border-left: none;
+	}
+
+	.page-body .nav-item:hover,
+	.page-body .nav-item.nav-active {
+		border-left-color: transparent;
+	}
+
+	.home-prompt-area {
+		padding-bottom: 0.8rem;
+	}
+
+	.home-prompt-area .prompt-input::placeholder {
+		opacity: 0.42;
 	}
 </style>
 
 <script>
 	const items = document.querySelectorAll<HTMLAnchorElement>(".nav-item");
-	const preview = document.getElementById("preview");
 	const chatInput = document.getElementById(
 		"chat-inline-input",
 	) as HTMLInputElement;
@@ -141,9 +160,6 @@ const navItems = [
 	function update(i: number) {
 		items.forEach((el) => el.classList.remove("nav-active"));
 		items[i].classList.add("nav-active");
-		if (preview) {
-			preview.textContent = (items[i] as HTMLElement).dataset.desc || "";
-		}
 		idx = i;
 	}
 
@@ -154,6 +170,12 @@ const navItems = [
 		if (href && href !== "#") {
 			window.location.href = href;
 		}
+	}
+
+	function moveToChat() {
+		const query = chatInput?.value.trim() ?? "";
+		const url = query ? `/chat?q=${encodeURIComponent(query)}` : "/chat";
+		window.location.href = url;
 	}
 
 	function enterMenuMode() {
@@ -171,6 +193,11 @@ const navItems = [
 	document.addEventListener("keydown", (e: KeyboardEvent) => {
 		// Chat input is focused
 		if (document.activeElement === chatInput) {
+			if (e.key === "Enter" && !e.shiftKey) {
+				e.preventDefault();
+				moveToChat();
+				return;
+			}
 			if (e.key === "ArrowDown") {
 				e.preventDefault();
 				enterMenuMode();
@@ -225,14 +252,6 @@ const navItems = [
 					e.preventDefault();
 					exitMenuMode();
 					break;
-				default:
-					const num = parseInt(e.key);
-					if (num >= 1 && num <= items.length) {
-						e.preventDefault();
-						update(num - 1);
-						navigate();
-					}
-					break;
 			}
 			return;
 		}
@@ -248,15 +267,6 @@ const navItems = [
 			case "/":
 				e.preventDefault();
 				exitMenuMode();
-				break;
-			default:
-				const num = parseInt(e.key);
-				if (num >= 1 && num <= items.length) {
-					e.preventDefault();
-					enterMenuMode();
-					update(num - 1);
-					navigate();
-				}
 				break;
 		}
 	});

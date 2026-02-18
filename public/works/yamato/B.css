@@ -1,52 +1,54 @@
-﻿:root {
-    --bg: #0e0e10;
+:root {
+    /* ── Background ── */
+    --bg: hsl(230 20% 5.5%);
+
+    /* ── UI chrome ── */
     --ink: #e0e0e0;
     --soft: #787878;
     --line: rgba(142, 167, 154, .15);
-    --accent: #6898c8;
-    --accent-dim: rgba(104, 152, 200, .10);
-    --k-n-bg: #1a1a1e;
-    --k-n-bd: #282830;
-    --k-n-tx: #555;
-    --k-l-bg: #141c28;
-    --k-l-bd: #243048;
-    --k-l-tx: #6898c8;
-    --k-la-bg: #1c2c44;
-    --k-la-bd: #3868a0;
-    --k-la-tx: #c0e0ff;
-    --k-r-bg: #28141c;
-    --k-r-bd: #482430;
-    --k-r-tx: #c86898;
-    --k-ra-bg: #441c2c;
-    --k-ra-bd: #a03868;
-    --k-ra-tx: #ffc0e0;
-    /* muted pink for right-side neutral keys */
-    --k-rn-bg: #1e1218;
-    --k-rn-bd: #301c24;
-    --k-rn-tx: #704050;
-    /* retro amber for QWERTY highlights */
-    --k-q-bg: #28221a;
-    --k-q-bd: #504028;
-    --k-q-tx: #b89060;
-    /* QWERTY neutral base (warm gray, distinct from Yamato cool gray) */
-    --k-qn-bg: #141310;
-    --k-qn-bd: #201e18;
-    --k-qn-tx: #3c3428;
-    --prog-track: #1a1a1e;
-    --prog-fill: #3868a0;
+    --accent: hsl(210 55% 55%);
+    --accent-dim: hsla(210, 55%, 55%, .10);
 
-    /* heatmap base hues (HSL) — replaces 90 individual vars */
-    --hm-q-h: 40;
-    --hm-q-s: 60;
-    /* amber (QWERTY)  */
-    --hm-l-h: 212;
+    /* ── #1 Yamato key colors (Pattern 02 桜鼠×縹 Vivid) ── */
+    --k-n-bg: hsl(230 5% 12%);
+    --k-n-tx: hsl(230 5% 32%);
+
+    --k-l-bg: hsl(210 55% 27%);
+    --k-l-tx: hsl(210 60% 88%);
+
+    --k-la-bg: hsl(210 55% 27%);
+    --k-la-tx: hsl(210 60% 95%);
+
+    --k-r-bg: hsl(345 48% 24%);
+    --k-r-tx: hsl(345 52% 86%);
+
+    --k-ra-bg: hsl(345 58% 30%);
+    --k-ra-tx: hsl(345 62% 92%);
+
+    /* right-side neutral (subtle pink tint, between n and r) */
+    --k-rn-bg: hsl(340 8% 11%);
+    --k-rn-tx: hsl(340 6% 28%);
+
+    /* ── #2 QWERTY key colors (Pattern J 朽葉 h=32°) ── */
+    --k-q-bg: hsl(32 44% 20%);
+    --k-q-tx: hsl(32 52% 60%);
+
+    --k-qn-bg: hsl(32 22% 12%);
+    --k-qn-tx: hsl(32 16% 30%);
+
+    /* ── Progress bar ── */
+    --prog-track: hsl(230 5% 12%);
+    --prog-fill: hsl(210 55% 42%);
+
+    /* ── Heatmap base hues (HSL) ── */
+    --hm-q-h: 32;
+    --hm-q-s: 52;
+    --hm-l-h: 210;
     --hm-l-s: 55;
-    /* blue  (left)     */
-    --hm-r-h: 330;
-    --hm-r-s: 55;
-    /* pink  (right)    */
+    --hm-r-h: 345;
+    --hm-r-s: 50;
 
-    /* UI chrome */
+    /* ── UI text shades ── */
     --ink-mid: #aaa;
     --ink-muted: #444;
     --ink-dim: #666;
@@ -56,16 +58,13 @@
     --ink-ghost: #2a2a2a;
     --border-subtle: #333;
 
-    /* typing compare key states */
-    --tc-y-press-bg: #2a2a30;
-    --tc-y-press-bd: #666;
+    /* ── Typing compare key states ── */
+    --tc-y-press-bg: hsl(230 8% 16%);
     --tc-y-press-tx: #ddd;
-    --tc-y-done-bg: #1e1e22;
-    --tc-y-done-bd: #383840;
-    --tc-y-done-tx: #666;
-    --tc-q-done-bg: #181610;
-    --tc-q-done-bd: #302a1c;
-    --tc-q-done-tx: #5a4e38;
+    --tc-y-done-bg: hsl(230 5% 10%);
+    --tc-y-done-tx: hsl(230 5% 28%);
+    --tc-q-done-bg: hsl(32 18% 9%);
+    --tc-q-done-tx: hsl(32 16% 26%);
 }
 
 * {
@@ -289,7 +288,7 @@ body {
     margin: 0
 }
 
-/* keyboard */
+/* keyboard — BORDERLESS flat design */
 .kb {
     display: grid;
     gap: 8px
@@ -317,7 +316,8 @@ body {
     place-items: center;
     position: relative;
     font-family: "Outfit", sans-serif;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .03), 0 3px 8px rgba(0, 0, 0, .18);
+    border: none;
+    box-shadow: none;
     transition: all 160ms ease
 }
 
@@ -329,33 +329,26 @@ body {
 
 .key.st-n {
     background: var(--k-n-bg);
-    border: 1px solid var(--k-n-bd);
     color: var(--k-n-tx)
 }
 
 .key.st-q {
     background: var(--k-q-bg);
-    border: 1px solid var(--k-q-bd);
     color: var(--k-q-tx)
 }
 
 .key.st-qn {
     background: var(--k-qn-bg);
-    border: 1px solid var(--k-qn-bd);
     color: var(--k-qn-tx)
 }
 
-/* heatmap keys styled via inline JS (see hmStyle) */
-
 .key.st-l {
     background: var(--k-l-bg);
-    border: 1px solid var(--k-l-bd);
     color: var(--k-l-tx)
 }
 
 .key.st-la {
     background: var(--k-la-bg);
-    border: 1px solid var(--k-la-bd);
     color: var(--k-la-tx)
 }
 
@@ -366,13 +359,11 @@ body {
 
 .key.st-r {
     background: var(--k-r-bg);
-    border: 1px solid var(--k-r-bd);
     color: var(--k-r-tx)
 }
 
 .key.st-ra {
     background: var(--k-ra-bg);
-    border: 1px solid var(--k-ra-bd);
     color: var(--k-ra-tx)
 }
 
@@ -383,7 +374,6 @@ body {
 
 .key.st-rn {
     background: var(--k-rn-bg);
-    border: 1px solid var(--k-rn-bd);
     color: var(--k-rn-tx)
 }
 
@@ -422,9 +412,8 @@ body {
 /* Interactive key flash */
 .key.key-flash-l {
     background: var(--k-la-bg) !important;
-    border-color: var(--k-la-bd) !important;
     color: var(--k-la-tx) !important;
-    box-shadow: 0 0 14px rgba(104, 152, 200, .35);
+    box-shadow: 0 0 14px hsla(210, 55%, 55%, .35);
     transform: scale(1.08);
     transition: all 60ms ease
 }
@@ -436,9 +425,8 @@ body {
 
 .key.key-flash-r {
     background: var(--k-ra-bg) !important;
-    border-color: var(--k-ra-bd) !important;
     color: var(--k-ra-tx) !important;
-    box-shadow: 0 0 14px rgba(200, 104, 152, .35);
+    box-shadow: 0 0 14px hsla(345, 52%, 50%, .35);
     transform: scale(1.08);
     transition: all 60ms ease
 }
@@ -504,7 +492,7 @@ body {
 .prompt-cell.active .ro {
     color: var(--k-ra-tx);
     font-weight: 700;
-    text-shadow: 0 0 18px rgba(255, 192, 224, .3)
+    text-shadow: 0 0 18px hsla(345, 62%, 92%, .3)
 }
 
 /* resources */
@@ -530,8 +518,8 @@ body {
 }
 
 .res-item:hover {
-    background: rgba(104, 152, 200, .06);
-    border-color: rgba(104, 152, 200, .2)
+    background: hsla(210, 55%, 55%, .06);
+    border-color: hsla(210, 55%, 55%, .2)
 }
 
 .res-icon {
@@ -708,19 +696,18 @@ body {
     position: relative;
     font-size: clamp(9px, 1vw, 12px);
     font-weight: 400;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .03), 0 1px 3px rgba(0, 0, 0, .1);
+    border: none;
+    box-shadow: none;
     transition: all .1s ease
 }
 
 .tc-y .tc-key {
     background: var(--k-n-bg);
-    border: 1px solid var(--k-n-bd);
     color: var(--k-n-tx)
 }
 
 .tc-q .tc-key {
     background: var(--k-qn-bg);
-    border: 1px solid var(--k-qn-bd);
     color: var(--k-qn-tx)
 }
 
@@ -738,7 +725,6 @@ body {
 
 .tc-y .tc-key.tc-pressing {
     background: var(--tc-y-press-bg);
-    border-color: var(--tc-y-press-bd);
     color: var(--tc-y-press-tx);
     box-shadow: 0 0 8px rgba(255, 255, 255, .06);
     transform: scale(1.08)
@@ -746,21 +732,18 @@ body {
 
 .tc-y .tc-key.tc-pressed {
     background: var(--tc-y-done-bg);
-    border-color: var(--tc-y-done-bd);
     color: var(--tc-y-done-tx)
 }
 
 .tc-q .tc-key.tc-pressing {
     background: var(--k-q-bg);
-    border-color: var(--k-q-bd);
     color: var(--k-q-tx);
-    box-shadow: 0 0 8px rgba(184, 144, 96, .15);
+    box-shadow: 0 0 8px hsla(32, 52%, 60%, .15);
     transform: scale(1.08)
 }
 
 .tc-q .tc-key.tc-pressed {
     background: var(--tc-q-done-bg);
-    border-color: var(--tc-q-done-bd);
     color: var(--tc-q-done-tx)
 }
 
@@ -802,18 +785,18 @@ body {
 
 .tc-y .tc-dot.tc-lh {
     background: var(--accent);
-    box-shadow: 0 0 4px rgba(104, 152, 200, .4)
+    box-shadow: 0 0 4px hsla(210, 55%, 55%, .4)
 }
 
 .tc-y .tc-dot.tc-rh {
     background: var(--k-r-tx);
-    box-shadow: 0 0 4px rgba(200, 104, 152, .4)
+    box-shadow: 0 0 4px hsla(345, 52%, 50%, .4)
 }
 
 .tc-q .tc-dot.tc-lh,
 .tc-q .tc-dot.tc-rh {
     background: var(--k-q-tx);
-    box-shadow: 0 0 4px rgba(184, 144, 96, .3)
+    box-shadow: 0 0 4px hsla(32, 52%, 60%, .3)
 }
 
 .tc-dot.tc-active {
@@ -872,7 +855,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 8px
 }
 

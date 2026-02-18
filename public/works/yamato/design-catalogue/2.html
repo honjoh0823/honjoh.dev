@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Color System Proposals — 5 Plans</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Outfit", sans-serif;
+            padding: 20px;
+            background: #111;
+            color: #bbb
+        }
+
+        h1 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 4px
+        }
+
+        .sub {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 20px
+        }
+
+        .proposal {
+            margin-bottom: 32px
+        }
+
+        .prop-header {
+            font-size: 14px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 12px
+        }
+
+        .slides {
+            display: flex;
+            flex-direction: column;
+            gap: 12px
+        }
+
+        .mode-bar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #111;
+            padding: 8px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .mode-btn {
+            padding: 5px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            cursor: pointer;
+            border: 1px solid #333;
+            background: #1a1a1a;
+            color: #666;
+            transition: all .15s;
+        }
+
+        .mode-btn.active {
+            background: #2a2a2a;
+            color: #ddd;
+            border-color: #555;
+        }
+
+        .mode-hint {
+            font-size: 10px;
+            color: #444;
+        }
+
+        .pane {
+            padding: 14px 12px;
+            border-radius: 10px
+        }
+
+        .pane-mode {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-align: center;
+            margin-bottom: 8px
+        }
+
+        .slide-hdr {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            margin-bottom: 2px
+        }
+
+        .slide-id {
+            font-size: 10px;
+            font-weight: 700;
+            opacity: .4
+        }
+
+        .slide-h3 {
+            font-size: 14px;
+            font-weight: 700
+        }
+
+        .slide-body {
+            font-size: 11px;
+            line-height: 1.6;
+            margin-bottom: 6px
+        }
+
+        .kb {
+            display: grid;
+            gap: 3px
+        }
+
+        .kb .row {
+            display: flex;
+            justify-content: center;
+            gap: 2px
+        }
+
+        .kb .row:nth-child(2) {
+            padding-left: 10px
+        }
+
+        .kb .row:nth-child(3) {
+            padding-left: 20px
+        }
+
+        .key {
+            width: clamp(28px, 2.8vw, 38px);
+            height: clamp(32px, 3.2vw, 42px);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Outfit", sans-serif;
+            font-size: clamp(9px, 1vw, 12px);
+            position: relative;
+        }
+
+        .key.home::after {
+            content: "";
+            position: absolute;
+            bottom: 3px;
+            width: 6px;
+            height: 1px;
+            border-radius: 1px;
+            background: currentColor;
+            opacity: .3;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #222;
+            margin: 24px 0
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Color System Proposals</h1>
+    <p class="sub">5 plans × 3 slides — ← → to toggle Dark / Light</p>
+    <div class="mode-bar">
+        <button class="mode-btn active" id="btn-dark" onclick="setMode(true)">DARK</button>
+        <button class="mode-btn" id="btn-light" onclick="setMode(false)">LIGHT</button>
+        <span class="mode-hint">← →</span>
+    </div>
+
+    <div id="app"></div>
+
+    <script>
+        const YAMATO = [
+            [['M', 'l'], ['Y', 'l'], ['R', 'l'], ['W', 'l'], ['P', 'l'], ['X', 'n'], ['L', 'n'], ['Q', 'n'], ['C', 'n'], ["'", 'n'], ['[', 'n'], [']', 'n']],
+            [['K', 'l'], ['S', 'l'], ['T', 'l'], ['N', 'l', 1], ['H', 'l'], ['F', 'n'], ['A', 'r', 1], ['O', 'r'], ['I', 'r'], ['E', 'r'], ['/', 'n']],
+            [['Z', 'l'], ['D', 'l'], ['B', 'l'], ['G', 'l'], ['J', 'l'], ['V', 'n'], ['U', 'r'], ['-', 'n'], [',', 'n'], ['.', 'n']]
+        ];
+        const QWERTY_L = [
+            [['Q', 'n'], ['W', 'n'], ['E', 'n'], ['R', 'n'], ['T', 'n'], ['Y', 'n'], ['U', 'n'], ['I', 'n'], ['O', 'n'], ['P', 'n'], ['[', 'n'], [']', 'n']],
+            [['A', 'n'], ['S', 'n'], ['D', 'n'], ['F', 'n', 1], ['G', 'n'], ['H', 'n'], ['J', 'n', 1], ['K', 'n'], ['L', 'n'], [';', 'n'], ["'", 'n']],
+            [['Z', 'n'], ['X', 'n'], ['C', 'n'], ['V', 'n'], ['B', 'n'], ['N', 'n'], ['M', 'n'], [',', 'n'], ['.', 'n'], ['/', 'n']]
+        ];
+
+        const SLIDES = [
+            {
+                id: '#1', title: '大和配列', body: '日本語入力に最適化された新しいキーボード配列。', layout: 'yamato',
+                states: { '0-5': 'rn', '0-6': 'rn', '0-7': 'rn', '0-8': 'rn', '0-9': 'rn', '0-10': 'rn', '0-11': 'rn', '1-5': 'rn', '1-10': 'rn', '2-5': 'rn', '2-7': 'rn', '2-8': 'rn', '2-9': 'rn' }
+            },
+            {
+                id: '#2', title: 'QWERTY配列とは', body: '1870年代、タイプライターの都合で生まれた配列。', layout: 'qwerty',
+                states: { '0-0': 'q', '0-1': 'q', '0-2': 'q', '0-3': 'q', '0-4': 'q', '0-5': 'q' }
+            },
+            {
+                id: '#10', title: 'あかさたなはまやらわ', body: '子音は50音順にそのまま配置。覚えるのではなく、思い出せる。', layout: 'yamato',
+                states: { '0-0': 'la', '0-1': 'la', '0-2': 'la', '0-3': 'la', '1-0': 'la', '1-1': 'la', '1-2': 'la', '1-3': 'la', '1-4': 'la', '1-6': 'ra', '1-7': 'ra', '1-8': 'ra', '1-9': 'ra', '2-6': 'ra' }
+            }
+        ];
+
+        // 5 proposals: [name, leftH, leftS, rightH, rightS, qwertyH, qwertyS, accentColor, darkBgH, darkBgS, lightBgH, lightBgS]
+        // Left = Blue系, Right = Pink/Red系, QWERTY = Brown系
+        // darkBgH/S = dark mode background tint (bluish), lightBgH/S = light mode background tint (creamy)
+        const PLANS = [
+            ['A案: Sapphire / Rose', 220, 50, 345, 45, 30, 12, '#5888d0', 220, 18, 40, 12],
+            ['B案: Cobalt / Crimson', 225, 55, 355, 50, 30, 10, '#5080c8', 225, 20, 38, 14],
+        ];
+
+        function hsl(h, s, l, a) { return a !== undefined ? `hsl(${h} ${s}% ${l}%/${a})` : `hsl(${h} ${s}% ${l}%)`; }
+
+        function makeTheme(lh, ls, rh, rs, qh, qs, dark, bgH, bgS) {
+            const nl = 4;
+            const base = dark ? nl : 100 - nl;
+            const d = dark ? 1 : -1;
+            // Dark needs MORE boost: human vision is less sensitive to contrast at low luminance
+            const cb = dark ? 1.55 : 1.05;
+            const L = o => Math.min(Math.max(base + d * o * cb, 0), 100);
+
+            // Tinted backgrounds: bluish for dark, creamy for light
+            const bH = bgH || 0;
+            const bS = bgS || 0;
+            const n = {
+                bg: hsl(bH, bS, L(0)), surface: hsl(bH, bS * .7, L(4)),
+                bd: hsl(bH, bS * .4, L(10)), text1: hsl(bH, bS * .15, L(80)),
+                text2: hsl(bH, bS * .2, L(42)), text3: hsl(bH, bS * .15, L(22)),
+                text4: hsl(bH, bS * .1, L(12)),
+            };
+            const keyC = (h, s) => ({ bg: hsl(h, s * .3, L(3)), bd: hsl(h, s * .5, L(10)), tx: hsl(h, s * .7, L(28)) });
+            const actC = (h, s) => ({ bg: hsl(h, s * .5, L(8)), bd: hsl(h, s * .85, L(18)), tx: hsl(h, s, L(55)) });
+            return {
+                n,
+                l: keyC(lh, ls), la: actC(lh, ls),
+                r: keyC(rh, rs), ra: actC(rh, rs),
+                rn: { bg: n.surface, bd: n.bd, tx: n.text4 },
+                q: { bg: hsl(qh, qs * .5, L(6)), bd: hsl(qh, qs * .8, L(15)), tx: hsl(qh, qs, L(32)) },
+                qn: { bg: hsl(qh, qs * .2, L(3)), bd: hsl(qh, qs * .3, L(8)), tx: hsl(qh, qs * .4, L(16)) },
+            };
+        }
+
+        function renderKey(ch, st, theme, dark, home) {
+            const c = theme[st] || theme.rn;
+            const sh = dark
+                ? 'inset 0 1px 0 rgba(255,255,255,.03),0 1px 3px rgba(0,0,0,.15)'
+                : 'inset 0 -1px 0 rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.07)';
+            const hm = home ? ` home` : '';
+            return `<div class="key${hm}" style="background:${c.bg};border:1px solid ${c.bd};color:${c.tx};box-shadow:${sh}">${ch}</div>`;
+        }
+
+        function renderSlide(slide, theme, dark) {
+            const rows = slide.layout === 'yamato' ? YAMATO : QWERTY_L;
+            const kb = rows.map((row, ri) => `<div class="row">${row.map(([ch, side, hm], ci) => {
+                const k = `${ri}-${ci}`;
+                let st = slide.states[k];
+                if (!st) {
+                    if (slide.layout === 'yamato') st = side === 'l' ? 'l' : side === 'r' ? 'r' : 'n';
+                    else st = 'qn';
+                }
+                return renderKey(ch, st, theme, dark, hm);
+            }).join('')}</div>`).join('');
+            return `<div>
+        <div class="slide-hdr"><span class="slide-id" style="color:${theme.n.text3}">${slide.id}</span><span class="slide-h3" style="color:${theme.n.text1}">${slide.title}</span></div>
+        <div class="slide-body" style="color:${theme.n.text2}">${slide.body}</div>
+        <div class="kb">${kb}</div>
+    </div>`;
+        }
+
+        let isDark = true;
+
+        function render() {
+            document.getElementById('app').innerHTML = PLANS.map(([name, lh, ls, rh, rs, qh, qs, accent, dkBgH, dkBgS, ltBgH, ltBgS], pi) => {
+                const theme = isDark
+                    ? makeTheme(lh, ls, rh, rs, qh, qs, true, dkBgH, dkBgS)
+                    : makeTheme(lh, ls, rh, rs, qh, qs, false, ltBgH, ltBgS);
+                const slidesHTML = SLIDES.map(slide => `
+            <div class="pane" style="background:${theme.n.bg}">
+                ${renderSlide(slide, theme, isDark)}
+            </div>`).join('');
+                return `${pi > 0 ? '<hr>' : ''}<div class="proposal">
+            <div class="prop-header" style="background:${accent}22;color:${accent};border:1px solid ${accent}44">${name}</div>
+            <div class="slides">${slidesHTML}</div>
+        </div>`;
+            }).join('');
+
+            // Update page background to match mode
+            document.body.style.background = isDark ? '#111' : '#f0ede8';
+            document.body.style.color = isDark ? '#bbb' : '#444';
+            document.querySelectorAll('hr').forEach(h => h.style.borderColor = isDark ? '#222' : '#ddd');
+        }
+
+        function setMode(dark) {
+            isDark = dark;
+            document.getElementById('btn-dark').classList.toggle('active', isDark);
+            document.getElementById('btn-light').classList.toggle('active', !isDark);
+            // Update mode bar background
+            document.querySelector('.mode-bar').style.background = isDark ? '#111' : '#f0ede8';
+            render();
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowLeft') setMode(true);
+            if (e.key === 'ArrowRight') setMode(false);
+        });
+
+        render();
+    </script>
+</body>
+
+</html>

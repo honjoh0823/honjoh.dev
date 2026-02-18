@@ -11,7 +11,7 @@ const isTopPage = path.length === 0;
 <header class="page-header">
     <div class="header-top">
         <a href="/" class="site-name">honjoh.dev</a>
-        <span class="tagline">Honjoh Nobuhiro</span>
+        <span class="tagline"><span class="status-dot" aria-hidden="true"></span>Online</span>
     </div>
     <div class="bc-line">
         {isTopPage ? "Nobuhiro Honjoh" : `> ${breadcrumb}`}
@@ -49,6 +49,17 @@ const isTopPage = path.length === 0;
         color: var(--dim);
         font-size: 0.8rem;
         font-weight: 300;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5ch;
+    }
+
+    .status-dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: #39c26a;
+        box-shadow: 0 0 0 1px color-mix(in srgb, #39c26a 45%, transparent);
     }
 
     .bc-line {

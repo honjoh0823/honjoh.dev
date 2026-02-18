@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Color Pattern Catalogue — Slide-by-Slide Key Color Design</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0e0e10;
+            --ink: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg);
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            background-size: 256px 256px;
+            color: var(--ink);
+            font-family: "Outfit", sans-serif;
+            padding: 32px 24px 80px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px
+        }
+
+        .sub {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 8px;
+            line-height: 1.6
+        }
+
+        .legend {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, .02);
+            border: 1px solid rgba(255, 255, 255, .04);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .legend-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        /* ── slide card ── */
+        .slide-card {
+            margin-bottom: 36px;
+            padding: 20px 24px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .015);
+            border: 1px solid rgba(255, 255, 255, .04);
+        }
+
+        .slide-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .slide-num {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            color: #555;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, .04);
+        }
+
+        .slide-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .slide-rule {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 14px;
+            line-height: 1.6;
+        }
+
+        .slide-rule strong {
+            color: #999;
+        }
+
+        /* ── keyboard grid ── */
+        .kb-grid {
+            display: grid;
+            gap: 6px;
+        }
+
+        .kb-row {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .kb-row:nth-child(2) {
+            padding-left: 16px;
+        }
+
+        .kb-row:nth-child(3) {
+            padding-left: 32px;
+        }
+
+        .key {
+            width: 56px;
+            height: 58px;
+            border-radius: 7px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: "Outfit", sans-serif;
+            border: none;
+            position: relative;
+            transition: all .15s;
+        }
+
+        .key .lbl {
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1;
+        }
+
+        .key .sub-lbl {
+            font-size: 8px;
+            opacity: .5;
+            margin-top: 2px;
+        }
+
+        /* split gap */
+        .gap-sp {
+            width: 28px;
+            flex-shrink: 0;
+        }
+
+        .split-label {
+            display: flex;
+            justify-content: center;
+            gap: 100px;
+            margin-top: 6px;
+            font-size: 12px;
+            font-weight: 300;
+        }
+
+        .split-label .lh {
+            color: hsl(212 60% 50%);
+            opacity: .6;
+        }
+
+        .split-label .rh {
+            color: hsl(330 60% 50%);
+            opacity: .6;
+        }
+
+        .notes {
+            margin-top: 12px;
+            padding: 10px 14px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, .02);
+            font-size: 12px;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .notes strong {
+            color: #888;
+        }
+
+        hr.section-hr {
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, .06);
+            margin: 36px 0 28px;
+        }
+
+        .group-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+        }
+
+        .group-label.blue {
+            color: hsl(212 60% 55%);
+            border-color: rgba(104, 152, 200, .15);
+        }
+
+        .group-label.amber {
+            color: hsl(35 60% 50%);
+            border-color: rgba(180, 140, 80, .15);
+        }
+
+        .group-label.heat {
+            color: hsl(20 60% 55%);
+            border-color: rgba(200, 120, 80, .15);
+        }
+
+        .group-label.highlight {
+            color: hsl(280 40% 55%);
+            border-color: rgba(160, 100, 200, .15);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <h1>Color Pattern Catalogue</h1>
+        <p class="sub">
+            A.html 各スライドのキーボードカラーパターン設計<br>
+            全キー: ボーダーなし・フラット / キー文字: 白〜白寄り
+        </p>
+
+        <!-- legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-dot" style="background:hsl(0 0% 12%)"></div>
+                <span>Neutral（無色）</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background:hsl(212 40% 16%)"></div>
+                <span>Left（青系）</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background:hsl(330 40% 16%)"></div>
+                <span>Right（桃系）</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background:hsl(212 55% 22%)"></div>
+                <span>Left Active</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background:hsl(330 55% 22%)"></div>
+                <span>Right Active</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background:hsl(35 35% 14%)"></div>
+                <span>QWERTY（茶系）</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background:hsl(35 50% 22%)"></div>
+                <span>QWERTY Highlight</span>
+            </div>
+        </div>
+
+        <div id="catalogue"></div>
+    </div>
+
+    <script>
+        // ── Yamato Layout ──
+        const ROWS = [
+            ['M', 'Y', 'R', 'W', 'P', 'X', 'L', 'Q', 'C', "'", '[', ']'],
+            ['K', 'S', 'T', 'N', 'H', 'F', 'A', 'O', 'I', 'E', '/'],
+            ['Z', 'D', 'B', 'G', 'J', 'V', 'U', '-', ',', '.']
+        ];
+        const SIDES = [
+            ['l', 'l', 'l', 'l', 'l', 'n', 'n', 'n', 'n', 'n', 'n', 'n'],
+            ['l', 'l', 'l', 'l', 'l', 'n', 'r', 'r', 'r', 'r', 'n'],
+            ['l', 'l', 'l', 'l', 'l', 'n', 'r', 'n', 'n', 'n']
+        ];
+        const SPLIT_AT = [5, 5, 5];
+        const HOME = { 1: [3, 6] }; // row 1 (B), indices 3 (N) and 6 (A)
+
+        const QWERTY = [
+            ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']'],
+            ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', "'"],
+            ['Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/']
+        ];
+        const Q_HOME = { 1: [3, 6] }; // F, J
+
+        const FREQ = {
+            A: 10, K: 9, O: 8, I: 7, N: 7, U: 6, T: 6, E: 5, S: 5,
+            R: 4, W: 3, M: 3, D: 3, H: 3, Y: 3,
+            V: 2, C: 2, J: 2, Z: 2, G: 2,
+            B: 1, P: 1, F: 1, L: 1, X: 1, Q: 1
+        };
+
+        // ── Color Definitions ──
+        // All borderless, text white-ish
+
+        // Neutral: dark gray
+        function colNeutral() {
+            return { bg: 'hsl(240 3% 12%)', tx: 'hsl(0 0% 35%)' };
+        }
+
+        // Left (blue) - base muted
+        function colLeft() {
+            return { bg: 'hsl(212 35% 14%)', tx: 'hsl(212 30% 55%)' };
+        }
+
+        // Left Active (blue) - elevated
+        function colLeftActive() {
+            return { bg: 'hsl(212 50% 20%)', tx: 'hsl(212 60% 82%)' };
+        }
+
+        // Right (pink) - base muted
+        function colRight() {
+            return { bg: 'hsl(330 30% 14%)', tx: 'hsl(330 30% 55%)' };
+        }
+
+        // Right (pink) - for neutral keys on right side
+        function colRightNeutral() {
+            return { bg: 'hsl(330 15% 12%)', tx: 'hsl(330 15% 38%)' };
+        }
+
+        // Right Active (pink) - elevated, one tone up
+        function colRightActive() {
+            return { bg: 'hsl(330 50% 20%)', tx: 'hsl(330 60% 82%)' };
+        }
+
+        // QWERTY base (warm brown, dark)
+        function colQBase() {
+            return { bg: 'hsl(35 25% 11%)', tx: 'hsl(35 18% 32%)' };
+        }
+
+        // QWERTY highlight (tea-amber, brighter)
+        function colQHighlight() {
+            return { bg: 'hsl(35 45% 18%)', tx: 'hsl(35 55% 65%)' };
+        }
+
+        // Heatmap: return color by hue and level (1-10)
+        // Uses alpha-on-vivid approach
+        function colHeat(hue, lvl) {
+            const t = lvl / 10;
+            const alpha = 0.06 + t * 0.55;
+            const txAlpha = 0.25 + t * 0.75;
+            return {
+                bg: `hsl(${hue} 65% 52% / ${alpha})`,
+                tx: `hsl(${hue} 50% 78% / ${txAlpha})`
+            };
+        }
+
+        // Highlight active (like #10, #11): brighter version
+        function colLeftHighlight() {
+            return { bg: 'hsl(212 60% 25%)', tx: 'hsl(212 70% 88%)' };
+        }
+
+        function colRightHighlight() {
+            return { bg: 'hsl(330 60% 25%)', tx: 'hsl(330 70% 88%)' };
+        }
+
+
+        // ── Render a single key ──
+        function renderKey(letter, bgColor, txColor, isHome) {
+            const homeClass = isHome ? ' style="box-shadow:0 2px 0 0 rgba(255,255,255,.15)"' : '';
+            return `<div class="key" style="background:${bgColor};color:${txColor}"${homeClass}>
+                <span class="lbl">${letter}</span>
+            </div>`;
+        }
+
+        // ── Build a keyboard with a coloring function ──
+        // colorFn(letter, side, rowIdx, colIdx) => { bg, tx }
+        function buildKB(rows, sides, splitAt, homeMap, colorFn, showSplit) {
+            let html = '<div class="kb-grid">';
+            rows.forEach((row, ri) => {
+                let rowHtml = '<div class="kb-row">';
+                const sideRow = sides ? sides[ri] : row.map(() => 'n');
+                if (showSplit) {
+                    // left group
+                    row.slice(0, splitAt[ri]).forEach((letter, ci) => {
+                        const { bg, tx } = colorFn(letter, sideRow[ci], ri, ci);
+                        const isHome = homeMap[ri]?.includes(ci);
+                        rowHtml += renderKey(letter, bg, tx, isHome);
+                    });
+                    rowHtml += '<div class="gap-sp"></div>';
+                    // right group
+                    row.slice(splitAt[ri]).forEach((letter, ci) => {
+                        const realIdx = splitAt[ri] + ci;
+                        const { bg, tx } = colorFn(letter, sideRow[realIdx], ri, realIdx);
+                        const isHome = homeMap[ri]?.includes(realIdx);
+                        rowHtml += renderKey(letter, bg, tx, isHome);
+                    });
+                } else {
+                    row.forEach((letter, ci) => {
+                        const { bg, tx } = colorFn(letter, sideRow[ci], ri, ci);
+                        const isHome = homeMap[ri]?.includes(ci);
+                        rowHtml += renderKey(letter, bg, tx, isHome);
+                    });
+                }
+                rowHtml += '</div>';
+                html += rowHtml;
+            });
+            html += '</div>';
+            if (showSplit) {
+                html += '<div class="split-label"><span class="lh">← 子音 (左手)</span><span class="rh">母音 (右手) →</span></div>';
+            }
+            return html;
+        }
+
+        // ════════════════════════════════════════════
+        // SLIDE DEFINITIONS
+        // ════════════════════════════════════════════
+
+        const VOWELS = new Set(['A', 'O', 'I', 'E', 'U']);
+
+        const SLIDES = [
+            // ── #1: 大和配列 intro ──
+            {
+                num: '#1',
+                title: '大和配列（イントロ）',
+                rule: '左手キーは統一デザイン。右手の <strong>AOIEU だけワントーン目立たせる</strong>。',
+                colorFn: (letter, side) => {
+                    if (side === 'l') return colLeft();
+                    if (side === 'r' && VOWELS.has(letter)) return colRightActive();
+                    if (side === 'r') return colRight();
+                    // neutral on right side → muted pink
+                    // Check row context: top row right side = neutral, middle row = rn
+                    return colRightNeutral();
+                },
+                layout: 'yamato',
+                states: 'normal'
+            },
+            // ── #2: QWERTYとは ──
+            {
+                num: '#2',
+                title: 'QWERTYとは',
+                rule: '茶系ベース。<strong>QWERTY の上段6文字ハイライト</strong>。仄暗い感じ。',
+                colorFn: (letter, side, ri, ci) => {
+                    // Q W E R T Y highlighted
+                    if (ri === 0 && ci <= 5) return colQHighlight();
+                    return colQBase();
+                },
+                layout: 'qwerty',
+                states: 'normal'
+            },
+            // ── #3: QWERTYと日本語の相性 ──
+            {
+                num: '#3',
+                title: 'QWERTYと日本語の相性',
+                rule: '茶系ベース。<strong>母音キー (E, U, I, O, A) をハイライト</strong>。散在を強調。',
+                colorFn: (letter) => {
+                    if (VOWELS.has(letter)) return colQHighlight();
+                    return colQBase();
+                },
+                layout: 'qwerty',
+                states: 'normal'
+            },
+            // ── #4: QWERTYのホームポジション ──
+            {
+                num: '#4',
+                title: 'QWERTYのホームポジション',
+                rule: '茶系ベース。<strong>F, J だけハイライト</strong>。使われないホームキーを強調。',
+                colorFn: (letter, side, ri, ci) => {
+                    if (ri === 1 && (ci === 3 || ci === 6)) return colQHighlight();
+                    return colQBase();
+                },
+                layout: 'qwerty',
+                states: 'normal'
+            },
+            // ── #5: 大和配列 ──
+            {
+                num: '#5',
+                title: '大和配列',
+                rule: '<strong>3パターン: 無色、左手（青）、右手（桃）</strong>。ニュートラルな全体像。',
+                colorFn: (letter, side) => {
+                    if (side === 'l') return colLeft();
+                    if (side === 'r') return colRight();
+                    return colNeutral();
+                },
+                layout: 'yamato',
+                states: 'normal'
+            },
+            // ── #6: 左手＝子音、右手＝母音 ──
+            {
+                num: '#6',
+                title: '左手＝子音、右手＝母音',
+                rule: '3パターン: 無色、左手、右手。<strong>スプリットレイアウトで分離を強調</strong>。',
+                colorFn: (letter, side) => {
+                    if (side === 'l') return colLeft();
+                    if (side === 'r') return colRight();
+                    return colNeutral();
+                },
+                layout: 'yamato-split',
+                states: 'normal'
+            },
+            // ── #7: キーの出現頻度（QWERTY配列） ──
+            {
+                num: '#7',
+                title: 'キーの出現頻度（QWERTY配列）',
+                rule: '<strong>濃淡で表現</strong>。アンバー系の透明度でレベル1〜10を段階表示。文字なしキーは最低透明度。',
+                colorFn: (letter) => {
+                    const freq = FREQ[letter.toUpperCase()] || 0;
+                    if (freq === 0) return { bg: 'hsl(35 15% 9%)', tx: 'hsl(35 10% 25%)' };
+                    return colHeat(35, freq);
+                },
+                layout: 'qwerty',
+                states: 'heatmap'
+            },
+            // ── #8: キーの出現頻度（大和配列） ──
+            {
+                num: '#8',
+                title: 'キーの出現頻度（大和配列）',
+                rule: '<strong>濃淡で表現</strong>。左手=青系、右手=桃系の透明度でレベル段階表示。',
+                colorFn: (letter, side) => {
+                    const freq = FREQ[letter.toUpperCase()] || 0;
+                    if (freq === 0) return { bg: 'hsl(240 3% 10%)', tx: 'hsl(0 0% 25%)' };
+                    const hue = side === 'l' ? 212 : (side === 'r' ? 330 : 240);
+                    return colHeat(hue, freq);
+                },
+                layout: 'yamato',
+                states: 'heatmap'
+            },
+            // ── #9: 出現頻度とホームポジション ──
+            {
+                num: '#9',
+                title: '出現頻度とホームポジション',
+                rule: '<strong>3パターン（無、左、右）</strong>。ホーム列のキーを通常レベルで色分け。',
+                colorFn: (letter, side, ri) => {
+                    // Only highlight the home row (row 1)
+                    if (ri === 1) {
+                        if (side === 'l') return colLeftActive();
+                        if (side === 'r') return colRightActive();
+                    }
+                    if (side === 'l') return colLeft();
+                    if (side === 'r') return colRight();
+                    return colNeutral();
+                },
+                layout: 'yamato',
+                states: 'normal'
+            },
+            // ── #10: あかさたなはまやらわ ──
+            {
+                num: '#10',
+                title: 'あかさたなはまやらわ',
+                rule: '#9 + <strong>ハイライトをトーンアップ</strong>。子音キー（50音順）と母音キーを強調。',
+                colorFn: (letter, side, ri) => {
+                    // Highlight all consonants (M,Y,R,W row0 left + K,S,T,N,H row1 left) and vowels
+                    const consonants = new Set(['M', 'Y', 'R', 'W', 'K', 'S', 'T', 'N', 'H']);
+                    if (consonants.has(letter) && side === 'l') return colLeftHighlight();
+                    if (VOWELS.has(letter) && side === 'r') return colRightHighlight();
+                    if (ri === 2 && letter === 'U' && side === 'r') return colRightHighlight();
+                    if (side === 'l') return colLeft();
+                    if (side === 'r') return colRight();
+                    return colNeutral();
+                },
+                layout: 'yamato',
+                states: 'normal'
+            },
+            // ── #11: 濁音は全て下段 ──
+            {
+                num: '#11',
+                title: '濁音は全て下段',
+                rule: '#9 + <strong>下段左手（濁音）をトーンアップ</strong>。Z, D, B, G, J を強調。',
+                colorFn: (letter, side, ri) => {
+                    const dakuon = new Set(['Z', 'D', 'B', 'G', 'J']);
+                    if (ri === 2 && dakuon.has(letter) && side === 'l') return colLeftHighlight();
+                    if (side === 'l') return colLeft();
+                    if (side === 'r') return colRight();
+                    return colNeutral();
+                },
+                layout: 'yamato',
+                states: 'normal'
+            },
+            // ── #12: 右手は母音 ──
+            {
+                num: '#12',
+                title: '右手は母音',
+                rule: '(参考) 母音キーを強調。<em style="color:#555">— まだ考えすぎないでいい</em>',
+                colorFn: (letter, side) => {
+                    if (VOWELS.has(letter) && side === 'r') return colRightHighlight();
+                    if (side === 'l') return colLeft();
+                    if (side === 'r') return colRight();
+                    return colNeutral();
+                },
+                layout: 'yamato',
+                states: 'normal'
+            },
+        ];
+
+        // ── Build Page ──
+        const root = document.getElementById('catalogue');
+
+        // Group definitions
+        const groups = [
+            { label: 'Group A — #1 イントロ', cls: 'blue', slides: [0] },
+            { label: 'Group B — #2–4 QWERTY（茶系・仄暗い + ハイライト）', cls: 'amber', slides: [1, 2, 3] },
+            { label: 'Group C — #5, 6, 9 三色パターン（無・左・右）', cls: 'blue', slides: [4, 5, 8] },
+            { label: 'Group D — #7, 8 ヒートマップ（濃淡 × 透明度）', cls: 'heat', slides: [6, 7] },
+            { label: 'Group E — #10, 11 トーンアップハイライト', cls: 'highlight', slides: [9, 10] },
+            { label: 'Group F — #12 参考（未確定）', cls: '', slides: [11] },
+        ];
+
+        groups.forEach((g, gi) => {
+            if (gi > 0) root.insertAdjacentHTML('beforeend', '<hr class="section-hr">');
+            root.insertAdjacentHTML('beforeend', `<div class="group-label ${g.cls}">${g.label}</div>`);
+
+            g.slides.forEach(si => {
+                const s = SLIDES[si];
+                const isQwerty = s.layout === 'qwerty';
+                const isSplit = s.layout === 'yamato-split';
+                const rows = isQwerty ? QWERTY : ROWS;
+                const sides = isQwerty ? QWERTY.map(r => r.map(() => 'n')) : SIDES;
+                const homeMap = isQwerty ? Q_HOME : HOME;
+
+                const kbHtml = buildKB(rows, sides, SPLIT_AT, homeMap, s.colorFn, isSplit);
+
+                const card = document.createElement('div');
+                card.className = 'slide-card';
+                card.innerHTML = `
+                    <div class="slide-header">
+                        <span class="slide-num">${s.num}</span>
+                        <span class="slide-title">${s.title}</span>
+                    </div>
+                    <div class="slide-rule">${s.rule}</div>
+                    ${kbHtml}
+                `;
+                root.appendChild(card);
+            });
+        });
+    </script>
+</body>
+
+</html>

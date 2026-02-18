@@ -1,13 +1,13 @@
 ---
 import TerminalLayout from "../../layouts/TerminalLayout.astro";
 import Header from "../../components/Header.astro";
-import HintBar from "../../components/HintBar.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
 
 const workItems = [
     {
         key: "1",
         label: "yamato-layout",
-        href: "/layout",
+        href: "/yamato",
         desc: "大和配列 — キーボード配列",
     },
     { key: "2", label: "manga", href: "#", desc: "漫画 — 準備中" },
@@ -16,7 +16,7 @@ const workItems = [
 ---
 
 <TerminalLayout
-    title="works — honjoh.dev"
+    title="works | honjoh.dev"
     description="Honjoh Nobuhiro の制作物"
 >
     <Header slot="header" path={["works"]} />
@@ -42,12 +42,12 @@ const workItems = [
         <div class="nav-preview" id="preview">大和配列 — キーボード配列</div>
     </div>
 
-    <HintBar slot="footer">
+    <SiteFooter slot="footer">
         <span><kbd>←</kbd> back</span>
         <span><kbd>↑</kbd><kbd>↓</kbd> move</span>
         <span><kbd>→</kbd> open</span>
         <span><kbd>1</kbd>-<kbd>3</kbd> jump</span>
-    </HintBar>
+    </SiteFooter>
 </TerminalLayout>
 
 <style>

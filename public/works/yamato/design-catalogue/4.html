@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ヒートマップ カラー比較 — 現行 vs 透明度計算方式</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0e0e10;
+            --ink: #e0e0e0;
+
+            /* ===== 現行方式: 個別に90変数を定義 ===== */
+            /* QWERTY（アンバー系） */
+            --h1-bg: #141312;
+            --h1-bd: #1e1c18;
+            --h1-tx: #2e2a22;
+            --h2-bg: #181614;
+            --h2-bd: #24201a;
+            --h2-tx: #38322a;
+            --h3-bg: #1c1a16;
+            --h3-bd: #2c2820;
+            --h3-tx: #4a4230;
+            --h4-bg: #201c16;
+            --h4-bd: #383020;
+            --h4-tx: #5c5038;
+            --h5-bg: #242018;
+            --h5-bd: #443828;
+            --h5-tx: #706040;
+            --h6-bg: #28241c;
+            --h6-bd: #504430;
+            --h6-tx: #887048;
+            --h7-bg: #2c2820;
+            --h7-bd: #605038;
+            --h7-tx: #a08858;
+            --h8-bg: #302c22;
+            --h8-bd: #706040;
+            --h8-tx: #b89860;
+            --h9-bg: #343028;
+            --h9-bd: #807048;
+            --h9-tx: #d0a868;
+            --h10-bg: #38342c;
+            --h10-bd: #908050;
+            --h10-tx: #e8c080;
+            /* 左手側（ブルー系） */
+            --hl1-bg: #121418;
+            --hl1-bd: #1a1e28;
+            --hl1-tx: #283040;
+            --hl2-bg: #131820;
+            --hl2-bd: #1e2838;
+            --hl2-tx: #344868;
+            --hl3-bg: #141c28;
+            --hl3-bd: #243048;
+            --hl3-tx: #446088;
+            --hl4-bg: #162030;
+            --hl4-bd: #2a3c58;
+            --hl4-tx: #5478a0;
+            --hl5-bg: #182438;
+            --hl5-bd: #304868;
+            --hl5-tx: #6890b8;
+            --hl6-bg: #1a2840;
+            --hl6-bd: #385898;
+            --hl6-tx: #78a8d0;
+            --hl7-bg: #1c2c44;
+            --hl7-bd: #3868a0;
+            --hl7-tx: #88b8e0;
+            --hl8-bg: #1e3450;
+            --hl8-bd: #4078b8;
+            --hl8-tx: #a0d0f0;
+            --hl9-bg: #203858;
+            --hl9-bd: #4888c8;
+            --hl9-tx: #b8e0ff;
+            --hl10-bg: #244060;
+            --hl10-bd: #5098d8;
+            --hl10-tx: #d0f0ff;
+            /* 右手側（ピンク系） */
+            --hr1-bg: #181214;
+            --hr1-bd: #281a1e;
+            --hr1-tx: #402830;
+            --hr2-bg: #201318;
+            --hr2-bd: #381e28;
+            --hr2-tx: #683448;
+            --hr3-bg: #281420;
+            --hr3-bd: #482430;
+            --hr3-tx: #884460;
+            --hr4-bg: #301628;
+            --hr4-bd: #582a3c;
+            --hr4-tx: #a05478;
+            --hr5-bg: #381830;
+            --hr5-bd: #683048;
+            --hr5-tx: #b86890;
+            --hr6-bg: #401a38;
+            --hr6-bd: #983858;
+            --hr6-tx: #d078a8;
+            --hr7-bg: #441c2c;
+            --hr7-bd: #a03868;
+            --hr7-tx: #e088b8;
+            --hr8-bg: #501e34;
+            --hr8-bd: #b84078;
+            --hr8-tx: #f0a0d0;
+            --hr9-bg: #582040;
+            --hr9-bd: #c84888;
+            --hr9-tx: #ffb8e0;
+            --hr10-bg: #602448;
+            --hr10-bd: #d85098;
+            --hr10-tx: #ffd0f0;
+
+            /* ===== 提案方式: ベースカラー3色のみ ===== */
+            --hm-q-h: 40;
+            --hm-q-s: 60%;
+            /* アンバー */
+            --hm-l-h: 212;
+            --hm-l-s: 55%;
+            /* ブルー */
+            --hm-r-h: 330;
+            --hm-r-s: 55%;
+            /* ピンク */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg);
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            background-size: 256px 256px;
+            color: var(--ink);
+            font-family: "Outfit", sans-serif;
+            padding: 32px 24px;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 6px
+        }
+
+        .sub {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 28px
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: .04em;
+            color: #6898c8;
+            margin: 28px 0 12px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(104, 152, 200, .15);
+        }
+
+        .section-title.amber {
+            color: #b89060
+        }
+
+        .section-title.pink {
+            color: #c86898
+        }
+
+        .row-wrap {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 20px;
+            flex-wrap: wrap
+        }
+
+        .col-label {
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 6px;
+            letter-spacing: .03em;
+            font-weight: 600;
+        }
+
+        .keys {
+            display: flex;
+            gap: 4px
+        }
+
+        .key {
+            width: 54px;
+            height: 58px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: "Outfit", sans-serif;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .03), 0 2px 6px rgba(0, 0, 0, .15);
+        }
+
+        .key .label {
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1
+        }
+
+        .key .lvl {
+            font-size: 9px;
+            opacity: .5;
+            margin-top: 3px
+        }
+
+        /* 現行方式: 個別変数で色指定 */
+        .cur .key.h1 {
+            background: var(--h1-bg);
+            border: 1px solid var(--h1-bd);
+            color: var(--h1-tx)
+        }
+
+        .cur .key.h2 {
+            background: var(--h2-bg);
+            border: 1px solid var(--h2-bd);
+            color: var(--h2-tx)
+        }
+
+        .cur .key.h3 {
+            background: var(--h3-bg);
+            border: 1px solid var(--h3-bd);
+            color: var(--h3-tx)
+        }
+
+        .cur .key.h4 {
+            background: var(--h4-bg);
+            border: 1px solid var(--h4-bd);
+            color: var(--h4-tx)
+        }
+
+        .cur .key.h5 {
+            background: var(--h5-bg);
+            border: 1px solid var(--h5-bd);
+            color: var(--h5-tx)
+        }
+
+        .cur .key.h6 {
+            background: var(--h6-bg);
+            border: 1px solid var(--h6-bd);
+            color: var(--h6-tx)
+        }
+
+        .cur .key.h7 {
+            background: var(--h7-bg);
+            border: 1px solid var(--h7-bd);
+            color: var(--h7-tx)
+        }
+
+        .cur .key.h8 {
+            background: var(--h8-bg);
+            border: 1px solid var(--h8-bd);
+            color: var(--h8-tx)
+        }
+
+        .cur .key.h9 {
+            background: var(--h9-bg);
+            border: 1px solid var(--h9-bd);
+            color: var(--h9-tx)
+        }
+
+        .cur .key.h10 {
+            background: var(--h10-bg);
+            border: 1px solid var(--h10-bd);
+            color: var(--h10-tx)
+        }
+
+        .cur .key.hl1 {
+            background: var(--hl1-bg);
+            border: 1px solid var(--hl1-bd);
+            color: var(--hl1-tx)
+        }
+
+        .cur .key.hl2 {
+            background: var(--hl2-bg);
+            border: 1px solid var(--hl2-bd);
+            color: var(--hl2-tx)
+        }
+
+        .cur .key.hl3 {
+            background: var(--hl3-bg);
+            border: 1px solid var(--hl3-bd);
+            color: var(--hl3-tx)
+        }
+
+        .cur .key.hl4 {
+            background: var(--hl4-bg);
+            border: 1px solid var(--hl4-bd);
+            color: var(--hl4-tx)
+        }
+
+        .cur .key.hl5 {
+            background: var(--hl5-bg);
+            border: 1px solid var(--hl5-bd);
+            color: var(--hl5-tx)
+        }
+
+        .cur .key.hl6 {
+            background: var(--hl6-bg);
+            border: 1px solid var(--hl6-bd);
+            color: var(--hl6-tx)
+        }
+
+        .cur .key.hl7 {
+            background: var(--hl7-bg);
+            border: 1px solid var(--hl7-bd);
+            color: var(--hl7-tx)
+        }
+
+        .cur .key.hl8 {
+            background: var(--hl8-bg);
+            border: 1px solid var(--hl8-bd);
+            color: var(--hl8-tx)
+        }
+
+        .cur .key.hl9 {
+            background: var(--hl9-bg);
+            border: 1px solid var(--hl9-bd);
+            color: var(--hl9-tx)
+        }
+
+        .cur .key.hl10 {
+            background: var(--hl10-bg);
+            border: 1px solid var(--hl10-bd);
+            color: var(--hl10-tx)
+        }
+
+        .cur .key.hr1 {
+            background: var(--hr1-bg);
+            border: 1px solid var(--hr1-bd);
+            color: var(--hr1-tx)
+        }
+
+        .cur .key.hr2 {
+            background: var(--hr2-bg);
+            border: 1px solid var(--hr2-bd);
+            color: var(--hr2-tx)
+        }
+
+        .cur .key.hr3 {
+            background: var(--hr3-bg);
+            border: 1px solid var(--hr3-bd);
+            color: var(--hr3-tx)
+        }
+
+        .cur .key.hr4 {
+            background: var(--hr4-bg);
+            border: 1px solid var(--hr4-bd);
+            color: var(--hr4-tx)
+        }
+
+        .cur .key.hr5 {
+            background: var(--hr5-bg);
+            border: 1px solid var(--hr5-bd);
+            color: var(--hr5-tx)
+        }
+
+        .cur .key.hr6 {
+            background: var(--hr6-bg);
+            border: 1px solid var(--hr6-bd);
+            color: var(--hr6-tx)
+        }
+
+        .cur .key.hr7 {
+            background: var(--hr7-bg);
+            border: 1px solid var(--hr7-bd);
+            color: var(--hr7-tx)
+        }
+
+        .cur .key.hr8 {
+            background: var(--hr8-bg);
+            border: 1px solid var(--hr8-bd);
+            color: var(--hr8-tx)
+        }
+
+        .cur .key.hr9 {
+            background: var(--hr9-bg);
+            border: 1px solid var(--hr9-bd);
+            color: var(--hr9-tx)
+        }
+
+        .cur .key.hr10 {
+            background: var(--hr10-bg);
+            border: 1px solid var(--hr10-bd);
+            color: var(--hr10-tx)
+        }
+
+        /* 提案方式: HSL + 透明度で自動計算 */
+
+        .compare {
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+            flex-wrap: wrap
+        }
+
+        .compare>div {
+            flex: 1;
+            min-width: 560px
+        }
+
+        .var-count {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        .var-count.bad {
+            background: rgba(200, 80, 80, .15);
+            color: #e06060
+        }
+
+        .var-count.good {
+            background: rgba(80, 200, 120, .15);
+            color: #60c080
+        }
+    </style>
+</head>
+
+<body>
+    <h1>ヒートマップ カラー比較</h1>
+    <p class="sub">現行方式（個別90変数）vs 提案方式（透明度計算・6変数のみ）</p>
+
+    <!-- ===== QWERTY（アンバー系） ===== -->
+    <div class="section-title amber">QWERTY ヒートマップ（アンバー系）</div>
+    <div class="compare">
+        <div>
+            <div class="col-label">現行方式 <span class="var-count bad">30変数</span></div>
+            <div class="keys cur" id="curQ"></div>
+        </div>
+        <div>
+            <div class="col-label">提案: 透明度計算 <span class="var-count good">2変数</span></div>
+            <div class="keys" id="newQ"></div>
+        </div>
+    </div>
+
+    <!-- ===== 左手（ブルー系） ===== -->
+    <div class="section-title">左手 / 子音 ヒートマップ（ブルー系）</div>
+    <div class="compare">
+        <div>
+            <div class="col-label">現行方式 <span class="var-count bad">30変数</span></div>
+            <div class="keys cur" id="curL"></div>
+        </div>
+        <div>
+            <div class="col-label">提案: 透明度計算 <span class="var-count good">2変数</span></div>
+            <div class="keys" id="newL"></div>
+        </div>
+    </div>
+
+    <!-- ===== 右手（ピンク系） ===== -->
+    <div class="section-title pink">右手 / 母音 ヒートマップ（ピンク系）</div>
+    <div class="compare">
+        <div>
+            <div class="col-label">現行方式 <span class="var-count bad">30変数</span></div>
+            <div class="keys cur" id="curR"></div>
+        </div>
+        <div>
+            <div class="col-label">提案: 透明度計算 <span class="var-count good">2変数</span></div>
+            <div class="keys" id="newR"></div>
+        </div>
+    </div>
+
+    <script>
+        const LETTERS = ['Z', 'D', 'B', 'G', 'K', 'S', 'T', 'N', 'H', 'A'];
+
+        // 現行方式: CSSクラスで色を参照
+        function renderCurrent(el, prefix) {
+            el.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const k = document.createElement('div');
+                k.className = `key ${prefix}${i}`;
+                k.innerHTML = `<span class="label">${LETTERS[i - 1]}</span><span class="lvl">${i}</span>`;
+                el.appendChild(k);
+            }
+        }
+
+        // 提案方式: HSL + 透明度による自動計算
+        function hslKey(h, s, level) {
+            // bg: ベース暗さ + 色相のティント
+            // bd: 色相を中間透明度で
+            // tx: レベルに応じた明度スケーリング
+            const t = level / 10; // 0.1 ~ 1.0
+            const bgL = 6 + t * 10;   // 明度 6% ~ 16%
+            const bgS = s * t;
+            const bdL = 10 + t * 28;  // 明度 10% ~ 38%
+            const bdA = 0.3 + t * 0.7;
+            const txL = 15 + t * 70;  // 明度 15% ~ 85%
+            const txS = s * (0.3 + t * 0.7);
+            return {
+                bg: `hsl(${h} ${bgS}% ${bgL}%)`,
+                bd: `hsl(${h} ${s}% ${bdL}% / ${bdA})`,
+                tx: `hsl(${h} ${txS}% ${txL}%)`
+            };
+        }
+
+        function renderProposed(el, h, s) {
+            el.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const c = hslKey(h, s, i);
+                const k = document.createElement('div');
+                k.className = 'key';
+                k.style.background = c.bg;
+                k.style.border = `1px solid ${c.bd}`;
+                k.style.color = c.tx;
+                k.innerHTML = `<span class="label">${LETTERS[i - 1]}</span><span class="lvl">${i}</span>`;
+                el.appendChild(k);
+            }
+        }
+
+        // QWERTY アンバー: 色相40, 彩度60%
+        renderCurrent(document.getElementById('curQ'), 'h');
+        renderProposed(document.getElementById('newQ'), 40, 60);
+
+        // 左手 ブルー: 色相212, 彩度55%
+        renderCurrent(document.getElementById('curL'), 'hl');
+        renderProposed(document.getElementById('newL'), 212, 55);
+
+        // 右手 ピンク: 色相330, 彩度55%
+        renderCurrent(document.getElementById('curR'), 'hr');
+        renderProposed(document.getElementById('newR'), 330, 55);
+    </script>
+</body>
+
+</html>

@@ -14,7 +14,7 @@ const { autofocus = true } = Astro.props;
             type="text"
             id="chat-inline-input"
             class="prompt-input"
-            placeholder="ask anything..."
+            placeholder="こんにちは！"
             autocomplete="off"
             autofocus={autofocus}
         />
@@ -120,6 +120,8 @@ const { autofocus = true } = Astro.props;
         display: flex;
         align-items: center;
         gap: 1ch;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 0.35rem;
     }
 </style>
 

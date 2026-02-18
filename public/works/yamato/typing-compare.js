@@ -239,7 +239,6 @@ const TypingCompare = (() => {
                             </div>
                         </div>
                     </div>
-                    <div style="text-align:center;font-size:12px;color:var(--k-n-tx);opacity:.5">Space / Click でリプレイ</div>
                 </div>`;
         },
 
