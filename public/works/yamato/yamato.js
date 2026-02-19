@@ -94,7 +94,7 @@
         } catch (e) { }
     }
     function playKeySound() { playSound(880, 0.08, 'sine'); }
-    function playMissSound() { playSound(220, 0.15, 'square'); }
+
 
     // --- Yamato Key Mapping ---
     const YAMATO_MAP = {
@@ -122,81 +122,6 @@
         });
     }
 
-    // --- Language Word Data (for typing-compare slides) ---
-    const LANG_WORDS = {
-        ja: {
-            phrase: '日本語入力に最適化された配列',
-            word: [
-                { ja: '', r: ['N', 'I'] }, { ja: '', r: ['H', 'O'] }, { ja: '', r: ['N'] },
-                { ja: '', r: ['G', 'O'] }, { ja: '', r: ['N', 'Y', 'U'] }, { ja: '', r: ['U'] },
-                { ja: '', r: ['R', 'Y', 'O'] }, { ja: '', r: ['K', 'U'] },
-                { ja: '', r: ['N', 'I'] }, { ja: '', r: ['S', 'A'] }, { ja: '', r: ['I'] },
-                { ja: '', r: ['T', 'E'] }, { ja: '', r: ['K', 'I'] }, { ja: '', r: ['K', 'A'] },
-                { ja: '', r: ['S', 'A'] }, { ja: '', r: ['R', 'E'] }, { ja: '', r: ['T', 'A'] },
-                { ja: '', r: ['H', 'A'] }, { ja: '', r: ['I'] }, { ja: '', r: ['R', 'E'] },
-                { ja: '', r: ['T', 'U'] }
-            ],
-        },
-        en: {
-            phrase: '英語入力も同様に最適化されています',
-            word: [
-                { ja: '', r: ['E', 'N', 'G', 'L', 'I', 'S', 'H'] },
-                { ja: '', r: ['I', 'N', 'P', 'U', 'T'] },
-                { ja: '', r: ['I', 'S'] },
-                { ja: '', r: ['O', 'P', 'T', 'I', 'M', 'I', 'Z', 'E', 'D'] },
-                { ja: '', r: ['O', 'N'] },
-                { ja: '', r: ['T', 'H', 'I', 'S'] },
-                { ja: '', r: ['T', 'O', 'O'] }
-            ],
-        },
-        zh: {
-            phrase: '中文打字也很輕鬆（中国語入力もラクラク）',
-            word: [
-                { ja: '', r: ['Z', 'H', 'O', 'N', 'G'] },
-                { ja: '', r: ['W', 'E', 'N'] },
-                { ja: '', r: ['D', 'A'] },
-                { ja: '', r: ['Z', 'I'] },
-                { ja: '', r: ['Y', 'E'] },
-                { ja: '', r: ['H', 'E', 'N'] },
-                { ja: '', r: ['Q', 'I', 'N', 'G'] },
-                { ja: '', r: ['S', 'O', 'N', 'G'] }
-            ]
-        },
-        ko: {
-            phrase: '한국어 입력도 턱턱해요（韓国語入力もサクサク）',
-            word: [
-                { ja: '', r: ['H', 'A', 'N'] },
-                { ja: '', r: ['G', 'U', 'G'] },
-                { ja: '', r: ['E', 'O'] },
-                { ja: '', r: ['I', 'P'] },
-                { ja: '', r: ['R', 'Y', 'E', 'O', 'K'] },
-                { ja: '', r: ['D', 'O'] },
-                { ja: '', r: ['T', 'E', 'O', 'K'] },
-                { ja: '', r: ['T', 'E', 'O', 'K'] },
-                { ja: '', r: ['H', 'A', 'E'] },
-                { ja: '', r: ['Y', 'O'] }
-            ]
-        }
-    };
-
-    // Stats calculation (from word data)
-    function calcStats(flat, fm, hm, homeRowKeys) {
-        let moves = 0, homeHits = 0;
-        const fingerPos = {};
-        for (let f = 0; f < 8; f++) fingerPos[f] = hm[f];
-        for (let i = 0; i < flat.length; i++) {
-            const key = flat[i], finger = fm[key];
-            if (homeRowKeys.has(key)) homeHits++;
-            if (fingerPos[finger] !== key) moves++;
-            fingerPos[finger] = key;
-            const next = i + 1 < flat.length ? flat[i + 1] : null;
-            if (next && fm[next] !== finger && hm[finger] !== key) {
-                moves++;
-                fingerPos[finger] = hm[finger];
-            }
-        }
-        return { home: Math.round(homeHits / flat.length * 100) + '%', moves: '' + moves };
-    }
 
     // --- Slide Data ---
     const SLIDES = [
@@ -356,28 +281,15 @@
 
     // --- Typing Compare Integration ---
     function renderTypingCompare(el, lang, leftLayoutId) {
-        const langData = LANG_WORDS[lang || 'ja'];
-
-        // Configure left layout
         if (leftLayoutId) {
             TypingCompare.setLeftLayoutByName(leftLayoutId);
         } else {
             TypingCompare.resetLeftLayout();
             TypingCompare.setColors(_cv('--k-q-tx'), _cv('--accent'), _cv('--k-r-tx'));
         }
-
-        const flat = langData.word.flatMap(c => c.r);
-        const cfg = TypingCompare.getConfig();
-        const qHomeRow = new Set(cfg.QR[1].map(k => k[0]));
-        const yHomeRow = new Set(cfg.YR[1].map(k => k[0]));
-        const qStats = calcStats(flat, cfg.QF, cfg.QH, qHomeRow);
-        const yStats = calcStats(flat, cfg.YF, cfg.YH, yHomeRow);
-        TypingCompare.configure({
-            word: langData.word,
-            stats: { qHome: qStats.home, qMoves: qStats.moves, yHome: yStats.home, yMoves: yStats.moves }
-        });
+        const phrase = TypingCompare.configureForLang(lang || 'ja');
         el.innerHTML = TypingCompare.renderHTML();
-        document.getElementById('tcPhrase').textContent = langData.phrase || '';
+        document.getElementById('tcPhrase').textContent = phrase;
         el.style.cursor = 'pointer';
         el.onclick = () => {
             if (curSec === 0 && SLIDES[curSlide]?.kb === 'typing-compare') {
