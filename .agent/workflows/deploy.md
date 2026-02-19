@@ -16,7 +16,7 @@ npm run build
 
 2. Deploy to Cloudflare Pages:
 ```
-npx wrangler pages deploy dist --project-name=honjoh-dev --commit-dirty=true
+npx wrangler pages deploy dist --project-name=honjoh-dev --commit-dirty=true --branch=master
 ```
 
 ## Development

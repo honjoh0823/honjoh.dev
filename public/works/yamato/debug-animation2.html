@@ -1,0 +1,879 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Typing Compare — 3-Layout Debug (QWERTY / Yamato / Onishi)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="B.css">
+    <style>
+        /* Debug page overrides */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .debug-controls {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: hsl(230 20% 8% / .95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--line);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 100;
+            font-family: "Outfit", sans-serif;
+            color: var(--ink);
+            flex-wrap: wrap;
+        }
+
+        .debug-controls .title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            white-space: nowrap;
+        }
+
+        .debug-controls .step-info {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--ink);
+            font-variant-numeric: tabular-nums;
+            min-width: 140px;
+        }
+
+        .debug-controls .step-info .current {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .debug-controls .char-info {
+            font-size: 13px;
+            color: var(--ink-mid);
+            flex: 1;
+        }
+
+        .debug-controls .char-info .ja {
+            font-size: 18px;
+            color: var(--ink);
+            margin-right: 4px;
+        }
+
+        .debug-controls .char-info .roma {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .debug-controls .hint {
+            font-size: 12px;
+            color: var(--ink-dim);
+            white-space: nowrap;
+        }
+
+        .debug-controls kbd {
+            display: inline-block;
+            padding: 2px 6px;
+            background: hsl(230 10% 18%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+            font-size: 11px;
+            font-family: "Outfit", monospace;
+            color: var(--ink-mid);
+        }
+
+        .debug-controls .btn {
+            padding: 6px 14px;
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            background: hsl(230 10% 14%);
+            color: var(--ink-mid);
+            font-size: 12px;
+            font-family: "Outfit", sans-serif;
+            cursor: pointer;
+            transition: all .15s ease;
+            white-space: nowrap;
+        }
+
+        .debug-controls .btn:hover {
+            background: hsl(230 10% 20%);
+            color: var(--ink);
+            border-color: var(--accent);
+        }
+
+        .debug-controls .btn.active {
+            background: hsl(210 55% 20%);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Language tabs */
+        .lang-tabs {
+            display: flex;
+            gap: 4px;
+        }
+
+        .lang-tabs .btn.lang-active {
+            background: hsl(210 55% 25%);
+            border-color: var(--accent);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* 3-panel layout */
+        .tc-wrap-3 {
+            display: flex;
+            gap: 14px;
+            width: 100%;
+            justify-content: center;
+            margin-top: 90px;
+        }
+
+        .tc-panel-3 {
+            flex: 1;
+            max-width: 380px;
+        }
+
+        .tc-panel-3 .tc-title {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: .03em;
+            margin-bottom: 6px;
+            display: block;
+            text-align: center;
+        }
+
+        .tc-panel-3.tc-q .tc-title {
+            color: var(--k-q-tx);
+        }
+
+        .tc-panel-3.tc-y .tc-title {
+            color: var(--accent);
+        }
+
+        .tc-panel-3.tc-o .tc-title {
+            color: hsl(30 100% 50%);
+        }
+
+        /* Onishi key colors */
+        .tc-o .tc-key {
+            background: hsl(30 20% 12%);
+            color: hsl(30 16% 30%);
+        }
+
+        .tc-o .tc-key.tc-pressing {
+            background: hsl(30 50% 22%);
+            color: hsl(30 60% 75%);
+            box-shadow: 0 0 8px hsla(30, 60%, 50%, .15);
+            transform: scale(1.08);
+        }
+
+        .tc-o .tc-key.tc-pressed {
+            background: hsl(30 14% 9%);
+            color: hsl(30 12% 24%);
+        }
+
+        .tc-o .tc-dot.tc-lh,
+        .tc-o .tc-dot.tc-rh {
+            background: hsl(30 100% 50%);
+            box-shadow: 0 0 4px hsla(30, 100%, 50%, .4);
+        }
+
+        .tc-o .tc-stats {
+            color: hsl(30 100% 50%);
+            opacity: .6;
+        }
+
+        /* Reuse existing tc-kb-wrap, tc-kb, tc-key, etc. from B.css */
+
+        /* Phrase display above keyboards */
+        .tc-phrase-3 {
+            font-size: clamp(16px, 2vw, 22px);
+            text-align: center;
+            margin-top: 90px;
+            margin-bottom: 4px;
+            letter-spacing: .03em;
+            min-height: 1.2em;
+        }
+
+        /* Typing display */
+        .tc-typing-3 {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        /* Step progress bar */
+        .step-progress {
+            width: 100%;
+            max-width: 800px;
+            margin: 12px auto 0;
+            display: flex;
+            gap: 2px;
+            height: 4px;
+        }
+
+        .step-progress .sp-bar {
+            flex: 1;
+            background: hsl(230 10% 14%);
+            border-radius: 2px;
+            transition: background .15s ease;
+        }
+
+        .step-progress .sp-bar.done {
+            background: var(--accent);
+            opacity: .5;
+        }
+
+        .step-progress .sp-bar.current {
+            background: var(--accent);
+        }
+
+        /* Stats styling */
+        .tc-stats {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            font-size: 10px;
+            font-weight: 300;
+            letter-spacing: .02em;
+            margin-bottom: 4px;
+        }
+
+        .tc-stats b {
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        /* Winner/loser highlights across 3 panels */
+        .tc-stats .tc-stat-win {
+            opacity: 1;
+            font-weight: 500;
+            background: rgba(255, 255, 255, .07);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, .1);
+        }
+
+        .tc-stats .tc-stat-win b {
+            font-size: 14px;
+            text-shadow: 0 0 16px currentColor;
+        }
+
+        .tc-stats .tc-stat-lose {
+            opacity: .4;
+        }
+
+        @media(max-width:1100px) {
+            .tc-wrap-3 {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .tc-panel-3 {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="debug-controls">
+        <span class="title">🔍 3-Layout Debug</span>
+        <div class="lang-tabs" id="langTabs">
+            <button class="btn lang-active" data-lang="ja">🇯🇵 日本語</button>
+            <button class="btn" data-lang="en">🇺🇸 English</button>
+            <button class="btn" data-lang="zh">🇨🇳 中文</button>
+            <button class="btn" data-lang="ko">🇰🇷 한국어</button>
+        </div>
+        <span class="step-info">Step <span class="current" id="dbgStep">-1</span> / <span id="dbgTotal">-</span></span>
+        <span class="char-info" id="dbgChar">Ready</span>
+        <button class="btn" id="btnReset">Reset</button>
+        <button class="btn" id="btnPlay">▶ Auto</button>
+        <span class="hint">
+            <kbd>←</kbd> prev &nbsp;
+            <kbd>→</kbd> next &nbsp;
+            <kbd>R</kbd> reset &nbsp;
+            <kbd>Space</kbd> auto &nbsp;
+            <kbd>1-4</kbd> lang
+        </span>
+    </div>
+
+    <!-- Phrase -->
+    <div class="tc-phrase-3" id="tcPhrase"></div>
+
+    <!-- Typing display (romaji) -->
+    <div class="tc-typing-3" id="tcTD"></div>
+
+    <!-- 3 Keyboards -->
+    <div class="tc-wrap-3">
+        <div class="tc-panel-3 tc-q" id="panelQ">
+            <span class="tc-title">QWERTY</span>
+            <div class="tc-stats" id="statsQ"></div>
+            <div class="tc-kb-wrap" id="tcWQ">
+                <div class="tc-kb" id="tcKQ"></div>
+                <svg class="tc-overlay" id="tcSQ"></svg>
+            </div>
+        </div>
+        <div class="tc-panel-3 tc-o" id="panelO">
+            <span class="tc-title">大西配列</span>
+            <div class="tc-stats" id="statsO"></div>
+            <div class="tc-kb-wrap" id="tcWO">
+                <div class="tc-kb" id="tcKO"></div>
+                <svg class="tc-overlay" id="tcSO"></svg>
+            </div>
+        </div>
+        <div class="tc-panel-3 tc-y" id="panelY">
+            <span class="tc-title">大和配列</span>
+            <div class="tc-stats" id="statsY"></div>
+            <div class="tc-kb-wrap" id="tcWY">
+                <div class="tc-kb" id="tcKY"></div>
+                <svg class="tc-overlay" id="tcSY"></svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="step-progress" id="stepProgress"></div>
+
+    <script>
+        (() => {
+            // ============================================================
+            // Layout Data
+            // ============================================================
+
+            // --- QWERTY ---
+            const QR = [
+                [['Q'], ['W'], ['E'], ['R'], ['T'], ['Y'], ['U'], ['I'], ['O'], ['P'], ['['], [']']],
+                [['A'], ['S'], ['D'], ['F', 1], ['G'], ['H'], ['J', 1], ['K'], ['L'], [';'], ["'"]],
+                [['Z'], ['X'], ['C'], ['V'], ['B'], ['N'], ['M'], [','], ['.'], ['/']]
+            ];
+            const QH = { 0: 'A', 1: 'S', 2: 'D', 3: 'F', 4: 'J', 5: 'K', 6: 'L', 7: ';' };
+            const QF = {
+                Q: 0, A: 0, Z: 0,
+                W: 1, S: 1, X: 1,
+                E: 2, D: 2, C: 2,
+                R: 3, T: 3, F: 3, G: 3, V: 3, B: 3,
+                Y: 4, H: 4, N: 4, U: 4, J: 4, M: 4,
+                I: 5, K: 5,
+                O: 6, L: 6,
+                P: 7
+            };
+
+            // --- Yamato ---
+            const YR = [
+                [['M'], ['Y'], ['R'], ['W'], ['P'], ['X'], ['L'], ['Q'], ['C'], ["'"], ['['], [']']],
+                [['K'], ['S'], ['T'], ['N', 1], ['H'], ['F'], ['A', 1], ['O'], ['I'], ['E'], ['/']],
+                [['Z'], ['D'], ['B'], ['G'], ['J'], ['V'], ['U'], ['-'], [','], ['.']]
+            ];
+            const YH = { 0: 'K', 1: 'S', 2: 'T', 3: 'N', 4: 'A', 5: 'O', 6: 'I', 7: 'E' };
+            const YF = {
+                M: 0, K: 0, Z: 0,
+                Y: 1, S: 1, D: 1,
+                R: 2, T: 2, B: 2,
+                W: 3, P: 3, N: 3, H: 3, G: 3, J: 3,
+                X: 4, L: 4, F: 4, A: 4, V: 4, U: 4,
+                Q: 5, O: 5,
+                C: 6, I: 6,
+                E: 7
+            };
+
+            // --- Onishi (大西配列) ---
+            // From Image:
+            //   Top:  Q  L  U  ,  .  F  W  R  Y  P
+            //   Home: E  I  A  O  -  K  T  N  S  H
+            //   Bot:  Z  X  C  V  ;  G  D  M  J  B
+            const OR = [
+                [['Q'], ['L'], ['U'], [','], ['.'], ['F'], ['W'], ['R'], ['Y'], ['P']],
+                [['E'], ['I'], ['A'], ['O', 1], ['-'], ['K'], ['T'], ['N'], ['S', 1], ['H']],
+                [['Z'], ['X'], ['C'], ['V'], [';'], ['G'], ['D'], ['M'], ['J'], ['B']]
+            ];
+            // Home keys: left pinky=E, ring=I, middle=A, index=O | right index=K, middle=T, ring=N, pinky=S
+            // (but image shows S highlighted, possibly just marking — using standard split)
+            const OH = { 0: 'E', 1: 'I', 2: 'A', 3: 'O', 4: 'K', 5: 'T', 6: 'N', 7: 'S' };
+            const OF = {
+                Q: 0, E: 0, Z: 0,
+                L: 1, I: 1, X: 1,
+                U: 2, A: 2, C: 2,
+                ',': 3, '.': 3, O: 3, '-': 3, V: 3,
+                F: 4, K: 4, ';': 4, G: 4,
+                W: 5, T: 5, D: 5,
+                R: 6, N: 6, M: 6,
+                Y: 7, P: 7, S: 7, H: 7, J: 7, B: 7
+            };
+
+            // ============================================================
+            // Language Configs
+            // ============================================================
+            const LANGS = {
+                ja: {
+                    phrase: '日本語入力に最適化された配列',
+                    word: [
+                        { ja: '', r: ['N', 'I'] }, { ja: '', r: ['H', 'O'] }, { ja: '', r: ['N'] },
+                        { ja: '', r: ['G', 'O'] }, { ja: '', r: ['N', 'Y', 'U'] }, { ja: '', r: ['U'] },
+                        { ja: '', r: ['R', 'Y', 'O'] }, { ja: '', r: ['K', 'U'] },
+                        { ja: '', r: ['N', 'I'] }, { ja: '', r: ['S', 'A'] }, { ja: '', r: ['I'] },
+                        { ja: '', r: ['T', 'E'] }, { ja: '', r: ['K', 'I'] }, { ja: '', r: ['K', 'A'] },
+                        { ja: '', r: ['S', 'A'] }, { ja: '', r: ['R', 'E'] }, { ja: '', r: ['T', 'A'] },
+                        { ja: '', r: ['H', 'A'] }, { ja: '', r: ['I'] }, { ja: '', r: ['R', 'E'] },
+                        { ja: '', r: ['T', 'U'] }
+                    ],
+                },
+                en: {
+                    phrase: '英語入力も同様に最適化されています',
+                    word: [
+                        { ja: '', r: ['E', 'N', 'G', 'L', 'I', 'S', 'H'] },
+                        { ja: '', r: ['I', 'N', 'P', 'U', 'T'] },
+                        { ja: '', r: ['I', 'S'] },
+                        { ja: '', r: ['O', 'P', 'T', 'I', 'M', 'I', 'Z', 'E', 'D'] },
+                        { ja: '', r: ['O', 'N'] },
+                        { ja: '', r: ['T', 'H', 'I', 'S'] },
+                        { ja: '', r: ['T', 'O', 'O'] }
+                    ],
+                },
+                zh: {
+                    phrase: '中文打字也很輕鬆（中国語入力もラクラク）',
+                    word: [
+                        { ja: '', r: ['Z', 'H', 'O', 'N', 'G'] },
+                        { ja: '', r: ['W', 'E', 'N'] },
+                        { ja: '', r: ['D', 'A'] },
+                        { ja: '', r: ['Z', 'I'] },
+                        { ja: '', r: ['Y', 'E'] },
+                        { ja: '', r: ['H', 'E', 'N'] },
+                        { ja: '', r: ['Q', 'I', 'N', 'G'] },
+                        { ja: '', r: ['S', 'O', 'N', 'G'] }
+                    ]
+                },
+                ko: {
+                    phrase: '한국어 입력도 턱턱해요（韓国語入力もサクサク）',
+                    word: [
+                        { ja: '', r: ['H', 'A', 'N'] },
+                        { ja: '', r: ['G', 'U', 'G'] },
+                        { ja: '', r: ['E', 'O'] },
+                        { ja: '', r: ['I', 'P'] },
+                        { ja: '', r: ['R', 'Y', 'E', 'O', 'K'] },
+                        { ja: '', r: ['D', 'O'] },
+                        { ja: '', r: ['T', 'E', 'O', 'K'] },
+                        { ja: '', r: ['T', 'E', 'O', 'K'] },
+                        { ja: '', r: ['H', 'A', 'E'] },
+                        { ja: '', r: ['Y', 'O'] }
+                    ]
+                }
+            };
+
+            let currentLang = 'ja';
+
+            // ============================================================
+            // Stats calculation
+            // ============================================================
+            function calcStats(flat, fm, hm, homeRowKeys) {
+                let moves = 0;
+                let homeHits = 0;
+                const fingerPos = {};
+                for (let f = 0; f < 8; f++) fingerPos[f] = hm[f];
+
+                for (let i = 0; i < flat.length; i++) {
+                    const key = flat[i];
+                    const finger = fm[key];
+                    if (finger === undefined) continue; // skip unmapped keys
+                    if (homeRowKeys.has(key)) homeHits++;
+                    if (fingerPos[finger] !== key) moves++;
+                    fingerPos[finger] = key;
+                    const next = i + 1 < flat.length ? flat[i + 1] : null;
+                    if (next && fm[next] !== undefined && fm[next] !== finger && hm[finger] !== key) {
+                        moves++;
+                        fingerPos[finger] = hm[finger];
+                    }
+                }
+                const homePercent = Math.round(homeHits / flat.length * 100);
+                return { home: homePercent + '%', moves: '' + moves };
+            }
+
+            // ============================================================
+            // DOM / animation helpers
+            // ============================================================
+            const DOT_R = 7;
+            const _cs = getComputedStyle(document.documentElement);
+            const _cv = (n) => _cs.getPropertyValue(n).trim();
+
+            // Colors
+            const cQPath = _cv('--k-q-tx');
+            const cYPathL = _cv('--accent');
+            const cYPathR = _cv('--k-r-tx');
+            const cOPath = 'hsl(30 100% 50%)';
+
+            // State per layout: { km, dots, pos, svg, wrap, kb, FM, HM, LR, color/colorFn }
+            let layouts = {};
+            let WORD, FLAT;
+            let step = -1;
+            let autoPlay = false;
+            let autoTimer = null;
+
+            const dbgStep = document.getElementById('dbgStep');
+            const dbgTotal = document.getElementById('dbgTotal');
+            const dbgChar = document.getElementById('dbgChar');
+            const btnReset = document.getElementById('btnReset');
+            const btnPlay = document.getElementById('btnPlay');
+            const stepProgress = document.getElementById('stepProgress');
+
+            // ============================================================
+            // Rendering helpers
+            // ============================================================
+            function renderKB(el, layout, km) {
+                el.innerHTML = '';
+                layout.forEach(row => {
+                    const d = document.createElement('div'); d.className = 'row';
+                    row.forEach(([ch, hm]) => {
+                        const k = document.createElement('div');
+                        k.className = 'tc-key' + (hm ? ' home' : '');
+                        k.textContent = ch;
+                        d.appendChild(k);
+                        if (!km[ch]) km[ch] = k;
+                    });
+                    el.appendChild(d);
+                });
+            }
+
+            function ctr(el, w) {
+                const k = el.getBoundingClientRect(), r = w.getBoundingClientRect();
+                return { x: k.left - r.left + k.width / 2, y: k.top - r.top + k.height / 2 };
+            }
+
+            function svgSetup(s, w) {
+                const r = w.getBoundingClientRect();
+                s.setAttribute('viewBox', `0 0 ${r.width} ${r.height}`);
+            }
+
+            function addLine(s, a, b, c) {
+                const ns = 'http://www.w3.org/2000/svg';
+                const l = document.createElementNS(ns, 'line');
+                l.setAttribute('x1', a.x); l.setAttribute('y1', a.y);
+                l.setAttribute('x2', b.x); l.setAttribute('y2', b.y);
+                l.setAttribute('stroke', c); l.classList.add('tc-path'); s.appendChild(l);
+            }
+
+            function mkDots(wrap, hm, km, dots, pos) {
+                for (let f = 0; f < 8; f++) {
+                    const ch = hm[f]; if (!ch || !km[ch]) continue;
+                    const d = document.createElement('div');
+                    d.className = 'tc-dot ' + (f < 4 ? 'tc-lh' : 'tc-rh');
+                    wrap.appendChild(d); dots[f] = d;
+                    const p = ctr(km[ch], wrap); pos[f] = { ...p };
+                    d.style.left = (p.x - DOT_R) + 'px'; d.style.top = (p.y - DOT_R) + 'px';
+                }
+            }
+
+            function step2char(i) {
+                let s = 0;
+                for (let j = 0; j < WORD.length; j++) {
+                    s += WORD[j].r.length;
+                    if (i < s) return j;
+                }
+                return WORD.length - 1;
+            }
+
+            function highlight(i) {
+                document.querySelectorAll('.tc-roma').forEach(el => {
+                    const s = +el.dataset.step;
+                    el.className = s < i ? 'tc-roma tc-r-done' : s === i ? 'tc-roma tc-r-active' : 'tc-roma';
+                });
+                if (i >= 0) {
+                    const ci = step2char(i);
+                    document.querySelectorAll('.tc-char').forEach(g => g.classList.toggle('tc-c-done', +g.dataset.ci < ci));
+                } else {
+                    document.querySelectorAll('.tc-char').forEach(g => g.classList.remove('tc-c-done'));
+                }
+            }
+
+            // ============================================================
+            // 3-way stats comparison helper
+            // ============================================================
+            function cmp3(vals, higherWins) {
+                const nums = vals.map(v => parseFloat(v) || 0);
+                let bestIdx = 0;
+                for (let i = 1; i < nums.length; i++) {
+                    if (higherWins ? nums[i] > nums[bestIdx] : nums[i] < nums[bestIdx]) bestIdx = i;
+                }
+                return vals.map((_, i) => {
+                    if (nums.every(n => n === nums[0])) return '';
+                    return i === bestIdx ? 'tc-stat-win' : 'tc-stat-lose';
+                });
+            }
+
+            // ============================================================
+            // Language switching
+            // ============================================================
+            function switchLang(lang) {
+                if (!LANGS[lang]) return;
+                currentLang = lang;
+                if (autoPlay) toggleAutoPlay();
+
+                const flat = LANGS[lang].word.flatMap(c => c.r);
+
+                // Compute stats for each layout
+                const qHomeRow = new Set(QR[1].map(k => k[0]));
+                const yHomeRow = new Set(YR[1].map(k => k[0]));
+                const oHomeRow = new Set(OR[1].map(k => k[0]));
+
+                const qStats = calcStats(flat, QF, QH, qHomeRow);
+                const yStats = calcStats(flat, YF, YH, yHomeRow);
+                const oStats = calcStats(flat, OF, OH, oHomeRow);
+
+                // Determine winners
+                const [qHc, oHc, yHc] = cmp3([qStats.home, oStats.home, yStats.home], true);
+                const [qMc, oMc, yMc] = cmp3([qStats.moves, oStats.moves, yStats.moves], false);
+
+                document.getElementById('statsQ').innerHTML =
+                    `<span class="${qHc}">ホーム列 <b>${qStats.home}</b></span><span class="${qMc}">指移動 <b>${qStats.moves}</b>回</span>`;
+                document.getElementById('statsO').innerHTML =
+                    `<span class="${oHc}">ホーム列 <b>${oStats.home}</b></span><span class="${oMc}">指移動 <b>${oStats.moves}</b>回</span>`;
+                document.getElementById('statsY').innerHTML =
+                    `<span class="${yHc}">ホーム列 <b>${yStats.home}</b></span><span class="${yMc}">指移動 <b>${yStats.moves}</b>回</span>`;
+
+                document.getElementById('tcPhrase').textContent = LANGS[lang].phrase || '';
+                WORD = LANGS[lang].word;
+                FLAT = WORD.flatMap(c => c.r);
+
+                // Update tabs
+                document.querySelectorAll('#langTabs .btn').forEach(b => {
+                    b.classList.toggle('lang-active', b.dataset.lang === lang);
+                });
+
+                // Rebuild progress bar
+                stepProgress.innerHTML = '';
+                for (let i = 0; i < FLAT.length; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'sp-bar';
+                    stepProgress.appendChild(bar);
+                }
+                dbgTotal.textContent = FLAT.length - 1;
+
+                requestAnimationFrame(() => requestAnimationFrame(() => initAll()));
+            }
+
+            // Tab click handlers
+            document.querySelectorAll('#langTabs .btn').forEach(btn => {
+                btn.addEventListener('click', () => switchLang(btn.dataset.lang));
+            });
+
+            // ============================================================
+            // Init
+            // ============================================================
+            function initAll() {
+                // Layout configs: id => { FM, HM, LR, wrapId, kbId, svgId, colorFn }
+                const cfgs = [
+                    { id: 'q', FM: QF, HM: QH, LR: QR, wrapId: 'tcWQ', kbId: 'tcKQ', svgId: 'tcSQ', colorFn: () => cQPath },
+                    { id: 'o', FM: OF, HM: OH, LR: OR, wrapId: 'tcWO', kbId: 'tcKO', svgId: 'tcSO', colorFn: () => cOPath },
+                    { id: 'y', FM: YF, HM: YH, LR: YR, wrapId: 'tcWY', kbId: 'tcKY', svgId: 'tcSY', colorFn: (f) => f < 4 ? cYPathL : cYPathR },
+                ];
+
+                layouts = {};
+                cfgs.forEach(cfg => {
+                    const km = {}, dots = {}, pos = {};
+                    const wrap = document.getElementById(cfg.wrapId);
+                    const kb = document.getElementById(cfg.kbId);
+                    const svg = document.getElementById(cfg.svgId);
+                    renderKB(kb, cfg.LR, km);
+                    mkDots(wrap, cfg.HM, km, dots, pos);
+                    svgSetup(svg, wrap);
+                    layouts[cfg.id] = { km, dots, pos, wrap, svg, FM: cfg.FM, HM: cfg.HM, colorFn: cfg.colorFn };
+                });
+
+                // Build typing display
+                const td = document.getElementById('tcTD');
+                td.innerHTML = ''; let s = 0;
+                WORD.forEach((ch, ci) => {
+                    const g = document.createElement('div'); g.className = 'tc-char'; g.dataset.ci = ci;
+                    g.innerHTML = `<span class="tc-ja">${ch.ja}</span><div class="tc-keys">${ch.r.map(r => `<span class="tc-roma" data-step="${s++}">${r}</span>`).join('')}</div>`;
+                    td.appendChild(g);
+                });
+
+                step = -1;
+                updateUI();
+            }
+
+            // ============================================================
+            // Step logic
+            // ============================================================
+            function resetAll() {
+                step = -1;
+                Object.values(layouts).forEach(L => {
+                    const { km, dots, pos, wrap, svg, HM } = L;
+                    document.querySelectorAll('.tc-key').forEach(k => k.classList.remove('tc-pressing', 'tc-pressed'));
+                    svg.innerHTML = '';
+                    svgSetup(svg, wrap);
+                    for (let f = 0; f < 8; f++) {
+                        if (!dots[f] || !HM[f] || !km[HM[f]]) continue;
+                        const ps = ctr(km[HM[f]], wrap); pos[f] = { ...ps };
+                        dots[f].style.left = (ps.x - DOT_R) + 'px'; dots[f].style.top = (ps.y - DOT_R) + 'px';
+                        dots[f].classList.remove('tc-active');
+                    }
+                });
+                highlight(-1);
+                updateUI();
+            }
+
+            function doStepFwd() {
+                if (step >= FLAT.length - 1) return;
+
+                // Handle previous step cleanup
+                if (step >= 0) {
+                    const prev = FLAT[step];
+                    Object.values(layouts).forEach(L => {
+                        const { km, dots, pos, wrap, svg, FM, HM, colorFn } = L;
+                        if (!km[prev]) return;
+                        km[prev].classList.remove('tc-pressing'); km[prev].classList.add('tc-pressed');
+                        const pf = FM[prev];
+                        if (pf === undefined) return;
+                        if (dots[pf]) dots[pf].classList.remove('tc-active');
+
+                        // Return-to-home
+                        const next = step + 1 < FLAT.length ? FLAT[step + 1] : null;
+                        if (next && FM[next] !== undefined && FM[next] !== pf && HM[pf] !== prev) {
+                            const hk = HM[pf];
+                            if (hk && km[hk]) {
+                                const hp = ctr(km[hk], wrap);
+                                addLine(svg, pos[pf], hp, colorFn(pf));
+                                pos[pf] = { ...hp };
+                                dots[pf].style.left = (hp.x - DOT_R) + 'px';
+                                dots[pf].style.top = (hp.y - DOT_R) + 'px';
+                            }
+                        }
+                    });
+                }
+
+                step++;
+                const ch = FLAT[step];
+
+                // Move each layout
+                Object.values(layouts).forEach(L => {
+                    const { km, dots, pos, wrap, svg, FM, colorFn } = L;
+                    if (!km[ch]) return;
+                    const f = FM[ch];
+                    if (f === undefined) return;
+                    const t = ctr(km[ch], wrap);
+                    if (pos[f] && (pos[f].x !== t.x || pos[f].y !== t.y)) {
+                        addLine(svg, pos[f], t, colorFn(f));
+                    }
+                    pos[f] = { ...t };
+                    dots[f].style.left = (t.x - DOT_R) + 'px'; dots[f].style.top = (t.y - DOT_R) + 'px';
+                    km[ch].classList.add('tc-pressing'); dots[f].classList.add('tc-active');
+                });
+
+                highlight(step);
+                updateUI();
+            }
+
+            function doStepBack() {
+                if (step < 0) return;
+                const target = step - 1;
+                resetAll();
+                for (let i = 0; i <= target; i++) {
+                    doStepFwd();
+                }
+            }
+
+            function updateUI() {
+                dbgStep.textContent = step;
+                const bars = stepProgress.querySelectorAll('.sp-bar');
+                bars.forEach((bar, i) => {
+                    bar.className = 'sp-bar' + (i < step ? ' done' : i === step ? ' current' : '');
+                });
+
+                if (step < 0) {
+                    dbgChar.innerHTML = 'Ready — press <kbd>→</kbd> to start';
+                } else {
+                    const ch = FLAT[step];
+                    const ci = step2char(step);
+                    const charData = WORD[ci];
+                    const qf = QF[ch], yf = YF[ch], of2 = OF[ch];
+                    const qHome = QH[qf] === ch, yHome = YH[yf] === ch, oHome = OH[of2] === ch;
+
+                    dbgChar.innerHTML = `
+                        <span class="ja">${charData.ja}</span>
+                        <span class="roma">${ch}</span>
+                        &nbsp;|&nbsp;
+                        Q: f${qf} ${qHome ? '✓' : '<span style="color:hsl(345 60% 60%)">✗</span>'}
+                        &nbsp;|&nbsp;
+                        O: f${of2 !== undefined ? of2 : '?'} ${oHome ? '✓' : '<span style="color:hsl(345 60% 60%)">✗</span>'}
+                        &nbsp;|&nbsp;
+                        Y: f${yf} ${yHome ? '✓' : '<span style="color:hsl(345 60% 60%)">✗</span>'}
+                    `;
+                }
+            }
+
+            // ============================================================
+            // Auto play
+            // ============================================================
+            function toggleAutoPlay() {
+                autoPlay = !autoPlay;
+                btnPlay.textContent = autoPlay ? '⏸ Stop' : '▶ Auto';
+                btnPlay.classList.toggle('active', autoPlay);
+                if (autoPlay) {
+                    autoTick();
+                } else if (autoTimer) {
+                    clearTimeout(autoTimer);
+                    autoTimer = null;
+                }
+            }
+
+            function autoTick() {
+                if (!autoPlay) return;
+                if (step >= FLAT.length - 1) {
+                    autoPlay = false;
+                    btnPlay.textContent = '▶ Auto';
+                    btnPlay.classList.remove('active');
+                    return;
+                }
+                doStepFwd();
+                autoTimer = setTimeout(autoTick, 180);
+            }
+
+            // ============================================================
+            // Event Listeners
+            // ============================================================
+            document.addEventListener('keydown', e => {
+                if (e.ctrlKey || e.altKey || e.metaKey) return;
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    if (autoPlay) toggleAutoPlay();
+                    doStepFwd();
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    if (autoPlay) toggleAutoPlay();
+                    doStepBack();
+                } else if (e.key === 'r' || e.key === 'R') {
+                    e.preventDefault();
+                    if (autoPlay) toggleAutoPlay();
+                    resetAll();
+                } else if (e.key === ' ') {
+                    e.preventDefault();
+                    toggleAutoPlay();
+                } else if (e.key >= '1' && e.key <= '4') {
+                    const langs = ['ja', 'en', 'zh', 'ko'];
+                    switchLang(langs[+e.key - 1]);
+                }
+            });
+
+            btnReset.addEventListener('click', () => { if (autoPlay) toggleAutoPlay(); resetAll(); });
+            btnPlay.addEventListener('click', toggleAutoPlay);
+
+            // Init with Japanese
+            switchLang('ja');
+        })();
+    </script>
+</body>
+
+</html>

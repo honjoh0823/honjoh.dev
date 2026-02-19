@@ -1,0 +1,1149 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Path Preview - Typing Compare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: hsl(230 20% 5.5%);
+            --ink: #e0e0e0;
+            --soft: #787878;
+            --accent: hsl(210 55% 55%);
+            --k-n-bg: hsl(230 5% 12%);
+            --k-n-tx: hsl(230 5% 32%);
+            --k-qn-bg: hsl(32 22% 12%);
+            --k-qn-tx: hsl(32 16% 30%);
+            --q-path: hsl(32 52% 60%);
+            --y-path-l: hsl(210 55% 55%);
+            --y-path-r: hsl(345 52% 70%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--ink);
+            font-family: "Outfit", "Zen Kaku Gothic New", sans-serif;
+            padding: 0 24px 80px;
+            margin: 0
+        }
+
+        h1 {
+            font-size: 16px;
+            font-weight: 400;
+            text-align: center;
+            margin-bottom: 16px;
+            color: var(--soft)
+        }
+
+        /* Bottom padding for fixed input area */
+        body {
+            padding-bottom: 70px
+        }
+
+        /* Input area - fixed to bottom */
+        .input-area {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 20;
+            max-width: 640px;
+            margin: 0 auto;
+            display: flex;
+            gap: 8px;
+            padding: 12px 20px;
+            background: var(--bg);
+            border-top: 1px solid #333
+        }
+
+        .input-area input {
+            flex: 1;
+            background: hsl(230 5% 10%);
+            color: var(--ink);
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-family: inherit;
+            font-size: 16px;
+            outline: none
+        }
+
+        .input-area input:focus {
+            border-color: var(--accent)
+        }
+
+        .input-area button {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap
+        }
+
+        .input-area button:hover {
+            opacity: .85
+        }
+
+        /* Sticky top section */
+        .top-section {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: var(--bg);
+            padding: 6px 0 4px;
+            border-bottom: 1px solid #222
+        }
+
+        /* Active preview */
+        .active-preview {
+            max-width: 960px;
+            margin: 0 auto 4px;
+            border: 1px solid #222;
+            border-radius: 10px;
+            padding: 8px 18px;
+            background: hsl(230 8% 7%)
+        }
+
+        .preview-phrase {
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 8px;
+            letter-spacing: .05em
+        }
+
+        .typing-display {
+            text-align: center;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2px
+        }
+
+        .tc-char {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: 2px 4px
+        }
+
+        .tc-ja {
+            font-size: 16px
+        }
+
+        .tc-keys {
+            display: flex;
+            gap: 1px
+        }
+
+        .tc-roma {
+            font-size: 10px;
+            color: var(--soft);
+            padding: 1px 3px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, .03)
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 14px;
+            font-size: 14px;
+            color: var(--soft)
+        }
+
+        .stats-row b {
+            color: var(--ink)
+        }
+
+        .stats-row .diff {
+            color: var(--accent);
+            font-weight: 600
+        }
+
+        .compare {
+            display: flex;
+            gap: 18px;
+            justify-content: center
+        }
+
+        .panel {
+            flex: 1;
+            max-width: 460px
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 4px;
+            letter-spacing: .03em
+        }
+
+        .panel.q .panel-title {
+            color: hsl(32 52% 60%)
+        }
+
+        .panel.y .panel-title {
+            color: var(--accent)
+        }
+
+        .panel-stats {
+            text-align: center;
+            font-size: 12px;
+            color: var(--soft);
+            margin-bottom: 4px
+        }
+
+        .panel-stats b {
+            color: var(--ink)
+        }
+
+        .kb-wrap {
+            position: relative;
+            padding: 4px
+        }
+
+        .kb {
+            display: grid;
+            gap: 3px
+        }
+
+        .kb .row {
+            display: flex;
+            justify-content: center;
+            gap: 2px
+        }
+
+        .kb .row:nth-child(2) {
+            padding-left: 10px
+        }
+
+        .kb .row:nth-child(3) {
+            padding-left: 20px
+        }
+
+        .key {
+            width: clamp(24px, 2.8vw, 34px);
+            height: clamp(26px, 3vw, 36px);
+            border-radius: 4px;
+            display: grid;
+            place-items: center;
+            font-size: clamp(9px, 1vw, 12px);
+            font-weight: 400;
+            border: none;
+            position: relative
+        }
+
+        .panel.y .key {
+            background: var(--k-n-bg);
+            color: var(--k-n-tx)
+        }
+
+        .panel.q .key {
+            background: var(--k-qn-bg);
+            color: var(--k-qn-tx)
+        }
+
+        .key.home::after {
+            content: "";
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 7px;
+            height: 1.5px;
+            border-radius: 1px;
+            background: rgba(255, 255, 255, .18)
+        }
+
+        .key.used {
+            font-weight: 600
+        }
+
+        .panel.y .key.used {
+            background: hsl(215 30% 22%);
+            color: hsl(210 50% 70%)
+        }
+
+        .panel.q .key.used {
+            background: hsl(32 44% 20%);
+            color: hsl(32 52% 60%)
+        }
+
+        svg.overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            overflow: visible
+        }
+
+        .path-line {
+            stroke-linecap: round;
+            stroke-width: 2;
+            fill: none;
+            opacity: .55
+        }
+
+        /* History */
+        .history {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 16px
+        }
+
+        .history-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--soft);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .history-title button {
+            background: none;
+            border: 1px solid #333;
+            color: var(--soft);
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 11px;
+            cursor: pointer
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .history-table th {
+            text-align: left;
+            color: var(--soft);
+            font-weight: 400;
+            padding: 6px 8px;
+            border-bottom: 1px solid #222
+        }
+
+        .history-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, .04)
+        }
+
+        .history-table tr:hover {
+            background: rgba(255, 255, 255, .02)
+        }
+
+        .history-table .num {
+            text-align: right;
+            font-variant-numeric: tabular-nums
+        }
+
+        .history-table .best {
+            color: var(--accent);
+            font-weight: 600
+        }
+
+        .history-table .phrase-cell {
+            max-width: 420px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap
+        }
+
+        .history-table .note-cell {
+            font-size: 11px;
+            color: var(--soft);
+            max-width: 400px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap
+        }
+
+        .sort-btn {
+            cursor: pointer;
+            user-select: none
+        }
+
+        .sort-btn:hover {
+            color: var(--ink)
+        }
+
+        .history-table tr.selected {
+            background: rgba(100, 160, 220, .12);
+            outline: 1px solid rgba(100, 160, 220, .25)
+        }
+
+        /* Language tabs */
+        .lang-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+            margin-bottom: 4px
+        }
+
+        .lang-tab {
+            background: hsl(230 5% 10%);
+            color: var(--soft);
+            border: 1px solid #333;
+            border-radius: 6px 6px 0 0;
+            padding: 8px 24px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all .15s
+        }
+
+        .lang-tab:hover {
+            color: var(--ink);
+            background: hsl(230 5% 13%)
+        }
+
+        .lang-tab.active {
+            background: hsl(230 8% 7%);
+            color: var(--ink);
+            border-bottom-color: hsl(230 8% 7%);
+            font-weight: 600
+        }
+
+        .lang-tab.disabled {
+            opacity: .4;
+            cursor: not-allowed
+        }
+
+        .coming-soon {
+            text-align: center;
+            color: var(--soft);
+            padding: 40px;
+            font-size: 14px
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-section">
+        <div class="lang-tabs">
+            <button class="lang-tab active" data-lang="ja">日本語</button>
+            <button class="lang-tab" data-lang="en">English</button>
+            <button class="lang-tab" data-lang="zh">中文</button>
+            <button class="lang-tab" data-lang="ko">한국어</button>
+        </div>
+        <div class="coming-soon" id="comingSoon" style="display:none">Coming Soon — 中文(ピンイン)対応は後日追加予定</div>
+        <div class="active-preview" id="activePreview" style="display:none">
+            <div class="compare">
+                <div class="panel q">
+                    <div class="panel-title">QWERTY</div>
+                    <div class="panel-stats" id="qStats"></div>
+                    <div class="kb-wrap" id="qWrap">
+                        <div class="kb" id="qKb"></div><svg class="overlay" id="qSvg"></svg>
+                    </div>
+                </div>
+                <div class="panel y">
+                    <div class="panel-title">大和配列</div>
+                    <div class="panel-stats" id="yStats"></div>
+                    <div class="kb-wrap" id="yWrap">
+                        <div class="kb" id="yKb"></div><svg class="overlay" id="ySvg"></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="max-width:960px;margin:0 auto;padding:8px 0">
+        <div class="preview-phrase" id="previewPhrase"></div>
+        <div class="typing-display" id="typingDisplay"></div>
+        <div class="stats-row" id="statsRow"></div>
+    </div>
+
+    <div class="history">
+        <div class="history-title">結果一覧 <button id="clearBtn">Clear</button></div>
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th class="sort-btn" data-col="idx">#</th>
+                    <th>構文</th>
+                    <th>訳</th>
+                    <th class="sort-btn num" data-col="len">文字</th>
+                    <th class="sort-btn num" data-col="q">Q線</th>
+                    <th class="sort-btn num" data-col="y">Y線</th>
+                    <th class="sort-btn num" data-col="diff">差</th>
+                    <th class="sort-btn num" data-col="ratio">比率</th>
+                    <th class="sort-btn num" data-col="qHome">Q Home%</th>
+                    <th class="sort-btn num" data-col="yHome">Y Home%</th>
+                    <th class="sort-btn num" data-col="homeDiff">Home差</th>
+                </tr>
+            </thead>
+            <tbody id="historyBody"></tbody>
+        </table>
+    </div>
+
+    <div class="input-area">
+        <input type="text" id="phraseInput" placeholder="ひらがなで構文を入力..." autofocus />
+        <button id="addBtn">追加</button>
+    </div>
+
+    <script>
+        const QR = [[['Q'], ['W'], ['E'], ['R'], ['T'], ['Y'], ['U'], ['I'], ['O'], ['P'], ['['], [']']], [['A'], ['S'], ['D'], ['F', 1], ['G'], ['H'], ['J', 1], ['K'], ['L'], [';'], ["'"]], [['Z'], ['X'], ['C'], ['V'], ['B'], ['N'], ['M'], [','], ['.'], ['/']]];
+        const YR = [[['M'], ['Y'], ['R'], ['W'], ['P'], ['X'], ['L'], ['Q'], ['C'], ["'"], ['['], [']']], [['K'], ['S'], ['T'], ['N', 1], ['H'], ['F'], ['A', 1], ['O'], ['I'], ['E'], ['/']], [['Z'], ['D'], ['B'], ['G'], ['J'], ['V'], ['U'], ['-'], [','], ['.']]];
+        const QF = { Q: 0, A: 0, Z: 0, W: 1, S: 1, X: 1, E: 2, D: 2, C: 2, R: 3, T: 3, F: 3, G: 3, V: 3, B: 3, Y: 4, U: 4, H: 4, J: 4, N: 4, M: 4, I: 5, K: 5, O: 6, L: 6, P: 7 };
+        const QH = { 0: 'A', 1: 'S', 2: 'D', 3: 'F', 4: 'J', 5: 'K', 6: 'L', 7: ';' };
+        const YF = { M: 0, K: 0, Z: 0, Y: 1, S: 1, D: 1, R: 2, T: 2, B: 2, W: 3, N: 3, G: 3, P: 3, H: 3, J: 3, X: 4, F: 4, V: 4, L: 4, A: 4, U: 4, Q: 5, O: 5, C: 6, I: 6, E: 7 };
+        const YH = { 0: 'K', 1: 'S', 2: 'T', 3: 'N', 4: 'A', 5: 'O', 6: 'I', 7: 'E' };
+
+        // Home row key sets for percentage calculation
+        const Q_HOME_KEYS = new Set(['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L']);
+        const Y_HOME_KEYS = new Set(['K', 'S', 'T', 'N', 'H', 'F', 'A', 'O', 'I', 'E']);
+
+        function calcHomePercent(flat, homeSet) {
+            if (!flat.length) return 0;
+            const homeCount = flat.filter(k => homeSet.has(k)).length;
+            return Math.round(homeCount / flat.length * 100);
+        }
+
+        // Kana → romaji mapping (single kana)
+        const kanaMap = {
+            'あ': ['A'], 'い': ['I'], 'う': ['U'], 'え': ['E'], 'お': ['O'],
+            'か': ['K', 'A'], 'き': ['K', 'I'], 'く': ['K', 'U'], 'け': ['K', 'E'], 'こ': ['K', 'O'],
+            'さ': ['S', 'A'], 'し': ['S', 'I'], 'す': ['S', 'U'], 'せ': ['S', 'E'], 'そ': ['S', 'O'],
+            'た': ['T', 'A'], 'ち': ['T', 'I'], 'つ': ['T', 'U'], 'て': ['T', 'E'], 'と': ['T', 'O'],
+            'な': ['N', 'A'], 'に': ['N', 'I'], 'ぬ': ['N', 'U'], 'ね': ['N', 'E'], 'の': ['N', 'O'],
+            'は': ['H', 'A'], 'ひ': ['H', 'I'], 'ふ': ['H', 'U'], 'へ': ['H', 'E'], 'ほ': ['H', 'O'],
+            'ま': ['M', 'A'], 'み': ['M', 'I'], 'む': ['M', 'U'], 'め': ['M', 'E'], 'も': ['M', 'O'],
+            'や': ['Y', 'A'], 'ゆ': ['Y', 'U'], 'よ': ['Y', 'O'],
+            'ら': ['R', 'A'], 'り': ['R', 'I'], 'る': ['R', 'U'], 'れ': ['R', 'E'], 'ろ': ['R', 'O'],
+            'が': ['G', 'A'], 'ぎ': ['G', 'I'], 'ぐ': ['G', 'U'], 'げ': ['G', 'E'], 'ご': ['G', 'O'],
+            'ざ': ['Z', 'A'], 'じ': ['Z', 'I'], 'ず': ['Z', 'U'], 'ぜ': ['Z', 'E'], 'ぞ': ['Z', 'O'],
+            'だ': ['D', 'A'], 'ぢ': ['D', 'I'], 'づ': ['D', 'U'], 'で': ['D', 'E'], 'ど': ['D', 'O'],
+            'ば': ['B', 'A'], 'び': ['B', 'I'], 'ぶ': ['B', 'U'], 'べ': ['B', 'E'], 'ぼ': ['B', 'O'],
+            'ぱ': ['P', 'A'], 'ぴ': ['P', 'I'], 'ぷ': ['P', 'U'], 'ぺ': ['P', 'E'], 'ぽ': ['P', 'O'],
+            'わ': ['W', 'A'], 'を': ['W', 'O'],
+            'ん': ['N', 'N'],
+        };
+        // Yōon: kana + small ゃゅょ
+        const yoonMap = {
+            'きゃ': ['K', 'Y', 'A'], 'きゅ': ['K', 'Y', 'U'], 'きょ': ['K', 'Y', 'O'],
+            'しゃ': ['S', 'Y', 'A'], 'しゅ': ['S', 'Y', 'U'], 'しょ': ['S', 'Y', 'O'],
+            'ちゃ': ['T', 'Y', 'A'], 'ちゅ': ['T', 'Y', 'U'], 'ちょ': ['T', 'Y', 'O'],
+            'にゃ': ['N', 'Y', 'A'], 'にゅ': ['N', 'Y', 'U'], 'にょ': ['N', 'Y', 'O'],
+            'ひゃ': ['H', 'Y', 'A'], 'ひゅ': ['H', 'Y', 'U'], 'ひょ': ['H', 'Y', 'O'],
+            'みゃ': ['M', 'Y', 'A'], 'みゅ': ['M', 'Y', 'U'], 'みょ': ['M', 'Y', 'O'],
+            'りゃ': ['R', 'Y', 'A'], 'りゅ': ['R', 'Y', 'U'], 'りょ': ['R', 'Y', 'O'],
+            'ぎゃ': ['G', 'Y', 'A'], 'ぎゅ': ['G', 'Y', 'U'], 'ぎょ': ['G', 'Y', 'O'],
+            'じゃ': ['Z', 'Y', 'A'], 'じゅ': ['Z', 'Y', 'U'], 'じょ': ['Z', 'Y', 'O'],
+            'びゃ': ['B', 'Y', 'A'], 'びゅ': ['B', 'Y', 'U'], 'びょ': ['B', 'Y', 'O'],
+            'ぴゃ': ['P', 'Y', 'A'], 'ぴゅ': ['P', 'Y', 'U'], 'ぴょ': ['P', 'Y', 'O'],
+        };
+
+        // Current language mode
+        let currentLang = 'ja';
+
+        function toRomaji(phrase) {
+            const w = [], chars = [...phrase];
+            for (let i = 0; i < chars.length; i++) {
+                const ch = chars[i];
+                // Check yōon (2-char combo)
+                if (i + 1 < chars.length) {
+                    const combo = ch + chars[i + 1];
+                    if (yoonMap[combo]) {
+                        w.push({ ja: combo, r: yoonMap[combo] });
+                        i++; // skip next char
+                        continue;
+                    }
+                }
+                // Geminate っ: double the next consonant
+                if (ch === 'っ' && i + 1 < chars.length) {
+                    const nx = chars[i + 1];
+                    // Check if next is yōon combo
+                    let nextKeys;
+                    if (i + 2 < chars.length && yoonMap[nx + chars[i + 2]]) {
+                        nextKeys = yoonMap[nx + chars[i + 2]];
+                    } else if (kanaMap[nx]) {
+                        nextKeys = kanaMap[nx];
+                    }
+                    if (nextKeys && nextKeys.length > 0) {
+                        w.push({ ja: 'っ', r: [nextKeys[0]] }); // double the first consonant
+                        continue;
+                    }
+                }
+                if (!kanaMap[ch]) continue;
+                let keys;
+                if (ch === 'ん' && i + 1 < chars.length) {
+                    const nx = chars[i + 1];
+                    // ん before consonant-starting kana → single N
+                    // ん before vowel/や行/end → NN
+                    const nextCombo = (i + 2 < chars.length) ? nx + chars[i + 2] : '';
+                    const nextKeys = yoonMap[nextCombo] || kanaMap[nx];
+                    if (nextKeys && nextKeys.length > 1) {
+                        keys = ['N']; // single N (next starts with consonant)
+                    } else {
+                        keys = ['N', 'N'];
+                    }
+                } else {
+                    keys = kanaMap[ch];
+                }
+                w.push({ ja: ch, r: keys });
+            }
+            const flat = w.flatMap(c => c.r);
+            return { flat, word: w };
+        }
+
+        // English: each letter becomes a single key press
+        function toAlpha(phrase) {
+            const w = [];
+            for (const ch of phrase) {
+                const upper = ch.toUpperCase();
+                if (/[A-Z]/.test(upper)) {
+                    w.push({ ja: ch, r: [upper] });
+                }
+                // Skip spaces and non-alpha characters
+            }
+            const flat = w.map(c => c.r[0]);
+            return { flat, word: w };
+        }
+
+        // Unified conversion dispatcher
+        function convertPhrase(phrase, lang) {
+            if (lang === 'en' || lang === 'zh' || lang === 'ko') return toAlpha(phrase);
+            return toRomaji(phrase);
+        }
+
+        // Count finger movements with return-to-home logic
+        function countLines(word, fm, hm) {
+            let lines = 0;
+            const flat = word.flatMap(c => c.r);
+            const fingerPos = {};
+            for (let f = 0; f < 8; f++) fingerPos[f] = hm[f];
+            for (let i = 0; i < flat.length; i++) {
+                const key = flat[i];
+                const f = fm[key]; if (f === undefined) continue;
+                if (fingerPos[f] !== key) { lines++; fingerPos[f] = key; }
+                // Return-to-home: if next key uses a different finger, this finger returns home
+                const next = i + 1 < flat.length ? flat[i + 1] : null;
+                if (next && fm[next] !== f && hm[f] !== key) {
+                    lines++;
+                    fingerPos[f] = hm[f];
+                }
+            }
+            return lines;
+        }
+
+        function renderKb(el, layout, km) {
+            el.innerHTML = '';
+            layout.forEach(row => {
+                const d = document.createElement('div'); d.className = 'row';
+                row.forEach(([ch, hm]) => { const k = document.createElement('div'); k.className = 'key' + (hm ? ' home' : ''); k.textContent = ch; d.appendChild(k); if (!km[ch]) km[ch] = k; });
+                el.appendChild(d);
+            });
+        }
+
+        function ctr(el, w) { const k = el.getBoundingClientRect(), r = w.getBoundingClientRect(); return { x: k.left - r.left + k.width / 2, y: k.top - r.top + k.height / 2 }; }
+
+        // Draw paths with return-to-home logic
+        function drawPaths(word, wrap, svg, km, fm, hm, colorFn) {
+            const r = wrap.getBoundingClientRect();
+            svg.setAttribute('viewBox', `0 0 ${r.width} ${r.height}`); svg.innerHTML = '';
+            const usedKeys = new Set(); const ns = 'http://www.w3.org/2000/svg'; let lines = 0;
+            const flat = word.flatMap(c => c.r);
+            // Init finger positions at home
+            const pos = {};
+            for (let f = 0; f < 8; f++) { const h = hm[f]; if (km[h]) pos[f] = { ...ctr(km[h], wrap) }; }
+
+            for (let i = 0; i < flat.length; i++) {
+                const key = flat[i];
+                const f = fm[key]; if (f === undefined || !km[key]) continue;
+                usedKeys.add(key);
+                const t = ctr(km[key], wrap);
+                if (pos[f] && (pos[f].x !== t.x || pos[f].y !== t.y)) {
+                    const l = document.createElementNS(ns, 'line');
+                    l.setAttribute('x1', pos[f].x); l.setAttribute('y1', pos[f].y);
+                    l.setAttribute('x2', t.x); l.setAttribute('y2', t.y);
+                    l.setAttribute('stroke', colorFn(f)); l.classList.add('path-line');
+                    svg.appendChild(l); lines++;
+                }
+                pos[f] = { ...t };
+                // Return-to-home: if next key uses a different finger, this finger returns home
+                const next = i + 1 < flat.length ? flat[i + 1] : null;
+                if (next && fm[next] !== f && hm[f] !== key) {
+                    const hk = hm[f];
+                    if (hk && km[hk] && pos[f]) {
+                        const hp = ctr(km[hk], wrap);
+                        const l = document.createElementNS(ns, 'line');
+                        l.setAttribute('x1', pos[f].x); l.setAttribute('y1', pos[f].y);
+                        l.setAttribute('x2', hp.x); l.setAttribute('y2', hp.y);
+                        l.setAttribute('stroke', colorFn(f)); l.classList.add('path-line');
+                        svg.appendChild(l); lines++;
+                        pos[f] = { ...hp };
+                    }
+                }
+            }
+            usedKeys.forEach(ch => { if (km[ch]) km[ch].classList.add('used'); });
+            return lines;
+        }
+
+        // State — per-language history
+        const historyMap = { ja: [], en: [], zh: [], ko: [] };
+        let sortCol = 'idx', sortAsc = false;
+
+        function getHistory() { return historyMap[currentLang]; }
+
+        function renderPreview(text, lang) {
+            lang = lang || currentLang;
+            const { flat, word } = convertPhrase(text, lang);
+            if (!flat.length) return;
+            document.getElementById('activePreview').style.display = '';
+            document.getElementById('previewPhrase').textContent = text;
+            const td = document.getElementById('typingDisplay'); td.innerHTML = '';
+            word.forEach(ch => {
+                const g = document.createElement('div'); g.className = 'tc-char';
+                g.innerHTML = `<span class="tc-ja">${ch.ja}</span><div class="tc-keys">${ch.r.map(r => `<span class="tc-roma">${r}</span>`).join('')}</div>`;
+                td.appendChild(g);
+            });
+            const qm = {}, ym = {};
+            renderKb(document.getElementById('qKb'), QR, qm);
+            renderKb(document.getElementById('yKb'), YR, ym);
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                const qL = drawPaths(word, document.getElementById('qWrap'), document.getElementById('qSvg'), qm, QF, QH, () => 'var(--q-path)');
+                const yL = drawPaths(word, document.getElementById('yWrap'), document.getElementById('ySvg'), ym, YF, YH, f => f < 4 ? 'var(--y-path-l)' : 'var(--y-path-r)');
+                document.getElementById('qStats').innerHTML = `指移動 <b>${qL}</b>回`;
+                document.getElementById('yStats').innerHTML = `指移動 <b>${yL}</b>回`;
+                document.getElementById('statsRow').innerHTML =
+                    `<span>Q: <b>${qL}</b></span><span>Y: <b>${yL}</b></span><span class="diff">差: ${qL - yL}</span><span>比率: ${(qL / Math.max(yL, 1)).toFixed(1)}:1</span>`;
+            }));
+            return { flat };
+        }
+
+        function addPhrase(text, lang, note) {
+            lang = lang || currentLang;
+            text = text.trim(); if (!text) return;
+            const { flat, word } = convertPhrase(text, lang); if (!flat.length) return;
+            const q = countLines(word, QF, QH), y = countLines(word, YF, YH);
+            const len = [...text].length;
+            const hist = historyMap[lang];
+            const qHome = calcHomePercent(flat, Q_HOME_KEYS);
+            const yHome = calcHomePercent(flat, Y_HOME_KEYS);
+            hist.push({ idx: hist.length + 1, text, note: note || '', len, q, y, diff: q - y, ratio: +(q / Math.max(y, 1)).toFixed(1), qHome, yHome, homeDiff: yHome - qHome });
+            renderPreview(text, lang);
+            renderHistory();
+        }
+
+        let selectedRowIdx = -1; // index into sorted array
+        let sortedCache = [];
+
+        function renderHistory() {
+            const history = getHistory();
+            sortedCache = [...history].sort((a, b) => {
+                const v = sortAsc ? 1 : -1;
+                if (typeof a[sortCol] === 'number') return (b[sortCol] - a[sortCol]) * v;
+                return 0;
+            });
+            const maxDiff = history.length ? Math.max(...history.map(h => h.diff)) : 0;
+            const body = document.getElementById('historyBody'); body.innerHTML = '';
+            sortedCache.forEach((h, i) => {
+                const tr = document.createElement('tr');
+                const isBest = h.diff === maxDiff;
+                if (i === selectedRowIdx) tr.classList.add('selected');
+                tr.innerHTML = `<td class="num">${h.idx}</td><td class="phrase-cell">${h.text}</td><td class="note-cell">${h.note || ''}</td><td class="num">${h.len}</td><td class="num">${h.q}</td><td class="num">${h.y}</td><td class="num ${isBest ? 'best' : ''}">${h.diff}</td><td class="num">${h.ratio}</td><td class="num">${h.qHome}%</td><td class="num">${h.yHome}%</td><td class="num ${h.homeDiff > 0 ? 'best' : ''}">${h.homeDiff > 0 ? '+' : ''}${h.homeDiff}%</td>`;
+                tr.style.cursor = 'pointer';
+                tr.addEventListener('click', () => { selectedRowIdx = i; renderHistory(); renderPreview(h.text); });
+                body.appendChild(tr);
+            });
+        }
+
+        function navigateRow(dir) {
+            if (!sortedCache.length) return;
+            if (selectedRowIdx < 0) selectedRowIdx = 0;
+            else selectedRowIdx = Math.max(0, Math.min(sortedCache.length - 1, selectedRowIdx + dir));
+            renderHistory();
+            renderPreview(sortedCache[selectedRowIdx].text, currentLang);
+            // Scroll selected row into view
+            const rows = document.getElementById('historyBody').children;
+            if (rows[selectedRowIdx]) rows[selectedRowIdx].scrollIntoView({ block: 'nearest' });
+        }
+
+        // Events
+        const input = document.getElementById('phraseInput');
+        const addBtn = document.getElementById('addBtn');
+
+        input.addEventListener('input', () => {
+            const text = input.value.trim();
+            if (text) renderPreview(text);
+        });
+
+        function doAdd() {
+            const text = input.value.trim();
+            if (text) { addPhrase(text); input.value = ''; input.focus(); }
+        }
+        addBtn.addEventListener('click', doAdd);
+        input.addEventListener('keydown', e => {
+            if (e.key === 'Enter') doAdd();
+            if (e.key === 'ArrowUp') { e.preventDefault(); navigateRow(-1); }
+            if (e.key === 'ArrowDown') { e.preventDefault(); navigateRow(1); }
+        });
+
+        document.addEventListener('keydown', e => {
+            if (document.activeElement === input) return;
+            if (e.key === 'ArrowUp') { e.preventDefault(); navigateRow(-1); }
+            if (e.key === 'ArrowDown') { e.preventDefault(); navigateRow(1); }
+        });
+
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            getHistory().length = 0; renderHistory();
+        });
+
+        document.querySelectorAll('.sort-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const col = btn.dataset.col;
+                if (sortCol === col) sortAsc = !sortAsc; else { sortCol = col; sortAsc = false; }
+                renderHistory();
+            });
+        });
+
+        // Language tab switching
+        const langConfig = {
+            ja: { placeholder: 'ひらがなで構文を入力...', addLabel: '追加' },
+            en: { placeholder: 'Type English phrase...', addLabel: 'Add' },
+            zh: { placeholder: '輸入拼音（例: shu ru zhong wen）...', addLabel: '添加' },
+            ko: { placeholder: '로마자로 입력 (예: han gug eo)...', addLabel: '추가' }
+        };
+
+        const seedsMap = {
+            ja: [
+                'にほんのなつはほんとうにあつい',
+                'にほんごにゅうりょくにさいてきかされたはいれつ',
+                'にほんごのためのあたらしいはいれつ',
+                'にほんごにゅうりょくをもっとかいてきに',
+                'にほんのことばをていねいにうつ',
+                'にほんごのにゅうりょくはもっとはやくなれる',
+                'にほんごをうつためにうまれたはいれつ',
+                'ていねいなにほんごにゅうりょくをめざして',
+                'にほんごにさいてきかされたきーはいれつ',
+                'にほんごのにゅうりょくそくどをにばいに',
+            ],
+            en: [
+                ['english input is optimized on this too', '英語入力もこれで最適化されている'],
+                ['english input is nice', '英語入力が良い感じ'],
+                ['this one is optimized for english too', 'これも英語に最適化されている'],
+                ['the english input is optimized too', '英語入力も最適化されている'],
+                ['english input is also optimized here', '英語入力もここで最適化されている'],
+                ['optimized for english input too', '英語入力にも最適化'],
+                ['english input has been optimized as well', '英語入力も最適化済み'],
+                ['even english input is optimized', '英語入力さえも最適化されている'],
+                ['it also optimizes english input', '英語入力も最適化する'],
+                ['english input feels optimized too', '英語入力も最適化されていると感じる'],
+                ['this also delivers optimized english input', 'これは英語入力の最適化も実現する'],
+                ['english input is equally optimized', '英語入力も同様に最適化されている'],
+                ['you get optimized english input too', '英語入力の最適化も手に入る'],
+                ['we also optimized english input', '英語入力も最適化した'],
+                ['the english input experience is optimized too', '英語入力体験も最適化されている'],
+                ['english input gets optimized here too', '英語入力もここで最適化される'],
+                ['optimized english input comes naturally too', '最適化された英語入力も自然に実現'],
+                ['english input is just as optimized', '英語入力も同じくらい最適化されている'],
+                ['this layout optimizes english input too', 'この配列は英語入力も最適化する'],
+                ['english input benefits from optimization too', '英語入力も最適化の恩恵を受ける'],
+                ['english input flow is optimized too', '英語入力の流れも最適化されている'],
+                ['this is optimized for english input as well', 'これは英語入力にも最適化されている'],
+                ['english input speed is also optimized', '英語入力の速度も最適化されている'],
+                ['english input comfort is optimized too', '英語入力の快適さも最適化されている'],
+                ['english input is seamlessly optimized too', '英語入力もシームレスに最適化'],
+                ['english input typing is optimized as well', '英語入力のタイピングも最適化済み'],
+                ['english input is naturally optimized too', '英語入力も自然に最適化されている'],
+                ['english input is carefully optimized too', '英語入力も丁寧に最適化されている'],
+                ['english input is perfectly optimized as well', '英語入力も完璧に最適化されている'],
+                ['english input is well optimized here too', '英語入力もここでしっかり最適化'],
+                ['english input is properly optimized too', '英語入力も適切に最適化されている'],
+                ['english input is finely optimized too', '英語入力も細かく最適化されている'],
+                ['not just japanese but english input is optimized too', '日本語だけでなく英語入力も最適化'],
+                ['english input also runs in an optimized way', '英語入力も最適化された形で動く'],
+                ['even the english input is fully optimized', '英語入力も完全に最適化されている'],
+                ['english input has also been fully optimized', '英語入力も完全に最適化済み'],
+                ['we made sure english input is optimized too', '英語入力も最適化されるようにした'],
+                ['enjoy optimized english input as well', '最適化された英語入力も楽しめる'],
+                ['english input was optimized along with it', '英語入力も一緒に最適化された'],
+                ['english input is similarly optimized', '英語入力も同様に最適化されている'],
+                ['this brings optimized english input as well', 'これは最適化された英語入力ももたらす'],
+                ['your english input is optimized here too', 'あなたの英語入力もここで最適化'],
+                ['english input efficiency is also optimized', '英語入力の効率も最適化されている'],
+                ['experience optimized english input too', '最適化された英語入力も体験しよう'],
+                ['english input was also a target for optimization', '英語入力も最適化の対象だった'],
+                ['english input remains optimized as well', '英語入力も最適化された状態を維持'],
+                ['it keeps english input optimized too', '英語入力も最適化された状態を保つ'],
+                ['english input is included in the optimization too', '英語入力も最適化に含まれている'],
+                ['english input is another optimized strength', '英語入力もまた最適化された強み'],
+                ['english input is one more optimized feature', '英語入力はもう一つの最適化された機能'],
+                ['english input is clearly optimized too', '英語入力も明らかに最適化されている'],
+                ['english input is impressively optimized too', '英語入力も見事に最適化されている'],
+                ['english input quality is also optimized', '英語入力の品質も最適化されている'],
+                ['english input precision is optimized too', '英語入力の精度も最適化されている'],
+            ],
+            zh: [
+                ['shu ru zhong wen ye hen jian dan', '輸入中文也很簡單｜中国語入力も簡単'],
+                ['zhong wen shu ru ye yi zui jia hua', '中文輸入也已最佳化｜中国語入力も最適化済み'],
+                ['da zhong wen ye hen shun shou', '打中文也很順手｜中国語を打つのもスムーズ'],
+                ['zhong wen shu ru tong yang liu chang', '中文輸入同樣流暢｜中国語入力も同様に滑らか'],
+                ['shu ru zhong wen yi yang fang bian', '輸入中文一樣方便｜中国語入力も同じく便利'],
+                ['zhong wen da zi ye hen qing song', '中文打字也很輕鬆｜中国語タイピングも楽々'],
+                ['zhong wen ye neng kuai su shu ru', '中文也能快速輸入｜中国語も素早く入力できる'],
+                ['yong zhe ge da zhong wen hen shu fu', '用這個打中文很舒服｜これで中国語を打つと快適'],
+                ['zhong wen shu ru de xiao lv ye hen gao', '中文輸入的效率也很高｜中国語入力の効率も高い'],
+                ['da zhong wen ye bu fei jin', '打中文也不費勁｜中国語を打つのも楽'],
+                ['zhe ge pei lie fei chang shi he da zhong wen', '這個配列非常適合打中文｜この配列は中国語入力に最適'],
+                ['zhong wen shu ru ye jing guo zui jia hua', '中文輸入也經過最佳化｜中国語入力も最適化されている'],
+                ['shu ru zhong wen cong wei ru ci jian dan', '輸入中文從未如此簡單｜中国語入力がこんなに簡単だったことはない'],
+                ['zhong wen da zi de ti yan ye hen hao', '中文打字的體驗也很好｜中国語タイピングの体験も良い'],
+                ['bu zhi ri wen lian zhong wen ye hen shun', '不只日文連中文也很順｜日本語だけでなく中国語もスムーズ'],
+                ['zhong wen pin yin shu ru ye hen liu chang', '中文拼音輸入也很流暢｜中国語拼音入力も滑らか'],
+                ['zhe ge pei lie rang zhong wen shu ru geng kuai', '這個配列讓中文輸入更快｜この配列で中国語入力がもっと速く'],
+                ['da zhong wen ye yi yang qing song zi zai', '打中文也一樣輕鬆自在｜中国語を打つのも同じく楽々'],
+                ['zhong wen shu ru ye hen you xiao lv', '中文輸入也很有效率｜中国語入力も効率的'],
+                ['shu ru zhong wen hao bu fei li', '輸入中文毫不費力｜中国語入力は全く苦にならない'],
+                ['zhong wen ye neng shu shi de shu ru', '中文也能舒適地輸入｜中国語も快適に入力できる'],
+                ['yong ta da zhong wen ye hen zi ran', '用它打中文也很自然｜これで中国語を打つのも自然'],
+                ['zhong wen shu ru bian de geng jia shun chang', '中文輸入變得更加順暢｜中国語入力がさらにスムーズに'],
+                ['wan mei zhi chi zhong wen shu ru', '完美支持中文輸入｜中国語入力を完璧にサポート'],
+                ['zhong wen da zi xiao lv fei chang gao', '中文打字效率非常高｜中国語タイピング効率が非常に高い'],
+                ['zhong wen pin yin da qi lai ye hen kuai', '中文拼音打起來也很快｜中国語拼音も打つのが速い'],
+                ['dui zhong wen ye zuo le zui jia hua chu li', '對中文也做了最佳化處理｜中国語にも最適化処理を施した'],
+                ['zhong wen shu ru bu zai ma fan', '中文輸入不再麻煩｜中国語入力はもう面倒じゃない'],
+                ['da zhong wen ye neng gan shou dao shun chang', '打中文也能感受到順暢｜中国語を打ってもスムーズさを感じる'],
+                ['zhong wen shu ru ye yi yang chu se', '中文輸入也一樣出色｜中国語入力も同様に優秀'],
+                ['zhe ge pei lie ye shi he shu ru zhong wen', '這個配列也適合輸入中文｜この配列は中国語入力にも適している'],
+                ['zhong wen da zi ye hen jian dan yi xue', '中文打字也很簡單易學｜中国語タイピングも簡単で覚えやすい'],
+                ['shu ru zhong wen de su du ye hen kuai', '輸入中文的速度也很快｜中国語入力の速度も速い'],
+                ['zhong wen ye neng gao xiao de shu ru', '中文也能高效地輸入｜中国語も高効率で入力できる'],
+                ['yong zhe ge pei lie da zhong wen hen fang bian', '用這個配列打中文很方便｜この配列で中国語を打つと便利'],
+                ['zhong wen shu ru ye de dao le zui jia hua', '中文輸入也得到了最佳化｜中国語入力も最適化された'],
+                ['da zhong wen bian de qing er yi ju', '打中文變得輕而易舉｜中国語を打つのが簡単になった'],
+                ['zhong wen ye neng shun chang de da chu lai', '中文也能順暢地打出來｜中国語もスムーズに打てる'],
+                ['zhong wen pin yin shu ru fei chang shun shou', '中文拼音輸入非常順手｜中国語拼音入力がとても順手'],
+                ['ye wei zhong wen shu ru zuo le you hua', '也為中文輸入做了優化｜中国語入力のためにも最適化した'],
+                ['zhong wen da zi de su du ye ti sheng le', '中文打字的速度也提升了｜中国語タイピングの速度も向上した'],
+                ['shu ru zhong wen gen ri wen yi yang jian dan', '輸入中文跟日文一樣簡單｜中国語入力は日本語と同じくらい簡単'],
+                ['zhe ge pei lie da zhong wen ye bu xun se', '這個配列打中文也不遜色｜この配列は中国語入力でも引けを取らない'],
+                ['da zhong wen ye neng xiang shou shun chang de shou gan', '打中文也能享受順暢的手感｜中国語でもスムーズな打鍵感を楽しめる'],
+                ['qie huan dao zhong wen ye bu ying xiang xiao lv', '切換到中文也不影響效率｜中国語に切り替えても効率に影響しない'],
+                ['yong zhe ge pei lie shu ru zhong wen zhen de hen bang', '用這個配列輸入中文真的很棒｜この配列で中国語入力は本当に素晴らしい'],
+                ['zhong wen shu ru cong ci bian de geng jian dan', '中文輸入從此變得更簡單｜中国語入力がこれからもっと簡単に'],
+                ['zhe ge pei lie ye neng liu chang de shu ru zhong wen', '這個配列也能流暢地輸入中文｜この配列でも中国語を流暢に入力できる'],
+                ['zhong wen shu ru de ti yan ling ren man yi', '中文輸入的體驗令人滿意｜中国語入力の体験が満足できる'],
+                ['da zhong wen zai ye bu shi nan shi', '打中文再也不是難事｜中国語を打つのはもう難しくない'],
+                ['zhong wen shu ru ye neng qing song shang shou', '中文輸入也能輕鬆上手｜中国語入力も楽に使いこなせる'],
+                ['wu lun da shen me yu yan dou hen shun', '無論打什麼語言都很順｜どの言語を打っても滑らか'],
+                ['zhi yao yong zhe ge pei lie zhong wen jiu hen hao da', '只要用這個配列中文就很好打｜この配列さえ使えば中国語が打ちやすい'],
+                ['yue da yue jue de zhong wen shu ru hen liu chang', '越打越覺得中文輸入很流暢｜打つほど中国語入力の滑らかさを感じる'],
+                ['bu dan ri wen hao da zhong wen ye hen hao da', '不但日文好打中文也很好打｜日本語だけでなく中国語も打ちやすい'],
+                ['chu le ri wen yi wai zhong wen ye hen shun', '除了日文以外中文也很順｜日本語以外に中国語もスムーズ'],
+                ['yi dan xi guan jiu hui ai shang da zhong wen', '一旦習慣就會愛上打中文｜慣れたら中国語を打つのが好きになる'],
+                ['ji kuai su you shu shi de zhong wen shu ru', '既快速又舒適的中文輸入｜速くて快適な中国語入力'],
+                ['bi yi qian geng rong yi shu ru zhong wen le', '比以前更容易輸入中文了｜以前より中国語入力が簡単になった'],
+                ['yuan lai zhong wen ke yi da de zhe me shun', '原來中文可以打得這麼順｜中国語がこんなに滑らかに打てるとは'],
+                ['mei xiang dao zhong wen shu ru ke yi zhe me kuai', '沒想到中文輸入可以這麼快｜中国語入力がこんなに速いとは'],
+                ['jing ran lian zhong wen dou da de zhe me shun', '竟然連中文都打得這麼順｜中国語までこんなに滑らかだとは'],
+                ['di que shi zui shi he zhong wen de pei lie', '的確是最適合中文的配列｜確かに中国語に最適な配列'],
+                ['bu de bu shuo zhong wen shu ru zhen de hen bang', '不得不說中文輸入真的很棒｜中国語入力は素晴らしいと言わざるを得ない'],
+                ['shui shuo zhe ge pei lie zhi shi he ri wen', '誰說這個配列只適合日文｜この配列が日本語だけとは誰が言った'],
+                ['you le zhe ge pei lie zhong wen shu ru bu zai shi wen ti', '有了這個配列中文輸入不再是問題｜この配列があれば中国語入力は問題ない'],
+                ['mei ci da zhong wen dou jue de hen shun shou', '每次打中文都覺得很順手｜中国語を打つたびにスムーズだと感じる'],
+                ['bu guan shi ri wen hai shi zhong wen dou hen hao da', '不管是日文還是中文都很好打｜日本語でも中国語でも打ちやすい'],
+                ['kan si wei ri wen she ji qi shi ye shi he zhong wen', '看似為日文設計其實也適合中文｜日本語向けに見えて実は中国語にも最適'],
+                ['zhong wen shu ru de shou gan chao hu yu qi', '中文輸入的手感超乎預期｜中国語入力の手感が予想を超えた'],
+                ['ba zhong wen da de you kuai you hao', '把中文打得又快又好｜中国語を速くきれいに打てる'],
+                ['zhe jiu shi zui jia hua guo de zhong wen shu ru', '這就是最佳化過的中文輸入｜これが最適化された中国語入力だ'],
+                ['zhong wen shu ru ye bei wan mei zui jia hua le', '中文輸入也被完美最佳化了｜中国語入力も完璧に最適化された'],
+                ['guo ran zhe ge pei lie da zhong wen ye hen qiang', '果然這個配列打中文也很強｜やはりこの配列は中国語も強い'],
+                ['zhi de yi shi de zhong wen shu ru ti yan', '值得一試的中文輸入體驗｜試す価値のある中国語入力体験'],
+                ['ling ren jing xi de zhong wen shu ru biao xian', '令人驚喜的中文輸入表現｜驚くほどの中国語入力性能'],
+                ['zhong wen da zi cong ci bu zai fan nao', '中文打字從此不再煩惱｜中国語タイピングの悩みがなくなった'],
+                ['sui shi dou neng liu chang de shu ru zhong wen', '隨時都能流暢地輸入中文｜いつでも流暢に中国語入力できる'],
+                ['duo yu yan shu ru jiu shi zhe me jian dan', '多語言輸入就是這麼簡單｜多言語入力はこんなに簡単'],
+                ['zhe ge pei lie zhen de hen shi he pin yin shu ru', '這個配列真的很適合拼音輸入｜この配列は本当に拼音入力に向いている'],
+                ['zhong wen pin yin de shu ru xiao lv da fu ti sheng', '中文拼音的輸入效率大幅提升｜中国語拼音の入力効率が大幅に向上'],
+                ['zai ye bu yong dan xin zhong wen da zi de xiao lv', '再也不用擔心中文打字的效率｜もう中国語タイピングの効率を心配しなくていい'],
+                ['shi guo jiu zhi dao zhong wen shu ru you duo shun', '試過就知道中文輸入有多順｜試せば中国語入力のスムーズさがわかる'],
+                ['zhe cai shi li xiang de zhong wen shu ru fang shi', '這才是理想的中文輸入方式｜これこそ理想の中国語入力方法'],
+                ['zhong wen ye neng da de xiang mu yu yi yang liu li', '中文也能打得像母語一樣流利｜中国語も母語のように流暢に打てる'],
+                ['yi ge pei lie gao ding ri wen he zhong wen', '一個配列搞定日文和中文｜一つの配列で日本語と中国語を解決'],
+                ['zhong wen shu ru de zui jia xuan ze', '中文輸入的最佳選擇｜中国語入力の最良の選択'],
+                ['zhong yu zhao dao shi he da zhong wen de pei lie le', '終於找到適合打中文的配列了｜ついに中国語に合う配列を見つけた'],
+                ['zhong wen shu ru ye neng ru ci gao xiao', '中文輸入也能如此高效｜中国語入力もこれほど高効率にできる'],
+                ['xiang bu dao da zhong wen ke yi zhe me shu fu', '想不到打中文可以這麼舒服｜中国語がこんなに快適に打てるとは'],
+                ['lian zhong wen dou neng da de zhe me hao', '連中文都能打得這麼好｜中国語までこんなにうまく打てる'],
+                ['zhen zheng wei duo yu yan she ji de pei lie', '真正為多語言設計的配列｜真の多言語設計の配列'],
+                ['zhong wen shu ru ye shi yi da liang dian', '中文輸入也是一大亮點｜中国語入力も大きなハイライト'],
+                ['pin yin shu ru cong wei zhe me rong yi guo', '拼音輸入從未這麼容易過｜拼音入力がこんなに簡単だったことはない'],
+                ['rang da zhong wen cheng wei yi zhong xiang shou', '讓打中文成為一種享受｜中国語を打つことが楽しみになる'],
+                ['zhong wen shu ru de liu chang du chao yue qi dai', '中文輸入的流暢度超越期待｜中国語入力のスムーズさが期待を超える'],
+                ['qing song jia yu zhong wen shu ru', '輕鬆駕馭中文輸入｜中国語入力を楽に使いこなす'],
+                ['zhong wen he ri wen yi yang da de shun chang', '中文和日文一樣打得順暢｜中国語も日本語と同じように滑らか'],
+                ['zhe pei lie dui zhong wen ye fei chang you shan', '這配列對中文也非常友善｜この配列は中国語にもフレンドリー'],
+                ['zhong wen shu ru jiu gai zhe me jian dan cai dui', '中文輸入就該這麼簡單才對｜中国語入力はこうあるべきだ'],
+            ],
+            ko: [
+                ['han gug eo ip ryeok do pyeon hae yo', '한국어 입력도 편해요｜韓国語入力も楽'],
+                ['han gug eo ip ryeok do choe jeok hwa dwae it seo yo', '한국어 입력도 최적화돼 있어요｜韓国語入力も最適化されている'],
+                ['han gug eo ip ryeok i ppal la yo', '한국어 입력이 빨라요｜韓国語入力が速い'],
+                ['han gug eo ip ryeok i bu deu reo wo yo', '한국어 입력이 부드러워요｜韓国語入力が滑らか'],
+                ['han gug eo ip ryeok do ja yeon seu reo wo yo', '한국어 입력도 자연스러워요｜韓国語入力も自然'],
+                ['han gug eo ip ryeok do swi wo yo', '한국어 입력도 쉬워요｜韓国語入力も簡単'],
+                ['han gug eo ip ryeok do ppal ru go pyeon hae yo', '한국어 입력도 빠르고 편해요｜韓国語入力も速くて楽'],
+                ['han gug eo ip ryeok i jeong mal jo a yo', '한국어 입력이 정말 좋아요｜韓国語入力が本当に良い'],
+                ['han gug eo ip ryeok do hyo yul jeok i e yo', '한국어 입력도 효율적이에요｜韓国語入力も効率的'],
+                ['han gug eo ip ryeok do mae kkeue reo wo yo', '한국어 입력도 매끄러워요｜韓国語入力も滑らか'],
+                ['han gug eo ip ryeok i wan byeok hae yo', '한국어 입력이 완벽해요｜韓国語入力が完璧'],
+                ['han gug eo ip ryeok do sin gyeong sseo sseo yo', '한국어 입력도 신경 썼어요｜韓国語入力にも気を配っている'],
+                ['han gug eo ip ryeok do su wol hae yo', '한국어 입력도 수월해요｜韓国語入力もスムーズ'],
+                ['han gug eo ip ryeok do mun je eop seo yo', '한국어 입력도 문제없어요｜韓国語入力も問題なし'],
+                ['han gug eo ip ryeok do choe go ye yo', '한국어 입력도 최고예요｜韓国語入力も最高'],
+                ['han gug eo ip ryeok i pyeon hae jyeo sseo yo', '한국어 입력이 편해졌어요｜韓国語入力が楽になった'],
+                ['i geo ro han gug eo ip ryeok i swi wo yo', '이걸로 한국어 입력이 쉬워요｜これで韓国語入力が簡単'],
+                ['han gug eo ip ryeok do sang kwae hae yo', '한국어 입력도 상쾌해요｜韓国語入力も爽快'],
+                ['han gug eo ip ryeok i jeu geo wo yo', '한국어 입력이 즐거워요｜韓国語入力が楽しい'],
+                ['han gug eo ip ryeok sok do ga hwol ssin ppal la yo', '한국어 입력 속도가 훨씬 빨라요｜韓国語入力速度がずっと速い'],
+                ['han gug eo ip ryeok e do an seong ma chum i e yo', '한국어 입력에도 안성맞춤이에요｜韓国語入力にもぴったり'],
+                ['han gug eo ip ryeok do pyeon ha ge hal su it seo yo', '한국어 입력도 편하게 할 수 있어요｜韓国語入力も楽にできる'],
+                ['han gug eo ip ryeok do gi dae i sang i e yo', '한국어 입력도 기대 이상이에요｜韓国語入力も期待以上'],
+                ['i bae yeol i han gug eo ip ryeok e do jal mat a yo', '이 배열이 한국어 입력에도 잘 맞아요｜この配列は韓国語入力にも合う'],
+                ['han gug eo ip ryeok do nol ra ul man keum jo a yo', '한국어 입력도 놀라울 만큼 좋아요｜韓国語入力も驚くほど良い'],
+                ['han gug eo ip ryeok i jeong mal mae kkeue reo wo yo', '한국어 입력이 정말 매끄러워요｜韓国語入力が本当に滑らか'],
+                ['han gug eo ip ryeok do chung bun hi ppal la yo', '한국어 입력도 충분히 빨라요｜韓国語入力も十分速い'],
+                ['han gug eo ip ryeok do ttok gat i bu deu reo wo yo', '한국어 입력도 똑같이 부드러워요｜韓国語入力も同じように滑らか'],
+                ['i bae yeol lo han gug eo ip ryeok i jeong mal pyeon hae yo', '이 배열로 한국어 입력이 정말 편해요｜この配列で韓国語入力が本当に楽'],
+                ['han gug eo ip ryeok do wan jeon hi choe jeok hwa dwae it seo yo', '한국어 입력도 완전히 최적화돼 있어요｜韓国語入力も完全に最適化されている'],
+                ['han gug eo ip ryeok i i reok ke swi ul jul i ya', '한국어 입력이 이렇게 쉬울 줄이야｜韓国語入力がこんなに簡単だとは'],
+                ['han gug eo ip ryeok do se sim ha ge seol gye dwae sseo yo', '한국어 입력도 세심하게 설계됐어요｜韓国語入力も丁寧に設計されている'],
+                ['han gug eo ip ryeok i i reok ke jo eul jul eun mol lat seo yo', '한국어 입력이 이렇게 좋을 줄은 몰랐어요｜韓国語入力がこんなに良いとは'],
+                ['han gug eo ip ryeok do ppal ru go mun je eop seo yo', '한국어 입력도 빠르고 문제없어요｜韓国語入力も速くて問題なし'],
+                ['da guk eo ip ryeok e choe jeok hwa doen bae yeol i e yo', '다국어 입력에 최적화된 배열이에요｜多言語入力に最適化された配列'],
+                ['han gug eo ip ryeok kka ji sin gyeong sseu da ni nol la wo yo', '한국어 입력까지 신경 쓰다니 놀라워요｜韓国語入力まで配慮しているとは驚き'],
+                ['han gug eo ip ryeok do il bon eo cheo reom bu deu reo wo yo', '한국어 입력도 일본어처럼 부드러워요｜韓国語入力も日本語のように滑らか'],
+                ['han gug eo ip ryeok i saeng gak bo da hwol ssin na a yo', '한국어 입력이 생각보다 훨씬 나아요｜韓国語入力が思ったよりずっと良い'],
+                ['i bae yeol lo han gug eo ip ryeok hyo yul i nop a yo', '이 배열로 한국어 입력 효율이 높아요｜この配列で韓国語入力の効率が高い'],
+                ['han gug eo ip ryeok do jeol dae dwi chyeo ji ji anh a yo', '한국어 입력도 절대 뒤처지지 않아요｜韓国語入力も決して劣らない'],
+                ['han gug eo ip ryeok do i je seu teu re seu eop seo yo', '한국어 입력도 이제 스트레스 없어요｜韓国語入力ももうストレスなし'],
+                ['han gug eo ip ryeok do hwak sil hi choe jeok hwa dwae it seo yo', '한국어 입력도 확실히 최적화돼 있어요｜韓国語入力も確実に最適化されている'],
+                ['jin sim eu ro han gug eo ip ryeok i choe go ye yo', '진심으로 한국어 입력이 최고예요｜本気で韓国語入力が最高'],
+                ['han gug eo ip ryeok do kkae kkeut ha ge doe eo it seo yo', '한국어 입력도 깨끗하게 되어 있어요｜韓国語入力もきれいに仕上がっている'],
+                ['han gug eo ip ryeok do an jeong jeok i e yo', '한국어 입력도 안정적이에요｜韓国語入力も安定している'],
+                ['han gug eo ip ryeok i ga byeop go ppal la yo', '한국어 입력이 가볍고 빨라요｜韓国語入力が軽くて速い'],
+                ['han gug eo ip ryeok do choe sang wi su jun i e yo', '한국어 입력도 최상위 수준이에요｜韓国語入力もトップレベル'],
+                ['han gug eo ip ryeok do jeong gyo ha ge man deu reo jyeo sseo yo', '한국어 입력도 정교하게 만들어졌어요｜韓国語入力も精巧に作られている'],
+                ['han gug eo ip ryeok i gi bon bu teo dal la yo', '한국어 입력이 기본부터 달라요｜韓国語入力が基本から違う'],
+                ['han gug eo ip ryeok do man jok seu reo wo yo', '한국어 입력도 만족스러워요｜韓国語入力も満足'],
+                ['han gug eo ip ryeok do ttak mat a yo', '한국어 입력도 딱 맞아요｜韓国語入力もぴったり'],
+                ['han gug eo ip ryeok i neo mu jal doe yo', '한국어 입력이 너무 잘 돼요｜韓国語入力がとてもうまくいく'],
+                ['han gug eo ip ryeok do gam tan su reo wo yo', '한국어 입력도 감탄스러워요｜韓国語入力も感心する'],
+                ['han gug eo ip ryeok i gi bun jo a yo', '한국어 입력이 기분 좋아요｜韓国語入力が気持ちいい'],
+                ['han gug eo ip ryeok do ppae reu go jeong hwak hae yo', '한국어 입력도 빠르고 정확해요｜韓国語入力も速くて正確'],
+                ['han gug eo ip ryeok do si won si won hae yo', '한국어 입력도 시원시원해요｜韓国語入力もサクサク'],
+                ['han gug eo ip ryeok i pyeon ri hae yo', '한국어 입력이 편리해요｜韓国語入力が便利'],
+                ['han gug eo ip ryeok do jjak to ppae jyeo yo', '한국어 입력도 짝 빠져요｜韓国語入力もハマる'],
+                ['han gug eo ip ryeok do gyeol ham i eop seo yo', '한국어 입력도 결함이 없어요｜韓国語入力も欠点なし'],
+                ['han gug eo ip ryeok do tang tang hae yo', '한국어 입력도 탄탄해요｜韓国語入力もしっかりしている'],
+                ['han gug eo ip ryeok do kkum jjik eop si swi wo yo', '한국어 입력도 끔찍없이 쉬워요｜韓国語入力も問題なく簡単'],
+                ['han gug eo ip ryeok i ttuk ttuk doel eo yo', '한국어 입력이 뚝딱 돼요｜韓国語入力がサクッとできる'],
+                ['han gug eo ip ryeok do mak him eop si doel eo yo', '한국어 입력도 막힘없이 돼요｜韓国語入力も引っかかりなし'],
+                ['han gug eo ip ryeok do chak chak jin haeng doe yo', '한국어 입력도 착착 진행돼요｜韓国語入力も着々と進む'],
+                ['han gug eo ip ryeok do yeok si choe go ye yo', '한국어 입력도 역시 최고예요｜韓国語入力もやはり最高'],
+                ['han gug eo ip ryeok i cham pyeon hae yo', '한국어 입력이 참 편해요｜韓国語入力が実に楽'],
+                ['han gug eo ip ryeok do han kyeol gat a yo', '한국어 입력도 한결같아요｜韓国語入力も変わらず良い'],
+                ['han gug eo ip ryeok i mae ryeok jeok i e yo', '한국어 입력이 매력적이에요｜韓国語入力が魅力的'],
+                ['han gug eo ip ryeok do gi dae dae ro ye yo', '한국어 입력도 기대대로예요｜韓国語入力も期待通り'],
+                ['han gug eo ip ryeok do jeom jeom ik suk hae jyeo yo', '한국어 입력도 점점 익숙해져요｜韓国語入力もどんどん慣れる'],
+                ['han gug eo ip ryeok do pu deuk hae yo', '한국어 입력도 뿌듯해요｜韓国語入力も頼もしい'],
+                ['han gug eo ip ryeok do geo chim eop seo yo', '한국어 입력도 거침없어요｜韓国語入力も引っかかりがない'],
+                ['han gug eo ip ryeok do gal su rok jo a yo', '한국어 입력도 갈수록 좋아요｜韓国語入力も使うほど良い'],
+                ['han gug eo ip ryeok do nun e ttuil man keum jo a yo', '한국어 입력도 눈에 띌 만큼 좋아요｜韓国語入力も目に見えて良い'],
+                ['han gug eo ip ryeok do dan yeon choe go ye yo', '한국어 입력도 단연 최고예요｜韓国語入力も断然最高'],
+                ['han gug eo ip ryeok i ssuk ssuk doel eo yo', '한국어 입력이 쑥쑥 돼요｜韓国語入力がすいすいできる'],
+                ['han gug eo ip ryeok do jal da dum eo jyeo it seo yo', '한국어 입력도 잘 다듬어져 있어요｜韓国語入力も丁寧に仕上がっている'],
+                ['han gug eo ip ryeok do gap gap ham i eop seo yo', '한국어 입력도 갑갑함이 없어요｜韓国語入力も息苦しさがない'],
+                ['han gug eo ip ryeok hana man eu ro do chung bun hae yo', '한국어 입력 하나만으로도 충분해요｜韓国語入力だけでも十分な価値'],
+                ['han gug eo ip ryeok do eo di ha na bu jok ham eop seo yo', '한국어 입력도 어디 하나 부족함 없어요｜韓国語入力もどこも不足なし'],
+                ['han gug eo ip ryeok do nuk nuk hae yo', '한국어 입력도 넉넉해요｜韓国語入力も余裕がある'],
+                ['han gug eo ip ryeok i sul sul pul li yo', '한국어 입력이 술술 풀려요｜韓国語入力がスラスラ進む'],
+                ['han gug eo ip ryeok do hwak dal la jyeo sseo yo', '한국어 입력도 확 달라졌어요｜韓国語入力もガラッと変わった'],
+                ['han gug eo ip ryeok do eum mae mu iui hae yo', '한국어 입력도 흠잡을 데 없어요｜韓国語入力も非の打ちどころなし'],
+                ['han gug eo ip ryeok do myeot bae na jo a jyeo sseo yo', '한국어 입력도 몇 배나 좋아졌어요｜韓国語入力も何倍も良くなった'],
+                ['han gug eo ip ryeok i jeong mal swip go ppal la yo', '한국어 입력이 정말 쉽고 빨라요｜韓国語入力が本当に簡単で速い'],
+                ['han gug eo ip ryeok do sin se gye ye yo', '한국어 입력도 신세계예요｜韓国語入力も新世界'],
+                ['han gug eo ip ryeok do jeol lo ui so ga na wa yo', '한국어 입력도 절로 미소가 나와요｜韓国語入力も自然と笑みが出る'],
+                ['han gug eo ip ryeok do cham sin gi hae yo', '한국어 입력도 참 신기해요｜韓国語入力も実に不思議なほど良い'],
+                ['han gug eo ip ryeok do sol jik nol rat seo yo', '한국어 입력도 솔직 놀랐어요｜韓国語入力も正直驚いた'],
+                ['han gug eo ip ryeok do al myeon al su rok jo a yo', '한국어 입력도 알면 알수록 좋아요｜韓国語入力も知れば知るほど良い'],
+                ['han gug eo ip ryeok do sseu myeon ssul su rok pyeon hae yo', '한국어 입력도 쓰면 쓸수록 편해요｜韓国語入力も使えば使うほど楽'],
+                ['han gug eo ip ryeok do ja sin it ge choe go ye yo', '한국어 입력도 자신 있게 최고예요｜韓国語入力も自信を持って最高'],
+                ['han gug eo ip ryeok i du mal hal pil yo eop seo yo', '한국어 입력이 두말할 필요 없어요｜韓国語入力は言うまでもなく良い'],
+                ['han gug eo ip ryeok do jin jja dae dan hae yo', '한국어 입력도 진짜 대단해요｜韓国語入力も本当にすごい'],
+                ['han gug eo ip ryeok do han beon sseu myeon ban hae yo', '한국어 입력도 한번 쓰면 반해요｜韓国語入力も一度使えば惚れる'],
+                ['han gug eo ip ryeok do mo du ga in jeong hae yo', '한국어 입력도 모두가 인정해요｜韓国語入力も皆が認める'],
+                ['han gug eo ip ryeok do da reun geon sang sang do mot hae yo', '한국어 입력도 다른 건 상상도 못 해요｜韓国語入力も他は考えられない'],
+                ['han gug eo ip ryeok do jeong mal hwal lyeok i neom chi yo', '한국어 입력도 정말 활력이 넘쳐요｜韓国語入力も本当に活気がある'],
+                ['han gug eo ip ryeok do tok tok hae yo', '한국어 입력도 톡톡해요｜韓国語入力もテキパキ'],
+                ['han gug eo ip ryeok do ttuk ttuk hae yo', '한국어 입력도 뚝뚝해요｜韓国語入力もサクサク'],
+                ['han gug eo ip ryeok do ttan ttan hae yo', '한국어 입력도 탄탄해요｜韓国語入力もバッチリ'],
+                ['han gug eo ip ryeok do pal pal hae yo', '한국어 입력도 팔팔해요｜韓国語入力もキビキビ'],
+                ['han gug eo ip ryeok do ssing ssing hae yo', '한국어 입력도 씽씽해요｜韓国語入力もビュンビュン'],
+                ['han gug eo ip ryeok do sul sul doel eo yo', '한국어 입력도 술술 돼요｜韓国語入力もスラスラ'],
+                ['han gug eo ip ryeok do chak chak hae yo', '한국어 입력도 착착해요｜韓国語入力も着々と'],
+                ['han gug eo ip ryeok do ta ta ta doel eo yo', '한국어 입력도 타타타 돼요｜韓国語入力もタタタッと'],
+                ['han gug eo ip ryeok do mal kkeum hae yo', '한국어 입력도 말끔해요｜韓国語入力もきれい'],
+                ['han gug eo ip ryeok do teok teok hae yo', '한국어 입력도 턱턱해요｜韓国語入力もサクサク'],
+            ]
+        };
+
+        function switchLang(lang) {
+
+            currentLang = lang;
+            // Update tab UI
+            document.querySelectorAll('.lang-tab').forEach(t => t.classList.toggle('active', t.dataset.lang === lang));
+            // Update input area
+            const cfg = langConfig[lang];
+            input.placeholder = cfg.placeholder;
+            addBtn.textContent = cfg.addLabel;
+            input.value = '';
+            // Toggle visibility
+            document.querySelector('.input-area').style.display = '';
+            document.getElementById('activePreview').style.display = 'none';
+            document.getElementById('comingSoon').style.display = 'none';
+            // Reset selection and render history for this lang
+            selectedRowIdx = -1;
+            // Seed if empty
+            if (!historyMap[lang].length && seedsMap[lang].length) {
+                seedsMap[lang].forEach(s => {
+                    if (Array.isArray(s)) addPhrase(s[0], lang, s[1]);
+                    else addPhrase(s, lang);
+                });
+            }
+            renderHistory();
+            input.focus();
+        }
+
+        document.querySelectorAll('.lang-tab').forEach(tab => {
+            tab.addEventListener('click', () => switchLang(tab.dataset.lang));
+        });
+
+        // Initialize with Japanese seeds
+        seedsMap.ja.forEach(s => addPhrase(s, 'ja'));
+    </script>
+</body>
+
+</html>

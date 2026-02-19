@@ -4,12 +4,207 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>大和配列 | honjoh.dev</title>
+    <title>C2 — Spacious / Generous | 大和配列</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="/works/yamato/B.css">
+    <link rel="stylesheet" href="B.css">
+    <style>
+        /* ── C2 Overrides: Spacious / Generous ──
+           Larger body text, wider line-height,
+           more vertical breathing room everywhere.
+        */
+
+        .page {
+            padding: 36px 24px 32px;
+            width: min(1060px, 92vw);
+        }
+
+        /* Header: more space below, larger text */
+        .header {
+            padding-bottom: 16px;
+        }
+
+        .quest {
+            font-size: 16px;
+            font-weight: 400;
+            letter-spacing: .06em;
+        }
+
+        .tagline {
+            font-size: 15px;
+            font-weight: 300;
+            letter-spacing: .03em;
+        }
+
+        /* Progress nav: more gap, bigger labels */
+        .progress-nav {
+            gap: 6px;
+        }
+
+        .prog-seg {
+            height: 4px;
+            border-radius: 3px;
+        }
+
+        .prog-label {
+            font-size: 15px;
+            font-weight: 400;
+            letter-spacing: .03em;
+            padding: 4px 0;
+        }
+
+        /* Content area: generous gap */
+        .content-area {
+            gap: 48px;
+        }
+
+        /* Text zone: taller for breathing room */
+        .text-zone {
+            height: 220px;
+        }
+
+        /* Intro slides: more gap between elements */
+        .intro-slide {
+            gap: 14px;
+        }
+
+        /* Slide heading: same size but more vertical space */
+        .slide-heading {
+            height: 60px;
+        }
+
+        .slide-heading .title {
+            font-size: clamp(30px, 4.2vw, 52px);
+            font-weight: 700;
+            letter-spacing: .07em;
+        }
+
+        .slide-heading .h3 {
+            font-size: clamp(17px, 2.2vw, 24px);
+            font-weight: 600;
+            letter-spacing: .03em;
+        }
+
+        /* Slide body: larger text, more generous line-height */
+        .slide-body {
+            font-size: clamp(15px, 1.6vw, 18px);
+            line-height: 1.9;
+            max-width: 640px;
+            min-height: 56px;
+        }
+
+        /* Prompt characters */
+        .prompt-cell {
+            min-width: clamp(44px, 6.5vw, 72px);
+            gap: 6px;
+        }
+
+        .prompt-cell .ja {
+            font-size: clamp(30px, 4vw, 48px);
+        }
+
+        .prompt-cell .ro {
+            font-size: clamp(16px, 1.8vw, 22px);
+        }
+
+        /* Resources: more padding, bigger text */
+        .res-list {
+            gap: 16px;
+            max-width: 640px;
+        }
+
+        .res-item {
+            padding: 18px 22px;
+            gap: 16px;
+            border-radius: 10px;
+        }
+
+        .res-icon {
+            font-size: 20px;
+        }
+
+        .res-body {
+            gap: 6px;
+        }
+
+        .res-title {
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .res-meta {
+            font-size: 13.5px;
+            line-height: 1.3;
+        }
+
+        /* FAQ: more generous */
+        .faq-section {
+            max-width: 640px;
+            margin-top: 32px;
+            padding-top: 24px;
+        }
+
+        .faq-title {
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+
+        .faq-item {
+            padding: 18px 22px;
+            border-radius: 10px;
+        }
+
+        .faq-item+.faq-item {
+            margin-top: 12px;
+        }
+
+        .faq-q {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .faq-a {
+            font-size: 15px;
+            font-weight: 300;
+            line-height: 1.85;
+        }
+
+        /* Footer: more padding */
+        .footer {
+            padding-top: 20px;
+        }
+
+        .nav-hint {
+            font-size: 14px;
+        }
+
+        .brand {
+            font-size: 15px;
+        }
+
+        /* Nav buttons */
+        .nav-btn {
+            font-size: 15px;
+            padding: 8px 20px;
+            border-radius: 8px;
+        }
+
+        /* Split label */
+        .split-label {
+            font-size: 15px;
+        }
+
+        /* Typing compare title */
+        .tc-panel .tc-title {
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+    </style>
 </head>
 
 <body>
@@ -115,8 +310,8 @@
         </footer>
     </div>
 
-    <script src="/works/yamato/typing-compare.js"></script>
-    <script src="/works/yamato/B.js"></script>
+    <script src="typing-compare.js"></script>
+    <script src="B.js"></script>
 </body>
 
 </html>

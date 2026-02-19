@@ -122,6 +122,101 @@
         });
     }
 
+    // --- Language Word Data (for typing-compare slides) ---
+    const LANG_WORDS = {
+        ja: {
+            phrase: '日本語入力に最適化された配列',
+            word: [
+                { ja: '', r: ['N', 'I'] }, { ja: '', r: ['H', 'O'] }, { ja: '', r: ['N'] },
+                { ja: '', r: ['G', 'O'] }, { ja: '', r: ['N', 'Y', 'U'] }, { ja: '', r: ['U'] },
+                { ja: '', r: ['R', 'Y', 'O'] }, { ja: '', r: ['K', 'U'] },
+                { ja: '', r: ['N', 'I'] }, { ja: '', r: ['S', 'A'] }, { ja: '', r: ['I'] },
+                { ja: '', r: ['T', 'E'] }, { ja: '', r: ['K', 'I'] }, { ja: '', r: ['K', 'A'] },
+                { ja: '', r: ['S', 'A'] }, { ja: '', r: ['R', 'E'] }, { ja: '', r: ['T', 'A'] },
+                { ja: '', r: ['H', 'A'] }, { ja: '', r: ['I'] }, { ja: '', r: ['R', 'E'] },
+                { ja: '', r: ['T', 'U'] }
+            ],
+        },
+        en: {
+            phrase: '英語入力も同様に最適化されています',
+            word: [
+                { ja: '', r: ['E', 'N', 'G', 'L', 'I', 'S', 'H'] },
+                { ja: '', r: ['I', 'N', 'P', 'U', 'T'] },
+                { ja: '', r: ['I', 'S'] },
+                { ja: '', r: ['O', 'P', 'T', 'I', 'M', 'I', 'Z', 'E', 'D'] },
+                { ja: '', r: ['O', 'N'] },
+                { ja: '', r: ['T', 'H', 'I', 'S'] },
+                { ja: '', r: ['T', 'O', 'O'] }
+            ],
+        },
+        zh: {
+            phrase: '中文打字也很輕鬆（中国語入力もラクラク）',
+            word: [
+                { ja: '', r: ['Z', 'H', 'O', 'N', 'G'] },
+                { ja: '', r: ['W', 'E', 'N'] },
+                { ja: '', r: ['D', 'A'] },
+                { ja: '', r: ['Z', 'I'] },
+                { ja: '', r: ['Y', 'E'] },
+                { ja: '', r: ['H', 'E', 'N'] },
+                { ja: '', r: ['Q', 'I', 'N', 'G'] },
+                { ja: '', r: ['S', 'O', 'N', 'G'] }
+            ]
+        },
+        ko: {
+            phrase: '한국어 입력도 턱턱해요（韓国語入力もサクサク）',
+            word: [
+                { ja: '', r: ['H', 'A', 'N'] },
+                { ja: '', r: ['G', 'U', 'G'] },
+                { ja: '', r: ['E', 'O'] },
+                { ja: '', r: ['I', 'P'] },
+                { ja: '', r: ['R', 'Y', 'E', 'O', 'K'] },
+                { ja: '', r: ['D', 'O'] },
+                { ja: '', r: ['T', 'E', 'O', 'K'] },
+                { ja: '', r: ['T', 'E', 'O', 'K'] },
+                { ja: '', r: ['H', 'A', 'E'] },
+                { ja: '', r: ['Y', 'O'] }
+            ]
+        }
+    };
+
+    // Stats calculation (from word data)
+    function calcStats(flat, fm, hm, homeRowKeys) {
+        let moves = 0, homeHits = 0;
+        const fingerPos = {};
+        for (let f = 0; f < 8; f++) fingerPos[f] = hm[f];
+        for (let i = 0; i < flat.length; i++) {
+            const key = flat[i], finger = fm[key];
+            if (homeRowKeys.has(key)) homeHits++;
+            if (fingerPos[finger] !== key) moves++;
+            fingerPos[finger] = key;
+            const next = i + 1 < flat.length ? flat[i + 1] : null;
+            if (next && fm[next] !== finger && hm[finger] !== key) {
+                moves++;
+                fingerPos[finger] = hm[finger];
+            }
+        }
+        return { home: Math.round(homeHits / flat.length * 100) + '%', moves: '' + moves };
+    }
+
+    // --- Onishi Layout Data ---
+    const ONISHI_R = [
+        [['Q'], ['L'], ['U'], [','], ['.'], ['F'], ['W'], ['R'], ['Y'], ['P'], [' '], [' ']],
+        [['E'], ['I'], ['A'], ['O', 1], ['-'], ['K'], ['T'], ['N'], ['S', 1], ['H'], [' ']],
+        [['Z'], ['X'], ['C'], ['V'], [';'], ['G'], ['D'], ['M'], ['J'], ['B']]
+    ];
+    const ONISHI_H = { 0: 'E', 1: 'I', 2: 'A', 3: 'O', 4: 'K', 5: 'T', 6: 'N', 7: 'S' };
+    const ONISHI_F = {
+        Q: 0, E: 0, Z: 0,
+        L: 1, I: 1, X: 1,
+        U: 2, A: 2, C: 2,
+        ',': 3, '.': 3, O: 3, '-': 3, V: 3,
+        F: 4, K: 4, ';': 4, G: 4,
+        W: 5, T: 5, D: 5,
+        R: 6, N: 6, M: 6,
+        Y: 7, P: 7, S: 7, H: 7, J: 7, B: 7
+    };
+    const ONISHI_PATH_COLOR = 'hsl(30 100% 50%)';
+
     // --- Slide Data ---
     const SLIDES = [
         {
@@ -193,9 +288,42 @@
             states: { 1: { 6: 'ra', 7: 'ra', 8: 'ra', 9: 'ra' }, 2: { 6: 'ra' } }
         },
         {
-            h3: '打鍵パス比較',
-            body: 'Space / Click でリプレイ',
-            kb: 'typing-compare'
+            h3: '🇯🇵 打鍵パス比較（日本語）',
+            body: '日本語入力に最適化された配列',
+            kb: 'typing-compare',
+            lang: 'ja'
+        },
+        {
+            h3: '🇺🇸 打鍵パス比較（English）',
+            body: '英語入力も同様に最適化されています',
+            kb: 'typing-compare',
+            lang: 'en'
+        },
+        {
+            h3: '🇨🇳 打鍵パス比較（中文）',
+            body: '中文打字也很輕鬆（中国語入力もラクラク）',
+            kb: 'typing-compare',
+            lang: 'zh'
+        },
+        {
+            h3: '🇰🇷 打鍵パス比較（한국어）',
+            body: '한국어 입력도 턱턱해요（韓国語入力もサクサク）',
+            kb: 'typing-compare',
+            lang: 'ko'
+        },
+        {
+            h3: '🇯🇵 大西配列 vs 大和配列（日本語）',
+            body: '大西配列との比較（日本語入力）',
+            kb: 'typing-compare',
+            lang: 'ja',
+            leftLayout: 'onishi'
+        },
+        {
+            h3: '🇺🇸 大西配列 vs 大和配列（English）',
+            body: '大西配列との比較（英語入力）',
+            kb: 'typing-compare',
+            lang: 'en',
+            leftLayout: 'onishi'
         },
     ];
     const T = SLIDES.length;
@@ -246,8 +374,37 @@
     }
 
     // --- Typing Compare Integration ---
-    function renderTypingCompare(el) {
+    function renderTypingCompare(el, lang, leftLayoutId) {
+        const langData = LANG_WORDS[lang || 'ja'];
+
+        // Configure left layout
+        if (leftLayoutId === 'onishi') {
+            TypingCompare.setLeftLayout({
+                name: '大西配列',
+                className: 'tc-o',
+                rows: ONISHI_R,
+                fingerMap: ONISHI_F,
+                homeMap: ONISHI_H,
+                pathColor: ONISHI_PATH_COLOR
+            });
+        } else {
+            TypingCompare.resetLeftLayout();
+            // Restore QWERTY path color
+            TypingCompare.setColors(_cv('--k-q-tx'), _cv('--accent'), _cv('--k-r-tx'));
+        }
+
+        const flat = langData.word.flatMap(c => c.r);
+        const cfg = TypingCompare.getConfig();
+        const qHomeRow = new Set(cfg.QR[1].map(k => k[0]));
+        const yHomeRow = new Set(cfg.YR[1].map(k => k[0]));
+        const qStats = calcStats(flat, cfg.QF, cfg.QH, qHomeRow);
+        const yStats = calcStats(flat, cfg.YF, cfg.YH, yHomeRow);
+        TypingCompare.configure({
+            word: langData.word,
+            stats: { qHome: qStats.home, qMoves: qStats.moves, yHome: yStats.home, yMoves: yStats.moves }
+        });
         el.innerHTML = TypingCompare.renderHTML();
+        document.getElementById('tcPhrase').textContent = langData.phrase || '';
         el.style.cursor = 'pointer';
         el.onclick = () => {
             if (curSec === 0 && SLIDES[curSlide]?.kb === 'typing-compare') {
@@ -264,7 +421,7 @@
             const s = SLIDES[curSlide];
             if (s.kb === 'typing-compare') {
                 TypingCompare.stop();
-                renderTypingCompare(kbZone);
+                renderTypingCompare(kbZone, s.lang, s.leftLayout);
             } else {
                 TypingCompare.stop();
                 renderKB(kbZone, s.kb || 'normal', s.states);

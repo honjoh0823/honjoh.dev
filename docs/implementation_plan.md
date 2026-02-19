@@ -1,46 +1,47 @@
-# A.html カラー整理
+# 多言語打鍵パス比較スライドの追加
 
-## 目的
-- A.html 内の全カラーを CSS 変数化し、デザインカタログ作成の土台を整える
+## 概要
+日本語(#13)の後に、英語・中国語・韓国語の打鍵パス比較スライドを追加する。
 
-## 現状
+## 設計方針
 
-### 変数化済み（`:root`、145行）
-- サイト基本色：`--bg`, `--ink`, `--soft`, `--accent`, `--accent-dim`, `--line`
-- キー状態色：`--k-n-*`, `--k-l-*`, `--k-la-*`, `--k-r-*`, `--k-ra-*`, `--k-rn-*`, `--k-q-*`, `--k-qn-*`
-- ヒートマップ：`--h1~10-*`, `--hl1~10-*`, `--hr1~10-*`
-- プログレスバー：`--prog-track`, `--prog-fill`
+### TypingCompareモジュールのリファクタ
+- 現在: 1つのWORD/QF/YFがハードコード → **言語設定を外部から注入可能に**
+- `TypingCompare.configure({ word, qf, yf, stats })` メソッド追加
+- B.jsのSLIDES配列で言語別の設定を指定
 
-### ハードコード（CSS・JS・インライン）
+### 作業順序（1言語ずつ）
+1. **英語** `english input is nice too` — 最もシンプル（ローマ字変換なし）
+2. **中国語** `zhong wen da zi ye hen qing song` — Pinyinベースで英語と同構造
+3. **韓国語** `han gug eo ip ryeok do teok teok hae yo` — ローマ字入力として処理
 
-| 色 | 用途 | 提案変数名 |
-|---|---|---|
-| `#aaa` | quest em, tagline | `--ink-mid` |
-| `#444` | prog-label, tc-roma | `--ink-muted` |
-| `#666` | prog-label:hover, tc-pressing border | `--ink-dim` |
-| `#888` | nav-btn, nav-hint kbd | `--ink-soft` |
-| `#333` | nav-btn border, nav-hint kbd border | `--border-subtle` |
-| `#ddd` | tc-pressing text | `--ink-bright` |
-| `#555` | tc-key text, inline style | `--ink-muted-alt`（`--k-n-tx` と同値、統合可） |
-| `#1a1a1e` | nav-hint kbd bg | `--prog-track` と同値、再利用可 |
-| `#2a2a2a` | tc-roma done | `--ink-ghost` |
-| `#2a2a30` | tc-pressing bg | 変数化不要（tc専用、後述） |
-| `#1e1e22`, `#383840` | tc-pressed | `--tc-pressed-bg`, `--tc-pressed-bd` |
-| `#181610`, `#302a1c`, `#5a4e38` | tc-q pressed | `--tc-q-pressed-bg/bd/tx` |
-| `#b89060` (JS) | QWERTY パスライン色 | `--tc-q-path` |
-| `#6898c8` (JS) | Yamato 左手パスライン色 | `--accent`と同値、変数参照不可→変数化 |
-| `#c86898` (JS) | Yamato 右手パスライン色 | `--tc-y-path-r` |
-| rgba群 | ボックスシャドウ・グロー・背景 | カテゴリ別に変数化 |
+### Phase 1: 英語のdebug-animation.html作成
 
-## 変更方針
-1. `:root` に不足している変数を追加（上表の「提案変数名」）
-2. CSS ルール内のハードコードを変数参照に置換
-3. JS 内のカラー定数を `:root` から `getComputedStyle` で取得、または JS 定数として上部に集約
-4. rgba のうちベースカラーが既存変数と同じものは、opacity だけが異なるので変数名で管理
+#### [MODIFY] [typing-compare.js](file:///d:/honjoh.dev/public/works/yamato/typing-compare.js)
+- `configure(config)` メソッド追加（WORD, QF, YF, stats, labelを動的に設定可能に）
+- デフォルトは現在の日本語データを維持
 
-## 変更対象
-- `A.html` のみ（`<style>` + `<script>` 内）
+#### [MODIFY] [debug-animation.html](file:///d:/honjoh.dev/public/works/yamato/debug-animation.html)
+- 英語用のWORD/QF/YFデータで動作確認
+- データ: `english input is nice too`
+  - 各文字 = 1キー（e, n, g, l, i, s, h, スペースはスキップ, i, n, p, u, t, ...）
+  - 単語間はスペースなし（表示上は単語ごとにグループ化）
+
+## 英語テキストの分解
+
+```
+english input is nice too
+```
+
+単語ごとにグループ化（スペースは打鍵パスに含めない）:
+- english: E, N, G, L, I, S, H
+- input: I, N, P, U, T
+- is: I, S
+- nice: N, I, C, E
+- too: T, O, O
 
 ## 検証
-- ブラウザで `#1` ～ `#13` 全スライドを目視確認（色が変わっていないこと）
-- ユーザーに確認依頼
+- `debug-animation.html` をブラウザで開き、← → キーでステップ実行
+- 各キーのfinger mapping（QWERTY/Yamato）が正しいか確認
+- パスの描画が正しいか確認
+- ユーザーに目視確認を依頼

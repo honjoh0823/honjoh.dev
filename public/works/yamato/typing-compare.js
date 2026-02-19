@@ -4,34 +4,62 @@
  */
 const TypingCompare = (() => {
     // --- Layout Data ---
-    const QR = [
+    // QWERTY (default left layout)
+    const QWERTY_R = [
         [['Q'], ['W'], ['E'], ['R'], ['T'], ['Y'], ['U'], ['I'], ['O'], ['P'], ['['], [']']],
         [['A'], ['S'], ['D'], ['F', 1], ['G'], ['H'], ['J', 1], ['K'], ['L'], [';'], ["'"]],
         [['Z'], ['X'], ['C'], ['V'], ['B'], ['N'], ['M'], [','], ['.'], ['/']]
     ];
+    const QWERTY_H = { 0: 'A', 1: 'S', 2: 'D', 3: 'F', 4: 'J', 5: 'K', 6: 'L', 7: ';' };
+    const QWERTY_F = {
+        Q: 0, A: 0, Z: 0,
+        W: 1, S: 1, X: 1,
+        E: 2, D: 2, C: 2,
+        R: 3, T: 3, F: 3, G: 3, V: 3, B: 3,
+        Y: 4, H: 4, N: 4, U: 4, J: 4, M: 4,
+        I: 5, K: 5,
+        O: 6, L: 6,
+        P: 7
+    };
+
+    // Yamato (fixed right layout)
     const YR = [
         [['M'], ['Y'], ['R'], ['W'], ['P'], ['X'], ['L'], ['Q'], ['C'], ["'"], ['['], [']']],
         [['K'], ['S'], ['T'], ['N', 1], ['H'], ['F'], ['A', 1], ['O'], ['I'], ['E'], ['/']],
         [['Z'], ['D'], ['B'], ['G'], ['J'], ['V'], ['U'], ['-'], [','], ['.']]
     ];
-
-    // Home position keys per finger (index 0-7)
-    const QH = { 0: 'A', 1: 'S', 2: 'D', 3: 'F', 4: 'J', 5: 'K', 6: 'L', 7: ';' };
     const YH = { 0: 'K', 1: 'S', 2: 'T', 3: 'N', 4: 'A', 5: 'O', 6: 'I', 7: 'E' };
+    const YF = {
+        M: 0, K: 0, Z: 0,
+        Y: 1, S: 1, D: 1,
+        R: 2, T: 2, B: 2,
+        W: 3, P: 3, N: 3, H: 3, G: 3, J: 3,
+        X: 4, L: 4, F: 4, A: 4, V: 4, U: 4,
+        Q: 5, O: 5,
+        C: 6, I: 6,
+        E: 7
+    };
 
-    // Key-to-finger mapping
-    const QF = { N: 4, I: 5, H: 4, O: 6, A: 0, T: 3, U: 4 };
-    const YF = { N: 3, I: 6, H: 3, O: 5, A: 4, T: 2, U: 4 };
+    // Configurable left layout (defaults to QWERTY)
+    let LR = QWERTY_R, LF = QWERTY_F, LH = QWERTY_H;
+    let leftTitle = 'QWERTY', leftClass = 'tc-q';
 
-    // Demo word: にほんのなつはほんとうにあつい
-    const WORD = [
+    // --- Configurable word data ---
+    const DEFAULT_WORD = [
         { ja: 'に', r: ['N', 'I'] }, { ja: 'ほ', r: ['H', 'O'] }, { ja: 'ん', r: ['N'] },
-        { ja: 'の', r: ['N', 'O'] }, { ja: 'な', r: ['N', 'A'] }, { ja: 'つ', r: ['T', 'U'] },
-        { ja: 'は', r: ['H', 'A'] }, { ja: 'ほ', r: ['H', 'O'] }, { ja: 'ん', r: ['N'] },
-        { ja: 'と', r: ['T', 'O'] }, { ja: 'う', r: ['U'] }, { ja: 'に', r: ['N', 'I'] },
-        { ja: 'あ', r: ['A'] }, { ja: 'つ', r: ['T', 'U'] }, { ja: 'い', r: ['I'] }
+        { ja: 'ご', r: ['G', 'O'] }, { ja: 'にゅ', r: ['N', 'Y', 'U'] }, { ja: 'う', r: ['U'] },
+        { ja: 'りょ', r: ['R', 'Y', 'O'] }, { ja: 'く', r: ['K', 'U'] },
+        { ja: 'に', r: ['N', 'I'] }, { ja: 'さ', r: ['S', 'A'] }, { ja: 'い', r: ['I'] },
+        { ja: 'て', r: ['T', 'E'] }, { ja: 'き', r: ['K', 'I'] }, { ja: 'か', r: ['K', 'A'] },
+        { ja: 'さ', r: ['S', 'A'] }, { ja: 'れ', r: ['R', 'E'] }, { ja: 'た', r: ['T', 'A'] },
+        { ja: 'は', r: ['H', 'A'] }, { ja: 'い', r: ['I'] }, { ja: 'れ', r: ['R', 'E'] },
+        { ja: 'つ', r: ['T', 'U'] }
     ];
-    const FLAT = WORD.flatMap(c => c.r);
+    const DEFAULT_STATS = { qHome: '25%', qMoves: '30', yHome: '75%', yMoves: '12' };
+
+    let WORD = DEFAULT_WORD;
+    let FLAT = WORD.flatMap(c => c.r);
+    let STATS = DEFAULT_STATS;
 
     // Animation timing
     const DUR = 4000;
@@ -118,13 +146,13 @@ const TypingCompare = (() => {
 
     function reset() {
         step = -1;
-        const wQ = document.getElementById('tcWQ'), wY = document.getElementById('tcWY');
-        const sQ = document.getElementById('tcSQ'), sY = document.getElementById('tcSY');
+        const wQ = document.getElementById('tcWL'), wY = document.getElementById('tcWY');
+        const sQ = document.getElementById('tcSL'), sY = document.getElementById('tcSY');
         if (!wQ || !wY) return;
         document.querySelectorAll('.tc-key').forEach(k => k.classList.remove('tc-pressing', 'tc-pressed'));
         sQ.innerHTML = ''; sY.innerHTML = '';
         svgSetup(sQ, wQ); svgSetup(sY, wY);
-        [{ d: qd, p: qp, h: QH, m: qm, w: wQ }, { d: yd, p: yp, h: YH, m: ym, w: wY }].forEach(({ d, p, h, m, w }) => {
+        [{ d: qd, p: qp, h: LH, m: qm, w: wQ }, { d: yd, p: yp, h: YH, m: ym, w: wY }].forEach(({ d, p, h, m, w }) => {
             for (let f = 0; f < 8; f++) {
                 if (!d[f] || !h[f] || !m[h[f]]) continue;
                 const ps = ctr(m[h[f]], w); p[f] = { ...ps };
@@ -137,17 +165,44 @@ const TypingCompare = (() => {
 
     function stepFwd() {
         if (!active) return;
-        const wQ = document.getElementById('tcWQ'), wY = document.getElementById('tcWY');
-        const sQ = document.getElementById('tcSQ'), sY = document.getElementById('tcSY');
+        const wQ = document.getElementById('tcWL'), wY = document.getElementById('tcWY');
+        const sQ = document.getElementById('tcSL'), sY = document.getElementById('tcSY');
         if (!wQ) return;
 
         if (step >= 0) {
             const prev = FLAT[step];
             qm[prev].classList.remove('tc-pressing'); qm[prev].classList.add('tc-pressed');
             ym[prev].classList.remove('tc-pressing'); ym[prev].classList.add('tc-pressed');
-            const pqf = QF[prev], pyf = YF[prev];
+            const pqf = LF[prev], pyf = YF[prev];
             if (qd[pqf]) qd[pqf].classList.remove('tc-active');
             if (yd[pyf]) yd[pyf].classList.remove('tc-active');
+
+            // Return-to-home: if next key uses a different finger, previous finger returns home
+            const next = step + 1 < FLAT.length ? FLAT[step + 1] : null;
+            if (next) {
+                // Left layout side
+                if (LF[next] !== pqf && LH[pqf] !== prev) {
+                    const hk = LH[pqf];
+                    if (hk && qm[hk]) {
+                        const hp = ctr(qm[hk], wQ);
+                        addLine(sQ, qp[pqf], hp, cQPath);
+                        qp[pqf] = { ...hp };
+                        qd[pqf].style.left = (hp.x - DOT_R) + 'px';
+                        qd[pqf].style.top = (hp.y - DOT_R) + 'px';
+                    }
+                }
+                // Yamato side
+                if (YF[next] !== pyf && YH[pyf] !== prev) {
+                    const hk = YH[pyf];
+                    if (hk && ym[hk]) {
+                        const hp = ctr(ym[hk], wY);
+                        addLine(sY, yp[pyf], hp, pyf < 4 ? cYPathL : cYPathR);
+                        yp[pyf] = { ...hp };
+                        yd[pyf].style.left = (hp.x - DOT_R) + 'px';
+                        yd[pyf].style.top = (hp.y - DOT_R) + 'px';
+                    }
+                }
+            }
         }
         step++;
         if (step >= FLAT.length) {
@@ -156,13 +211,15 @@ const TypingCompare = (() => {
             return;
         }
         const ch = FLAT[step];
-        const qf = QF[ch], qt = ctr(qm[ch], wQ), qi = QH[qf] === ch;
-        if (!qi) { addLine(sQ, qp[qf], qt, cQPath); qp[qf] = { ...qt }; }
+        const qf = LF[ch], qt = ctr(qm[ch], wQ);
+        if (qp[qf].x !== qt.x || qp[qf].y !== qt.y) { addLine(sQ, qp[qf], qt, cQPath); }
+        qp[qf] = { ...qt };
         qd[qf].style.left = (qt.x - DOT_R) + 'px'; qd[qf].style.top = (qt.y - DOT_R) + 'px';
         qm[ch].classList.add('tc-pressing'); qd[qf].classList.add('tc-active');
 
-        const yf = YF[ch], yt = ctr(ym[ch], wY), yi = YH[yf] === ch;
-        if (!yi) { addLine(sY, yp[yf], yt, yf < 4 ? cYPathL : cYPathR); yp[yf] = { ...yt }; }
+        const yf = YF[ch], yt = ctr(ym[ch], wY);
+        if (yp[yf].x !== yt.x || yp[yf].y !== yt.y) { addLine(sY, yp[yf], yt, yf < 4 ? cYPathL : cYPathR); }
+        yp[yf] = { ...yt };
         yd[yf].style.left = (yt.x - DOT_R) + 'px'; yd[yf].style.top = (yt.y - DOT_R) + 'px';
         ym[ch].classList.add('tc-pressing'); yd[yf].classList.add('tc-active');
 
@@ -188,12 +245,12 @@ const TypingCompare = (() => {
 
     function initAnimation() {
         clearMaps();
-        renderKB(document.getElementById('tcKQ'), QR, qm);
+        renderKB(document.getElementById('tcKL'), LR, qm);
         renderKB(document.getElementById('tcKY'), YR, ym);
-        const wQ = document.getElementById('tcWQ'), wY = document.getElementById('tcWY');
-        mkDots(wQ, QH, qm, qd, qp);
+        const wQ = document.getElementById('tcWL'), wY = document.getElementById('tcWY');
+        mkDots(wQ, LH, qm, qd, qp);
         mkDots(wY, YH, ym, yd, yp);
-        svgSetup(document.getElementById('tcSQ'), wQ);
+        svgSetup(document.getElementById('tcSL'), wQ);
         svgSetup(document.getElementById('tcSY'), wY);
 
         // Build typing display
@@ -220,19 +277,31 @@ const TypingCompare = (() => {
 
         /** Generate the HTML structure for the typing compare panel */
         renderHTML() {
+            function cmp(qVal, yVal, higherWins) {
+                const q = parseFloat(qVal) || 0, y = parseFloat(yVal) || 0;
+                if (q === y) return ['', ''];
+                const qWins = higherWins ? q > y : q < y;
+                return qWins ? ['tc-stat-win', 'tc-stat-lose'] : ['tc-stat-lose', 'tc-stat-win'];
+            }
+            const [qH, yH] = cmp(STATS.qHome, STATS.yHome, true);
+            const [qM, yM] = cmp(STATS.qMoves, STATS.yMoves, false);
+
             return `
                 <div class="tc-mock-box">
+                    <div class="tc-phrase" id="tcPhrase"></div>
                     <div class="tc-typing" id="tcTD"></div>
                     <div class="tc-wrap">
-                        <div class="tc-panel tc-q">
-                            <span class="tc-title">QWERTY</span>
-                            <div class="tc-kb-wrap" id="tcWQ">
-                                <div class="tc-kb" id="tcKQ"></div>
-                                <svg class="tc-overlay" id="tcSQ"></svg>
+                        <div class="tc-panel ${leftClass}">
+                            <span class="tc-title">${leftTitle}</span>
+                            <div class="tc-stats"><span class="${qH}">ホーム列 <b>${STATS.qHome}</b></span><span class="${qM}">指移動 <b>${STATS.qMoves}</b>回</span></div>
+                            <div class="tc-kb-wrap" id="tcWL">
+                                <div class="tc-kb" id="tcKL"></div>
+                                <svg class="tc-overlay" id="tcSL"></svg>
                             </div>
                         </div>
                         <div class="tc-panel tc-y">
                             <span class="tc-title">大和配列</span>
+                            <div class="tc-stats"><span class="${yH}">ホーム列 <b>${STATS.yHome}</b></span><span class="${yM}">指移動 <b>${STATS.yMoves}</b>回</span></div>
                             <div class="tc-kb-wrap" id="tcWY">
                                 <div class="tc-kb" id="tcKY"></div>
                                 <svg class="tc-overlay" id="tcSY"></svg>
@@ -256,6 +325,34 @@ const TypingCompare = (() => {
             reset();
             active = true;
             startAnim();
+        },
+
+        /** Configure word data and stats for a different language */
+        configure({ word, stats }) {
+            if (word) { WORD = word; FLAT = WORD.flatMap(c => c.r); }
+            if (stats) STATS = stats;
+        },
+
+        /** Set the left layout (default: QWERTY) */
+        setLeftLayout({ name, className, rows, fingerMap, homeMap, pathColor }) {
+            leftTitle = name || 'QWERTY';
+            leftClass = className || 'tc-q';
+            LR = rows || QWERTY_R;
+            LF = fingerMap || QWERTY_F;
+            LH = homeMap || QWERTY_H;
+            if (pathColor) cQPath = pathColor;
+        },
+
+        /** Reset left layout to QWERTY */
+        resetLeftLayout() {
+            leftTitle = 'QWERTY';
+            leftClass = 'tc-q';
+            LR = QWERTY_R; LF = QWERTY_F; LH = QWERTY_H;
+        },
+
+        /** Get current config (for debug page) */
+        getConfig() {
+            return { WORD, FLAT, QF: LF, YF, QH: LH, YH, QR: LR, YR };
         }
     };
 })();

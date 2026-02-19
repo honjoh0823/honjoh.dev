@@ -1,15 +1,18 @@
-# A.html Refactoring
+# Multilingual Typing Compare Slides
 
-## Phase 1: Label Dual-Definition Fix (High Priority)
-- [x] Remove HTML nav labels, let JS `SEC_LABELS` be the single source of truth
-- [x] `updateLabel()` initializes labels on page load
+## Phase 1: English
+- [x] Refactor `typing-compare.js` — expand QF/YF, add `configure()` method
+- [x] Update `debug-animation.html` — English word data for prototyping
+- [/] Verify in browser
 
-## Phase 2: CSS / JS / HTML Separation (Medium Priority)
-- [x] Extract CSS to `A.css`
-- [x] Extract JS to `A.js`
-- [ ] Verify page works identically after separation
+## Phase 2: Chinese (Pinyin)
+- [ ] Add Chinese data to debug-animation.html
+- [ ] Verify in browser
 
-## Phase 3: Typing Compare Engine Module Separation (Medium Priority)
-- [x] Extract `tc*` functions to `typing-compare.js`
-- [x] Expose minimal API for main script integration
-- [ ] Verify typing compare animation works
+## Phase 3: Korean (2벌식 romanized)
+- [ ] Add Korean data to debug-animation.html
+- [ ] Verify in browser
+
+## Phase 4: Integration into B.js
+- [ ] Add multilingual slides to SLIDES array
+- [ ] Verify full slide flow
