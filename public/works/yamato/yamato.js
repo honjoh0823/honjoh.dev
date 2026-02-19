@@ -1,10 +1,10 @@
 (() => {
-    // CSS color references for JS
-    const _cs = getComputedStyle(document.documentElement);
-    const _cv = (n) => _cs.getPropertyValue(n).trim();
+    // CSS variable helper
+    const rootStyles = getComputedStyle(document.documentElement);
+    const cssVar = (n) => rootStyles.getPropertyValue(n).trim();
 
     // Pass colors to typing compare module
-    TypingCompare.setColors(_cv('--k-q-tx'), _cv('--accent'), _cv('--k-r-tx'));
+    TypingCompare.setColors(cssVar('--k-q-tx'), cssVar('--accent'), cssVar('--k-r-tx'));
 
     // --- Keyboard Layout Data ---
     const ROWS = [
@@ -31,27 +31,27 @@
         return FREQ[letter.toUpperCase()] || 0;
     }
 
-    // --- Heatmap HSL Color Generator (aligned to confirmed palette) ---
-    const HM = { h: [32, 52], hl: [210, 55], hr: [345, 50] };
-    function hmStyle(pfx, lvl) {
-        const [h, s] = HM[pfx]; const t = lvl / 10;
+    // --- Heatmap HSL Color Generator ---
+    const HEATMAP_HSL = { h: [32, 52], hl: [210, 55], hr: [345, 50] };
+    function heatmapStyle(pfx, lvl) {
+        const [h, s] = HEATMAP_HSL[pfx]; const t = lvl / 10;
         return `background:hsl(${h} ${s * t}% ${6 + t * 10}%);color:hsl(${h} ${s * (.3 + t * .7)}% ${15 + t * 70}%)`;
     }
 
-    function rk(k) {
+    function renderKey(k) {
         const m = k[1].match(/^(h[lr]?)(\d+)$/);
-        if (m) return `<div class="key${k[2] ? ' home' : ''}" style="${hmStyle(m[1], +m[2])}"><span class="ym">${k[0]}</span></div>`;
+        if (m) return `<div class="key${k[2] ? ' home' : ''}" style="${heatmapStyle(m[1], +m[2])}"><span class="ym">${k[0]}</span></div>`;
         return `<div class="key st-${k[1]}${k[2] ? ' home' : ''}"><span class="ym">${k[0]}</span></div>`;
     }
 
-    function renderKB(el, mode, ov) {
+    function renderKB(el, mode, overlays) {
         const isHeat = mode === 'heat-yamato' || mode === 'heat-qwerty';
         const isQwerty = mode === 'qwerty' || mode === 'heat-qwerty';
         const src = isQwerty ? QWERTY : ROWS;
         const rows = src.map((row, ri) => {
-            let rd;
+            let rowData;
             if (isHeat) {
-                rd = row.map(k => {
+                rowData = row.map(k => {
                     const h = heatLevel(k[0]);
                     if (mode === 'heat-yamato') {
                         if (k[1] === 'l' && h > 0) return [k[0], 'hl' + h, k[2]];
@@ -60,41 +60,37 @@
                     }
                     return [k[0], h > 0 ? 'h' + h : 'qn', k[2]];
                 });
-            } else if (ov) {
+            } else if (overlays) {
                 const base = isQwerty ? 'qn' : null;
-                rd = row.map((k, ki) => {
-                    const o = ov[ri]?.[ki];
+                rowData = row.map((k, ki) => {
+                    const o = overlays[ri]?.[ki];
                     return o ? [k[0], o, k[2]] : (base ? [k[0], base, k[2]] : k);
                 });
             } else {
-                rd = isQwerty ? row.map(k => [k[0], 'qn', k[2]]) : row;
+                rowData = isQwerty ? row.map(k => [k[0], 'qn', k[2]]) : row;
             }
             let inner;
             if (mode === 'split') {
-                inner = `<div class="lg">${rd.slice(0, SPLIT_AT[ri]).map(rk).join('')}</div><div class="gap-sp"></div><div class="rg">${rd.slice(SPLIT_AT[ri]).map(rk).join('')}</div>`;
-            } else inner = rd.map(rk).join('');
+                inner = `<div class="lg">${rowData.slice(0, SPLIT_AT[ri]).map(renderKey).join('')}</div><div class="gap-sp"></div><div class="rg">${rowData.slice(SPLIT_AT[ri]).map(renderKey).join('')}</div>`;
+            } else inner = rowData.map(renderKey).join('');
             return `<div class="row">${inner}</div>`;
         }).join('');
         el.innerHTML = `<section class="kb${mode === 'split' ? ' split' : ''}">${rows}</section>`;
     }
 
     // --- Audio ---
-    let soundEnabled = true;
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
     function getAudioCtx() { if (!audioCtx) audioCtx = new AudioCtx(); return audioCtx; }
-    function playSound(freq, dur, type) {
-        if (!soundEnabled) return;
+    function playKeySound() {
         try {
             const ctx = getAudioCtx(), osc = ctx.createOscillator(), g = ctx.createGain();
-            osc.type = type || 'sine'; osc.frequency.value = freq;
+            osc.type = 'sine'; osc.frequency.value = 880;
             g.gain.setValueAtTime(0.08, ctx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-            osc.connect(g); g.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + dur);
+            g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+            osc.connect(g); g.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.08);
         } catch (e) { }
     }
-    function playKeySound() { playSound(880, 0.08, 'sine'); }
-
 
     // --- Yamato Key Mapping ---
     const YAMATO_MAP = {
@@ -121,7 +117,6 @@
             }
         });
     }
-
 
     // --- Slide Data ---
     const SLIDES = [
@@ -232,7 +227,7 @@
             leftLayout: 'onishi'
         },
     ];
-    const T = SLIDES.length;
+    const TOTAL_SLIDES = SLIDES.length;
 
     // --- Build Slides ---
     const introEl = document.getElementById('sec-intro-text');
@@ -257,7 +252,7 @@
     const kbZone = document.getElementById('kbZone');
     let curSec = 0, curSlide = 0;
 
-    function pageNum() { return curSec === 0 ? curSlide + 1 : T + curSec; }
+    function pageNum() { return curSec === 0 ? curSlide + 1 : TOTAL_SLIDES + curSec; }
 
     function updateLabel() {
         SEC_LABELS.forEach((lbl, i) => {
@@ -273,7 +268,7 @@
             col.classList.toggle('active', i === curSec);
             if (i < curSec) fill.style.width = '100%';
             else if (i === curSec) {
-                fill.style.width = i === 0 ? ((curSlide + 1) / T * 100) + '%' : '100%';
+                fill.style.width = i === 0 ? ((curSlide + 1) / TOTAL_SLIDES * 100) + '%' : '100%';
             } else fill.style.width = '0%';
         });
         updateLabel();
@@ -285,7 +280,7 @@
             TypingCompare.setLeftLayoutByName(leftLayoutId);
         } else {
             TypingCompare.resetLeftLayout();
-            TypingCompare.setColors(_cv('--k-q-tx'), _cv('--accent'), _cv('--k-r-tx'));
+            TypingCompare.setColors(cssVar('--k-q-tx'), cssVar('--accent'), cssVar('--k-r-tx'));
         }
         const phrase = TypingCompare.configureForLang(lang || 'ja');
         el.innerHTML = TypingCompare.renderHTML();
@@ -326,7 +321,7 @@
     }
 
     function showSlide(idx, skipKB) {
-        if (idx < 0 || idx >= T) return;
+        if (idx < 0 || idx >= TOTAL_SLIDES) return;
         curSlide = idx;
         document.querySelectorAll('#sec-intro-text .intro-slide').forEach((s, i) => s.classList.toggle('active', i === idx));
         if (!skipKB) updateKB();
@@ -335,7 +330,7 @@
     }
 
     window.C7 = {
-        next() { if (curSec === 0) { curSlide < T - 1 ? showSlide(curSlide + 1) : switchSection(1); } else switchSection(curSec + 1); },
+        next() { if (curSec === 0) { curSlide < TOTAL_SLIDES - 1 ? showSlide(curSlide + 1) : switchSection(1); } else switchSection(curSec + 1); },
         prev() { if (curSec === 0 && curSlide > 0) showSlide(curSlide - 1); else if (curSec > 0) switchSection(curSec - 1); }
     };
 
@@ -372,7 +367,7 @@
     // --- Hash Navigation ---
     function initHash() {
         const n = parseInt(location.hash.replace('#', ''));
-        if (!isNaN(n) && n >= 1) { if (n <= T) { curSlide = n - 1; switchSection(0); } else { const si = n - T; switchSection(si < SEC.length ? si : 0); } }
+        if (!isNaN(n) && n >= 1) { if (n <= TOTAL_SLIDES) { curSlide = n - 1; switchSection(0); } else { const si = n - TOTAL_SLIDES; switchSection(si < SEC.length ? si : 0); } }
         else switchSection(0);
     }
     initHash();
