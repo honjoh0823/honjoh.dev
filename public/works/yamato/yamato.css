@@ -40,20 +40,13 @@
     --prog-track: hsl(230 5% 12%);
     --prog-fill: hsl(210 55% 42%);
 
-    /* ── Heatmap base hues (HSL) ── */
-    --hm-q-h: 32;
-    --hm-q-s: 52;
-    --hm-l-h: 210;
-    --hm-l-s: 55;
-    --hm-r-h: 345;
-    --hm-r-s: 50;
 
     /* ── UI text shades ── */
     --ink-mid: #aaa;
     --ink-muted: #444;
     --ink-dim: #666;
     --ink-soft: #888;
-    --ink-bright: #ddd;
+
     --ink-white: #fff;
     --ink-ghost: #2a2a2a;
     --border-subtle: #333;

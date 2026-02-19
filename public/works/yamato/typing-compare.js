@@ -144,22 +144,10 @@ const TypingCompare = (() => {
     let LR = QWERTY_R, LF = QWERTY_F, LH = QWERTY_H;
     let leftTitle = 'QWERTY', leftClass = 'tc-q';
 
-    // --- Configurable word data ---
-    const DEFAULT_WORD = [
-        { ja: 'に', r: ['N', 'I'] }, { ja: 'ほ', r: ['H', 'O'] }, { ja: 'ん', r: ['N'] },
-        { ja: 'ご', r: ['G', 'O'] }, { ja: 'にゅ', r: ['N', 'Y', 'U'] }, { ja: 'う', r: ['U'] },
-        { ja: 'りょ', r: ['R', 'Y', 'O'] }, { ja: 'く', r: ['K', 'U'] },
-        { ja: 'に', r: ['N', 'I'] }, { ja: 'さ', r: ['S', 'A'] }, { ja: 'い', r: ['I'] },
-        { ja: 'て', r: ['T', 'E'] }, { ja: 'き', r: ['K', 'I'] }, { ja: 'か', r: ['K', 'A'] },
-        { ja: 'さ', r: ['S', 'A'] }, { ja: 'れ', r: ['R', 'E'] }, { ja: 'た', r: ['T', 'A'] },
-        { ja: 'は', r: ['H', 'A'] }, { ja: 'い', r: ['I'] }, { ja: 'れ', r: ['R', 'E'] },
-        { ja: 'つ', r: ['T', 'U'] }
-    ];
-    const DEFAULT_STATS = { qHome: '25%', qMoves: '30', yHome: '75%', yMoves: '12' };
-
-    let WORD = DEFAULT_WORD;
+    // --- Active word data (defaults to Japanese) ---
+    let WORD = LANG_WORDS.ja.word;
     let FLAT = WORD.flatMap(c => c.r);
-    let STATS = DEFAULT_STATS;
+    let STATS = { qHome: '–', qMoves: '–', yHome: '–', yMoves: '–' };
 
     // Animation timing
     const DUR = 4000;
