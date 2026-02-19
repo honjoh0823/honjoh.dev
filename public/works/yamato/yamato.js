@@ -198,25 +198,6 @@
         return { home: Math.round(homeHits / flat.length * 100) + '%', moves: '' + moves };
     }
 
-    // --- Onishi Layout Data ---
-    const ONISHI_R = [
-        [['Q'], ['L'], ['U'], [','], ['.'], ['F'], ['W'], ['R'], ['Y'], ['P'], [' '], [' ']],
-        [['E'], ['I'], ['A'], ['O', 1], ['-'], ['K'], ['T'], ['N'], ['S', 1], ['H'], [' ']],
-        [['Z'], ['X'], ['C'], ['V'], [';'], ['G'], ['D'], ['M'], ['J'], ['B']]
-    ];
-    const ONISHI_H = { 0: 'E', 1: 'I', 2: 'A', 3: 'O', 4: 'K', 5: 'T', 6: 'N', 7: 'S' };
-    const ONISHI_F = {
-        Q: 0, E: 0, Z: 0,
-        L: 1, I: 1, X: 1,
-        U: 2, A: 2, C: 2,
-        ',': 3, '.': 3, O: 3, '-': 3, V: 3,
-        F: 4, K: 4, ';': 4, G: 4,
-        W: 5, T: 5, D: 5,
-        R: 6, N: 6, M: 6,
-        Y: 7, P: 7, S: 7, H: 7, J: 7, B: 7
-    };
-    const ONISHI_PATH_COLOR = 'hsl(30 100% 50%)';
-
     // --- Slide Data ---
     const SLIDES = [
         {
@@ -378,18 +359,10 @@
         const langData = LANG_WORDS[lang || 'ja'];
 
         // Configure left layout
-        if (leftLayoutId === 'onishi') {
-            TypingCompare.setLeftLayout({
-                name: '大西配列',
-                className: 'tc-o',
-                rows: ONISHI_R,
-                fingerMap: ONISHI_F,
-                homeMap: ONISHI_H,
-                pathColor: ONISHI_PATH_COLOR
-            });
+        if (leftLayoutId) {
+            TypingCompare.setLeftLayoutByName(leftLayoutId);
         } else {
             TypingCompare.resetLeftLayout();
-            // Restore QWERTY path color
             TypingCompare.setColors(_cv('--k-q-tx'), _cv('--accent'), _cv('--k-r-tx'));
         }
 

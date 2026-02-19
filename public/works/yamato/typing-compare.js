@@ -40,6 +40,30 @@ const TypingCompare = (() => {
         E: 7
     };
 
+    // Onishi layout (built-in preset)
+    const ONISHI_R = [
+        [['Q'], ['L'], ['U'], [','], ['.'], ['F'], ['W'], ['R'], ['Y'], ['P'], [' '], [' ']],
+        [['E'], ['I'], ['A'], ['O', 1], ['-'], ['K'], ['T'], ['N'], ['S', 1], ['H'], [' ']],
+        [['Z'], ['X'], ['C'], ['V'], [';'], ['G'], ['D'], ['M'], ['J'], ['B']]
+    ];
+    const ONISHI_H = { 0: 'E', 1: 'I', 2: 'A', 3: 'O', 4: 'K', 5: 'T', 6: 'N', 7: 'S' };
+    const ONISHI_F = {
+        Q: 0, E: 0, Z: 0,
+        L: 1, I: 1, X: 1,
+        U: 2, A: 2, C: 2,
+        ',': 3, '.': 3, O: 3, '-': 3, V: 3,
+        F: 4, K: 4, ';': 4, G: 4,
+        W: 5, T: 5, D: 5,
+        R: 6, N: 6, M: 6,
+        Y: 7, P: 7, S: 7, H: 7, J: 7, B: 7
+    };
+    const ONISHI_PATH_COLOR = 'hsl(30 100% 50%)';
+
+    // Named preset registry
+    const PRESETS = {
+        onishi: { name: '大西配列', className: 'tc-o', rows: ONISHI_R, fingerMap: ONISHI_F, homeMap: ONISHI_H, pathColor: ONISHI_PATH_COLOR }
+    };
+
     // Configurable left layout (defaults to QWERTY)
     let LR = QWERTY_R, LF = QWERTY_F, LH = QWERTY_H;
     let leftTitle = 'QWERTY', leftClass = 'tc-q';
@@ -341,6 +365,12 @@ const TypingCompare = (() => {
             LF = fingerMap || QWERTY_F;
             LH = homeMap || QWERTY_H;
             if (pathColor) cQPath = pathColor;
+        },
+
+        /** Set left layout by preset name (e.g. 'onishi') */
+        setLeftLayoutByName(id) {
+            const p = PRESETS[id];
+            if (p) this.setLeftLayout(p);
         },
 
         /** Reset left layout to QWERTY */
