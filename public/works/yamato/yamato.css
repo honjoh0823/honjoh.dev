@@ -25,9 +25,7 @@
     --k-ra-bg: hsl(345 58% 30%);
     --k-ra-tx: hsl(345 62% 92%);
 
-    /* right-side neutral (subtle pink tint, between n and r) */
-    --k-rn-bg: hsl(340 8% 11%);
-    --k-rn-tx: hsl(340 6% 28%);
+
 
     /* ── #2 QWERTY key colors (Pattern J 朽葉 h=32°) ── */
     --k-q-bg: hsl(32 44% 20%);
@@ -366,11 +364,6 @@ body {
     font-weight: 700
 }
 
-.key.st-rn {
-    background: var(--k-rn-bg);
-    color: var(--k-rn-tx)
-}
-
 .key.home::after {
     content: "";
     position: absolute;
@@ -430,28 +423,6 @@ body {
     font-weight: 700
 }
 
-.split-label {
-    font-size: 14px;
-    font-weight: 300;
-    text-align: center;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    gap: clamp(60px, 10vw, 140px)
-}
-
-.split-label span:first-child {
-    color: var(--k-l-tx);
-    opacity: .6
-}
-
-.split-label span:last-child {
-    color: var(--k-r-tx);
-    opacity: .6
-}
 
 /* prompt */
 .prompt-pair {
