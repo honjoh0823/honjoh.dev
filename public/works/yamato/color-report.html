@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yamato Color System Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --page-bg: hsl(230 20% 5.5%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+        }
+
+        body {
+            background: var(--page-bg);
+            color: #ccc;
+            font-family: "Outfit", sans-serif;
+            padding: 32px;
+            line-height: 1.5;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 40px;
+        }
+
+        /* --- Section --- */
+        .section {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+        }
+
+        .section-title .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* --- Swatch Row --- */
+        .swatch-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .swatch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            min-width: 100px;
+        }
+
+        .swatch-box {
+            width: 80px;
+            height: 56px;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, .06);
+            position: relative;
+        }
+
+        .swatch-label {
+            font-size: 11px;
+            color: #888;
+            text-align: center;
+            max-width: 100px;
+            word-break: break-all;
+        }
+
+        .swatch-var {
+            font-size: 10px;
+            color: #555;
+            text-align: center;
+            font-family: monospace;
+        }
+
+        /* --- Key Preview --- */
+        .key-pair {
+            display: flex;
+            gap: 6px;
+            align-items: flex-end;
+        }
+
+        .key-preview {
+            width: 48px;
+            height: 52px;
+            border-radius: 6px;
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        /* --- Usage Table --- */
+        .usage-grid {
+            display: grid;
+            grid-template-columns: 40px repeat(18, 1fr);
+            gap: 2px;
+            font-size: 11px;
+            margin-top: 24px;
+        }
+
+        .usage-header {
+            background: rgba(255, 255, 255, .04);
+            padding: 4px 2px;
+            text-align: center;
+            color: #888;
+            font-weight: 500;
+            border-radius: 3px;
+        }
+
+        .usage-label {
+            padding: 4px 2px;
+            text-align: right;
+            color: #666;
+            font-weight: 400;
+            font-size: 10px;
+        }
+
+        .usage-cell {
+            width: 100%;
+            height: 24px;
+            border-radius: 3px;
+            border: 1px solid rgba(255, 255, 255, .03);
+        }
+
+        .usage-cell.active {
+            border: 1px solid rgba(255, 255, 255, .12);
+        }
+
+        /* --- Subsection --- */
+        .sub-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #999;
+            margin: 16px 0 10px;
+            letter-spacing: .03em;
+        }
+
+        /* --- Grayscale strip --- */
+        .gray-strip {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 8px;
+        }
+
+        .gray-chip {
+            flex: 1;
+            height: 36px;
+            border-radius: 4px;
+            display: grid;
+            place-items: center;
+            font-size: 10px;
+            font-family: monospace;
+            border: 1px solid rgba(255, 255, 255, .04);
+        }
+
+        /* --- Glow demo --- */
+        .glow-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .glow-demo {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            font-size: 10px;
+            color: #aaa;
+            text-align: center;
+        }
+
+        /* --- Summary --- */
+        .summary-box {
+            background: rgba(255, 255, 255, .03);
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 8px;
+            padding: 20px 24px;
+            margin-top: 8px;
+        }
+
+        .summary-box h3 {
+            font-size: 14px;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .summary-box p {
+            font-size: 13px;
+            color: #888;
+        }
+
+        .count {
+            font-size: 28px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🎨 Yamato Color System Report</h1>
+    <p class="subtitle">yamato.css / yamato.js / typing-compare.js — 全カラー一覧</p>
+
+    <!-- ============================================ -->
+    <!-- NEUTRAL -->
+    <!-- ============================================ -->
+    <div class="section">
+        <div class="section-title">
+            <span class="dot" style="background:hsl(230 5% 12%)"></span>
+            Neutral（h=230）— 背景・未着色キー
+        </div>
+
+        <div class="sub-title">Key Colors</div>
+        <div class="key-pair">
+            <div class="swatch">
+                <div class="key-preview" style="background:hsl(230 5% 12%);color:hsl(230 5% 32%)">K</div>
+                <div class="swatch-label">未着色キー</div>
+                <div class="swatch-var">--k-n-bg/tx</div>
+            </div>
+        </div>
+
+        <div class="sub-title">Backgrounds</div>
+        <div class="swatch-row">
+            <div class="swatch">
+                <div class="swatch-box" style="background:hsl(230 20% 5.5%);color:#666">BG</div>
+                <div class="swatch-var">--bg</div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-box" style="background:hsl(230 5% 12%);color:#666">12%</div>
+                <div class="swatch-var">--prog-track</div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-box" style="background:hsl(230 8% 16%);color:#888">16%</div>
+                <div class="swatch-var">--tc-y-press-bg</div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-box" style="background:hsl(230 5% 10%);color:#555">10%</div>
+                <div class="swatch-var">--tc-y-done-bg</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- BLUE -->
+    <!-- ============================================ -->
+    <div class="section">
+        <div class="section-title">
+            <span class="dot" style="background:hsl(210 55% 55%)"></span>
+            Blue（h=210）— Yamato 左手 / UI Accent
+        </div>
+
+        <div class="sub-title">Key Colors — Active vs Dim</div>
+        <div class="swatch-row">
+            <div class="swatch">
+                <div class="key-preview" style="background:hsl(210 55% 27%);color:hsl(210 60% 95%)">K</div>
+                <div class="swatch-label">Active</div>
+                <div class="swatch-var">--k-la-bg/tx</div>
+            </div>
+            <div class="swatch">
+                <div class="key-preview" style="background:hsl(210 55% 27%);color:hsl(210 60% 88%)">K</div>
+                <div class="swatch-label">Dim</div>
+                <div class="swatch-var">--k-l-bg/tx</div>
+            </div>
+            <div class="swatch" style="opacity:.4">
+                <div style="font-size:11px;color:#666;padding:16px 0">← bg 同一値<br>text のみ差異</div>
+            </div>
+        </div>
+
+        <div class="sub-title">UI Accent</div>
+        <div class="swatch-row">
+            <div class="swatch">
+                <div class="swatch-box" style="background:hsl(210 55% 55%);color:#fff">55%</div>
+                <div class="swatch-label">Accent</div>
+                <div class="swatch-var">--accent</div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-box" style="background:hsl(210 55% 42%);color:#fff">42%</div>
+                <div class="swatch-label">Progress</div>
+                <div class="swatch-var">--prog-fill</div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-box" style="background:hsla(210,55%,55%,.10);color:hsl(210 55% 55%)">10%</div>
+                <div class="swatch-label">Hover BG</div>
+                <div class="swatch-var">--accent-dim</div>
+            </div>
+        </div>
+
+        <div class="sub-title">Typing Compare 彩度遷移 (JS)</div>
+        <div class="swatch-row">
+            <div class="swatch">
+                <div class="key-preview"
+                    style="background:hsl(210 5% 12%);color:hsl(210 5% 32%);width:32px;height:36px;font-size:11px">0
+                </div>
+                <div class="swatch-var">base</div>
+            </div>
+            <div class="swatch">
+                <div class="key-preview"
+                    style="background:hsl(210 18% 16%);color:hsl(210 20% 46%);width:32px;height:36px;font-size:11px">·
+                </div>
+                <div class="swatch-var" style="color:transparent">.</div>
+            </div>
+            <div class="swatch">
+                <div class="key-preview"
+                    style="background:hsl(210 32% 20%);color:hsl(210 38% 62%);width:32px;height:36px;font-size:11px">·
+                </div>
+                <div class="swatch-var" style="color:transparent">.</div>
+            </div>
+            <div class="swatch">
+                <div class="key-preview"
+                    style="background:hsl(210 44% 24%);color:hsl(210 50% 76%);width:32px;height:36px;font-size:11px">·
+                </div>
+                <div class="swatch-var" style="color:transparent">.</div>
+            </div>
+            <div class="swatch">
+                <div class="key-preview"
+                    style="background:hsl(210 55% 27%);color:hsl(210 60% 88%);width:32px;height:36px;font-size:11px">1
+                </div>
+                <div class="swatch-var">target</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- PINK -->
+    <!-- ============================================ -->
+    <div class="section">
+        <div class="section-title">
+            <span class="dot" style="background:hsl(345 52% 50%)"></span>
+            Pink（h=345）— Yamato 右手
+        </div>
+
+        <div class="sub-title">Key Colors — Active vs Dim</div>
+        <div class="swatch-row">
+            <div class="swatch">
+                <div class="key-preview" style="background:hsl(345 58% 30%);color:hsl(345 62% 92%)">A</div>
+                <div class="swatch-label">Active</div>
+                <div class="swatch-var">--k-ra-bg/tx</div>
+            </div>
+            <div class="swatch">
+                <div class="key-preview" style="background:hsl(345 48% 24%);color:hsl(345 52% 86%)">A</div>
+                <div class="swatch-label">Dim</div>
+                <div class="swatch-var">--k-r-bg/tx</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- AMBER -->
+    <!-- ============================================ -->
+    <div class="section">
+        <div class="section-title">
+            <span class="dot" style="background:hsl(32 52% 60%)"></span>
+            Amber（h=32）— QWERTY
+        </div>
+
+        <div class="sub-title">Key Colors — Highlight vs Neutral</div>
+        <div class="swatch-row">
+            <div class="swatch">
+                <div class="key-preview" style="background:hsl(32 44% 20%);color:hsl(32 52% 60%)">F</div>
+                <div class="swatch-label">Highlight</div>
+                <div class="swatch-var">--k-q-bg/tx</div>
+            </div>
+            <div class="swatch">
+                <div class="key-preview" style="background:hsl(32 22% 12%);color:hsl(32 16% 30%)">W</div>
+                <div class="swatch-label">Neutral</div>
+                <div class="swatch-var">--k-qn-bg/tx</div>
+            </div>
+        </div>
+
+        <div class="sub-title">Typing Compare 彩度遷移 (JS)</div>
+        <div class="swatch-row">
+            <div class="swatch">
+                <div class="key-preview"
+                    style="background:hsl(32 5% 12%);color:hsl(32 5% 32%);width:32px;height:36px;font-size:11px">0</div>
+                <div class="swatch-var">base</div>
+            </div>
+            <div class="swatch">
+                <div class="key-preview"
+                    style="background:hsl(32 16% 15%);color:hsl(32 18% 45%);width:32px;height:36px;font-size:11px">·
+                </div>
+                <div class="swatch-var" style="color:transparent">.</div>
+            </div>
+            <div class="swatch">
+                <div class="key-preview"
+                    style="background:hsl(32 28% 18%);color:hsl(32 34% 58%);width:32px;height:36px;font-size:11px">·
+                </div>
+                <div class="swatch-var" style="color:transparent">.</div>
+            </div>
+            <div class="swatch">
+                <div class="key-preview"
+                    style="background:hsl(32 40% 22%);color:hsl(32 48% 72%);width:32px;height:36px;font-size:11px">·
+                </div>
+                <div class="swatch-var" style="color:transparent">.</div>
+            </div>
+            <div class="swatch">
+                <div class="key-preview"
+                    style="background:hsl(32 50% 25%);color:hsl(32 60% 85%);width:32px;height:36px;font-size:11px">1
+                </div>
+                <div class="swatch-var">target</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- GREEN -->
+    <!-- ============================================ -->
+    <div class="section">
+        <div class="section-title">
+            <span class="dot" style="background:#4E8A5F"></span>
+            Green（h=148）— Onishi
+        </div>
+
+        <div class="sub-title">Key Colors</div>
+        <div class="swatch-row">
+            <div class="swatch">
+                <div class="key-preview" style="background:hsl(148 35% 22%);color:hsl(148 45% 75%)">T</div>
+                <div class="swatch-label">Pressing</div>
+                <div class="swatch-var">--k-o-press-bg/tx</div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-box" style="background:transparent;border:2px solid #4E8A5F;color:#4E8A5F">Text</div>
+                <div class="swatch-label">Theme</div>
+                <div class="swatch-var">--k-o-tx</div>
+            </div>
+        </div>
+
+        <div class="sub-title">Typing Compare 彩度遷移 (JS)</div>
+        <div class="swatch-row">
+            <div class="swatch">
+                <div class="key-preview"
+                    style="background:hsl(148 5% 12%);color:hsl(148 5% 32%);width:32px;height:36px;font-size:11px">0
+                </div>
+                <div class="swatch-var">base</div>
+            </div>
+            <div class="swatch">
+                <div class="key-preview"
+                    style="background:hsl(148 13% 15%);color:hsl(148 15% 45%);width:32px;height:36px;font-size:11px">·
+                </div>
+                <div class="swatch-var" style="color:transparent">.</div>
+            </div>
+            <div class="swatch">
+                <div class="key-preview"
+                    style="background:hsl(148 21% 18%);color:hsl(148 25% 58%);width:32px;height:36px;font-size:11px">·
+                </div>
+                <div class="swatch-var" style="color:transparent">.</div>
+            </div>
+            <div class="swatch">
+                <div class="key-preview"
+                    style="background:hsl(148 28% 22%);color:hsl(148 35% 72%);width:32px;height:36px;font-size:11px">·
+                </div>
+                <div class="swatch-var" style="color:transparent">.</div>
+            </div>
+            <div class="swatch">
+                <div class="key-preview"
+                    style="background:hsl(148 35% 25%);color:hsl(148 45% 85%);width:32px;height:36px;font-size:11px">1
+                </div>
+                <div class="swatch-var">target</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- GLOW -->
+    <!-- ============================================ -->
+    <div class="section">
+        <div class="section-title">
+            <span class="dot" style="background:rgba(255,255,255,.15)"></span>
+            Glow / Box-Shadow
+        </div>
+        <div class="glow-row">
+            <div class="glow-demo" style="background:hsl(210 55% 27%);box-shadow:0 0 14px hsla(210,55%,55%,.35)">
+                Blue<br><span style="font-size:9px">--glow-blue</span></div>
+            <div class="glow-demo" style="background:hsl(345 58% 30%);box-shadow:0 0 14px hsla(345,52%,50%,.35)">
+                Pink<br><span style="font-size:9px">--glow-pink</span></div>
+            <div class="glow-demo" style="background:hsl(32 44% 20%);box-shadow:0 0 14px hsla(32,52%,60%,.25)">
+                Amber<br><span style="font-size:9px">--glow-amber</span></div>
+            <div class="glow-demo" style="background:hsl(148 35% 22%);box-shadow:0 0 14px hsla(148,45%,50%,.25)">
+                Green<br><span style="font-size:9px">--glow-green</span></div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- GRAYSCALE -->
+    <!-- ============================================ -->
+    <div class="section">
+        <div class="section-title">
+            <span class="dot" style="background:linear-gradient(135deg,#fff,#333)"></span>
+            Grayscale — UI テキスト（10種）
+        </div>
+        <div class="gray-strip">
+            <div class="gray-chip" style="background:#fff;color:#000">#fff</div>
+            <div class="gray-chip" style="background:#e0e0e0;color:#000">#e0e0e0</div>
+            <div class="gray-chip" style="background:#ddd;color:#000">#ddd</div>
+            <div class="gray-chip" style="background:#aaa;color:#000">#aaa</div>
+            <div class="gray-chip" style="background:#888;color:#000">#888</div>
+            <div class="gray-chip" style="background:#787878;color:#000">#787878</div>
+            <div class="gray-chip" style="background:#666;color:#fff">#666</div>
+            <div class="gray-chip" style="background:#444;color:#fff">#444</div>
+            <div class="gray-chip" style="background:#333;color:#fff">#333</div>
+            <div class="gray-chip" style="background:#2a2a2a;color:#fff">#2a2a2a</div>
+        </div>
+        <div style="font-size:12px;color:#666;margin-top:4px">
+            --ink → --ink-mid → --ink-soft → --soft → --ink-dim → --ink-muted → --border-subtle → --ink-ghost
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SLIDE MAP -->
+    <!-- ============================================ -->
+    <div class="section">
+        <div class="section-title">
+            <span class="dot"
+                style="background:linear-gradient(135deg,hsl(210 55% 55%),hsl(345 52% 50%),hsl(32 52% 60%))"></span>
+            Slide × Color Map
+        </div>
+        <div class="usage-grid" id="usageGrid"></div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SUMMARY -->
+    <!-- ============================================ -->
+    <div class="section">
+        <div class="section-title">
+            <span class="dot" style="background:#fff"></span>
+            Summary
+        </div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+            <div class="summary-box" style="text-align:center;min-width:120px">
+                <div class="count" style="color:hsl(210 55% 55%)">5</div>
+                <p>Base Hues</p>
+            </div>
+            <div class="summary-box" style="text-align:center;min-width:120px">
+                <div class="count" style="color:hsl(345 52% 80%)">10</div>
+                <p>Grayscale Shades</p>
+            </div>
+            <div class="summary-box" style="text-align:center;min-width:120px">
+                <div class="count" style="color:hsl(32 52% 60%)">8</div>
+                <p>Glow Variables</p>
+            </div>
+            <div class="summary-box" style="text-align:center;min-width:120px">
+                <div class="count" style="color:#4E8A5F">42</div>
+                <p>Total CSS Vars</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Slide color usage map
+        const slides = [
+            { n: '1', l: '大和配列', colors: { blue: 'la', pink: 'ra', neutral: 'n' } },
+            { n: '2', l: 'QWERTYとは', colors: { amber: 'q+qn' } },
+            { n: '3', l: 'QWERTY×日本語', colors: { amber: 'q+qn' } },
+            { n: '4', l: 'QWERTYホーム', colors: { amber: 'q+qn' } },
+            { n: '5', l: '大和配列', colors: { blue: 'la', pink: 'ra', neutral: 'n' } },
+            { n: '6', l: '左手＝子音', colors: { blue: 'la', pink: 'ra', neutral: 'n' } },
+            { n: '7', l: '頻度 QWERTY', colors: { amber: 'heat' } },
+            { n: '8', l: '頻度 大和', colors: { blue: 'heat', pink: 'heat' } },
+            { n: '9', l: '頻度+ホーム', colors: { blue: 'l+la', pink: 'r+ra', neutral: 'n' } },
+            { n: '10', l: 'あかさたな', colors: { blue: 'la', pink: 'ra', neutral: 'n' } },
+            { n: '11', l: '濁音', colors: { blue: 'la', neutral: 'n' } },
+            { n: '12', l: '右手母音', colors: { pink: 'ra', neutral: 'n' } },
+            { n: '13', l: '比較 JA', colors: { blue: 'tc-y', amber: 'tc-q', neutral: 'n' } },
+            { n: '14', l: '比較 EN', colors: { blue: 'tc-y', amber: 'tc-q', neutral: 'n' } },
+            { n: '15', l: '比較 ZH', colors: { blue: 'tc-y', amber: 'tc-q', neutral: 'n' } },
+            { n: '16', l: '比較 KO', colors: { blue: 'tc-y', amber: 'tc-q', neutral: 'n' } },
+            { n: '17', l: '大西 JA', colors: { blue: 'tc-y', green: 'tc-o', neutral: 'n' } },
+            { n: '18', l: '大西 EN', colors: { blue: 'tc-y', green: 'tc-o', neutral: 'n' } },
+        ];
+        const colorDefs = {
+            blue: { bg: 'hsl(210 55% 40%)', label: 'Blue' },
+            pink: { bg: 'hsl(345 52% 40%)', label: 'Pink' },
+            amber: { bg: 'hsl(32 44% 35%)', label: 'Amber' },
+            green: { bg: '#4E8A5F', label: 'Green' },
+            neutral: { bg: 'hsl(230 5% 18%)', label: 'Neutral' },
+        };
+        const grid = document.getElementById('usageGrid');
+        // Header row
+        grid.innerHTML = '<div class="usage-header"></div>';
+        slides.forEach(s => {
+            grid.innerHTML += `<div class="usage-header">${s.n}</div>`;
+        });
+        // Color rows
+        Object.entries(colorDefs).forEach(([key, def]) => {
+            grid.innerHTML += `<div class="usage-label">${def.label}</div>`;
+            slides.forEach(s => {
+                const val = s.colors[key];
+                if (val) {
+                    grid.innerHTML += `<div class="usage-cell active" style="background:${def.bg}" title="#${s.n} ${def.label}: ${val}"></div>`;
+                } else {
+                    grid.innerHTML += `<div class="usage-cell" style="background:rgba(255,255,255,.015)"></div>`;
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>

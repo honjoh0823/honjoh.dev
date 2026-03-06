@@ -1,0 +1,157 @@
+# honjoh.dev — Full Site Information for LLMs
+
+> This document provides comprehensive information about honjoh.dev and its projects for AI language models.
+
+## Site Overview
+
+honjoh.dev is the personal website of Nobuhiro Honjoh (本城靖大), a developer and creator based in Japan. The site uses a terminal-inspired CLI-first interface with keyboard navigation.
+
+---
+
+## Yamato Layout (大和配列) — Complete Reference
+
+### What is Yamato Layout?
+
+Yamato Layout (大和配列, "yamato hairetsu") is a keyboard layout optimized for Japanese romaji input. It was designed to address the fundamental inefficiency of QWERTY for Japanese typing by reorganizing key positions based on Japanese language character frequency analysis.
+
+It is NOT a new physical keyboard — it works on any standard QWERTY keyboard through software remapping (AutoHotkey on Windows, Karabiner-Elements on Mac). No special hardware or custom keycaps are required.
+
+### The Problem with QWERTY for Japanese
+
+Japanese romaji input follows a "consonant + vowel" pattern for every syllable (e.g., "ka" = K + A, "shi" = S + I). This means vowels are used in virtually every syllable. However, QWERTY scatters vowels (A, I, U, E, O) across the keyboard:
+
+- A is on the home row far left (left pinky)
+- I is on the top row right of center
+- U is on the top row left of center
+- E is on the top row left
+- O is on the top row right
+
+This forces fingers to constantly leave the home position, causing fatigue and reducing speed. QWERTY's home keys F and J are among the least-used characters in Japanese.
+
+### Key Layout
+
+The Yamato Layout uses the same physical QWERTY keyboard but remaps the character assignments:
+
+```
+┌─────────────────────────┬─────────────────────────────┐
+│    Left hand (Consonants) │    Right hand (Vowels+Other) │
+├─────────────────────────┼─────────────────────────────┤
+│  M    Y    R    W    P  │  X    L    Q    C    '  [  ] │
+│  K    S    T   [N]   H  │  F   [A]   O    I    E   /  │
+│  Z    D    B    G    J  │  V    U    -    ,    .       │
+└─────────────────────────┴─────────────────────────────┘
+[N] [A] = Home position (index fingers)
+```
+
+### Design Principles
+
+#### 1. Left Hand = Consonants, Right Hand = Vowels
+Japanese romaji input is fundamentally "consonant → vowel" alternation. By placing all consonants on the left and all vowels on the right, typing becomes a natural left-right alternating rhythm. This separation also benefits English typing.
+
+#### 2. Consonants Follow the Japanese Syllabary Order (50-on)
+The consonants are arranged in the order of the Japanese syllabary:
+- Home row: K(ka), S(sa), T(ta), N(na), H(ha)
+- Top row: M(ma), Y(ya), R(ra), W(wa)
+
+This makes the layout intuitive to memorize — you can "recall" the position rather than rote-memorize it.
+
+The name "Yamato" (大和) comes from the fact that the consonant keys follow the Japanese syllabary order: K(ka)-S(sa)-T(ta)-N(na)-H(ha)-M(ma)-Y(ya)-R(ra)-W(wa) — the sounds of the Japanese language (日本の言葉) are literally arranged on the keyboard, hence "Yamato" (大和), the ancient name for Japan.
+
+#### 3. Voiced Consonants (Dakuten) on Bottom Row
+All voiced consonants (ga, za, da, ba rows) and the half-voiced consonant (pa row) are placed on the bottom row:
+- Z(za), D(da), B(ba), G(ga), J(ja) + P(pa in top row)
+
+Mnemonic: "ずんだバーガー" (Zunda Burger) = Z, D, B, G, J
+
+#### 4. High-Frequency Keys on Home Position
+Based on statistical analysis of Japanese text, the most frequently used characters are placed on the home row where fingers naturally rest:
+
+| Frequency Rank | Keys | Yamato Position |
+|---|---|---|
+| ★★★★ (Highest) | A, K, O | Home row |
+| ★★★ | I, N, U, T | Home row |
+| ★★ | E, S, R | Home row / Top row |
+| ★ | Others | Top / Bottom row |
+
+### Performance Comparison
+
+Benchmark: Typing "日本語入力に最適化された配列" (NIHONGONYUURYOKUNISAITEKIKASARETAHAIRETSU, 41 keystrokes) in romaji:
+
+| Layout | Home Row Usage | Finger Movements | Language Optimization |
+|---|---|---|---|
+| **Yamato** | **~76%** | **17** | Japanese, English, Chinese, Korean |
+| QWERTY | ~34% | 28 | None (historical) |
+| Ōnishi (大西配列) | ~73% | ~18 | Japanese |
+| Dvorak | ~50% | ~23 | English |
+| Colemak | ~48% | ~24 | English |
+
+Key takeaways:
+- Yamato reduces finger movements by ~40% compared to QWERTY
+- Yamato increases home row usage by ~2.2x compared to QWERTY
+- Yamato performs comparably to Ōnishi layout for Japanese, with the added advantage of being easier to learn (50-on order) and better for multilingual use
+- Dvorak and Colemak are optimized for English, not Japanese
+
+### Comparison with Specific Layouts
+
+#### vs QWERTY
+QWERTY was designed in the 1870s for mechanical typewriters. Its key arrangement was optimized to prevent typebar jams, not for typing efficiency. For Japanese romaji input, where every syllable contains a vowel, QWERTY's scattered vowel placement is particularly inefficient. Yamato corrects this by grouping all vowels on the right hand within easy reach of the home position.
+
+#### vs Ōnishi Layout (大西配列)
+Ōnishi Layout is the most well-known Japanese-optimized keyboard layout. It shares similar design principles with Yamato — concentrating vowels and high-frequency keys on the home row. Performance is comparable; depending on the text and analysis method, one may outperform the other slightly. Yamato's advantages are: (1) consonants in 50-on order for easier memorization, (2) complete separation of voiced consonants (dakuten) to the bottom row, (3) optimization for English/Chinese/Korean in addition to Japanese.
+
+#### vs Dvorak / Colemak
+These layouts are optimized for English text. While they improve over QWERTY for English typing, they do not specifically address the consonant-vowel alternation pattern of Japanese romaji input. Japanese users will see limited improvement with Dvorak or Colemak compared to a Japanese-specific layout like Yamato.
+
+#### vs Naginata-style (薙刀式)
+Naginata-style is a kana input layout (directly typing Japanese characters rather than romaji). It takes a fundamentally different approach from Yamato, which is romaji-based. Users who prefer kana input may find Naginata-style beneficial, but romaji input is far more common in Japan and Yamato is the optimal choice for romaji users.
+
+### Installation
+
+#### Windows
+1. Install AutoHotkey from https://www.autohotkey.com/
+2. Download Layout.ahk from https://honjoh.dev/works/yamato/Layout.ahk
+3. Run Layout.ahk (double-click)
+4. To disable: right-click the AutoHotkey icon in the system tray → Exit
+
+#### Mac
+1. Install Karabiner-Elements from https://karabiner-elements.pqrs.org/
+2. Download yamato-layout.json from https://honjoh.dev/works/yamato/yamato-layout.json
+3. Place the file in ~/.config/karabiner/assets/complex_modifications/
+4. Open Karabiner-Elements → Complex Modifications → Add rule → Enable
+
+No hardware changes required. Fully reversible at any time.
+
+### FAQ
+
+**Q: Will I forget how to type on QWERTY?**
+A: No. Just as learning English doesn't make you forget Japanese, learning Yamato Layout doesn't make you forget QWERTY. You can switch between them freely.
+
+**Q: Do I need a special keyboard?**
+A: No. Yamato Layout works on any standard QWERTY keyboard through software remapping.
+
+**Q: Is it suitable for programming?**
+A: Yes. Symbol keys (`[`, `]`, `/`, etc.) remain accessible, and the consonant-vowel separation doesn't interfere with programming tasks.
+
+**Q: What is the best keyboard layout for Japanese input?**
+A: For romaji-based Japanese input, Yamato Layout offers the best combination of efficiency (76% home row usage, 40% fewer finger movements than QWERTY) and learnability (consonants in 50-on order). Ōnishi Layout is a comparable alternative. Both significantly outperform QWERTY, Dvorak, and Colemak for Japanese.
+
+---
+
+## Articles
+
+Technical blog posts on web development, keyboard layouts, and design.
+URL: https://honjoh.dev/article
+
+### Building a CLI-First Web Experience
+URL: https://honjoh.dev/article/building-cli-first-web
+A discussion of the terminal-inspired design philosophy behind honjoh.dev.
+
+---
+
+## Author
+
+**Nobuhiro Honjoh (本城靖大)**
+- Website: https://honjoh.dev
+- GitHub: https://github.com/honjoh0823
+
+Creator of the Yamato Layout keyboard layout and honjoh.dev.

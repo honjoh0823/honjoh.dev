@@ -4,19 +4,54 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>大和配列 | honjoh.dev</title>
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <title>大和配列 | 日本語入力に最適化された配列</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="/works/yamato/yamato.css">
+    <link rel="icon" type="image/png" href="/works/yamato/favicon.png">
+    <link rel="canonical" href="https://honjoh.dev/yamato" />
+    <meta property="og:title" content="大和配列 | 日本語入力に最適化された配列" />
+    <meta property="og:description" content="日本語入力に最適化された新しいキーボード配列。子音と母音を左右に分離し、効率的なタイピングを実現します。" />
+    <meta property="og:image" content="https://honjoh.dev/works/yamato/og.png" />
+    <meta property="og:url" content="https://honjoh.dev/yamato" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="honjoh.dev" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="description" content="日本語入力に最適化された新しいキーボード配列。子音と母音を左右に分離し、効率的なタイピングを実現します。" />
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "大和配列 (Yamato Layout)",
+        "alternateName": "Yamato Keyboard Layout",
+        "description": "日本語入力に最適化された新しいキーボード配列。子音と母音を左右に分離し、効率的なタイピングを実現します。QWERTY配列と比較して指の移動距離を大幅に削減し、疲労を軽減します。",
+        "url": "https://honjoh.dev/yamato",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Windows, macOS",
+        "author": {
+            "@type": "Person",
+            "name": "Nobuhiro Honjoh",
+            "alternateName": "本城靖大",
+            "url": "https://honjoh.dev"
+        },
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "JPY"
+        },
+        "image": "https://honjoh.dev/works/yamato/og.png"
+    }
+    </script>
 </head>
 
 <body>
     <div class="page">
         <header class="header">
-            <span class="quest"><em>大和配列</em> Yamato Layout</span>
-            <span class="tagline">1日でマスター, 1ヶ月で入力速度を2倍に。</span>
+            <span class="quest"><em>大和配列</em></span>
+            <span class="tagline">日本語入力に最適化された新しい配列</span>
         </header>
 
         <nav class="progress-nav" id="progNav">
@@ -38,84 +73,147 @@
                 </div>
                 <div class="prog-label" id="pl2"></div>
             </div>
-            <div class="prog-col" data-s="3">
-                <div class="prog-seg">
-                    <div class="fill"></div>
-                </div>
-                <div class="prog-label" id="pl3"></div>
-            </div>
         </nav>
 
         <div class="content-area">
             <div class="text-zone" id="textZone">
                 <div class="section active" id="sec-intro-text"></div>
                 <div class="section" id="sec-practice-text">
-                    <section class="prompt-pair">
-                        <div class="prompt-cell done"><span class="ja">な</span><span class="ro">NA</span></div>
-                        <div class="prompt-cell done"><span class="ja">に</span><span class="ro">NI</span></div>
-                        <div class="prompt-cell active"><span class="ja">ぬ</span><span class="ro">NU</span></div>
-                        <div class="prompt-cell"><span class="ja">ね</span><span class="ro">NE</span></div>
-                        <div class="prompt-cell"><span class="ja">の</span><span class="ro">NO</span></div>
-                    </section>
-                </div>
-                <div class="section" id="sec-resources-text">
-                    <div class="res-list">
-                        <a class="res-item" href="https://note.com/_honjoh/n/n6eca0fda500b" target="_blank"
-                            rel="noopener">
-                            <span class="res-icon">📝</span>
-                            <div class="res-body"><span
-                                    class="res-title">独自のキーボード配列「大和配列」を開発し、使用1ヶ月半でe-typingスコア300になった話</span><span
-                                    class="res-meta">note.com — 開発経緯・設計思想・導入方法</span></div>
-                        </a>
-                        <a class="res-item" href="#" target="_blank" rel="noopener">
-                            <span class="res-icon">⬇️</span>
-                            <div class="res-body"><span class="res-title">大和配列 ダウンロード（AutoHotkey /
-                                    Karabiner-Elements）</span><span class="res-meta">Windows / macOS 対応の設定ファイル</span>
-                            </div>
-                        </a>
-                        <a class="res-item" href="#" target="_blank" rel="noopener">
-                            <span class="res-icon">🎥</span>
-                            <div class="res-body"><span class="res-title">実際の入力風景（e-typing デモ）</span><span
-                                    class="res-meta">使用1ヶ月で260点（Sランク）到達</span></div>
-                        </a>
-                    </div>
-                    <div class="faq-section">
-                        <div class="faq-title">よくある質問</div>
-                        <div class="faq-item">
-                            <div class="faq-q">Q. 新しい配列に移行すると、QWERTY配列が打てなくなりませんか？</div>
-                            <div class="faq-a">
-                                英語を覚えても日本語を忘れることはありません。野球を覚えてもサッカーができなくなることもありません。新しいスキルが既存のスキルを上書きすることはなく、むしろ指の器用さは向上していきます。
-                            </div>
-                        </div>
-                        <div class="faq-item">
-                            <div class="faq-q">Q. Ctrl+C や ⌘+V などのショートカットは使えますか？</div>
-                            <div class="faq-a">
-                                修飾キー（Ctrl / ⌘）押下中は自動でQWERTY配列に切り替わるため、全てのショートカットがそのまま使えます。Windows は AutoHotkey、macOS は
-                                Karabiner-Elements で導入できます。
-                            </div>
-                        </div>
+                    <div class="intro-slide active">
+                        <div class="slide-heading"><span class="title" id="tg-head">あ</span></div>
+                        <div class="slide-body" id="tg-body"></div>
                     </div>
                 </div>
-                <div class="section" id="sec-game-text">
-                    <section class="prompt-pair">
-                        <div class="prompt-cell done"><span class="ja">こ</span><span class="ro">KO</span></div>
-                        <div class="prompt-cell active"><span class="ja">ん</span><span class="ro">NN</span></div>
-                        <div class="prompt-cell"><span class="ja">に</span><span class="ro">NI</span></div>
-                        <div class="prompt-cell"><span class="ja">ち</span><span class="ro">TI</span></div>
-                        <div class="prompt-cell"><span class="ja">は</span><span class="ro">HA</span></div>
-                    </section>
-                </div>
+                <div class="section" id="sec-faq-text"></div>
             </div>
             <div class="kb-zone" id="kbZone"></div>
         </div>
 
         <footer class="footer">
-            <div class="nav-hint"><span><kbd>←</kbd><kbd>→</kbd> で操作</span></div>
+            <div class="nav-hint"><span><kbd>←</kbd><kbd>↑</kbd> <kbd>↓</kbd><kbd>→</kbd> キーボードで操作できます</span></div>
             <span class="brand"><em>Yamato Layout</em> | honjoh.dev</span>
         </footer>
     </div>
 
+    <!-- Noscript: Full content for AI crawlers and non-JS environments -->
+    <noscript>
+        <article style="max-width:720px;margin:2rem auto;padding:0 1rem;font-family:sans-serif;line-height:1.8">
+            <h1>大和配列 — 日本語入力に最適化された新しいキーボード配列</h1>
+            <p>日本語入力に最適化された新しいキーボード配列です。覚えやすく、疲れづらい。簡単に導入でき、いつでも戻せます。簡単にマスターでき、入力速度が2倍になります。</p>
+
+            <h2>はじめに</h2>
+            <p>QWERTY配列は、1870年代にタイプライター業界の都合で生まれた配列です。その配列が150年経った今もそのまま使われ続けています。</p>
+
+            <h2>QWERTYと日本語の相性</h2>
+            <p>日本語のローマ字入力は、必ず母音を含みます。しかしQWERTY配列では母音が鍵盤上に散らばっており、指と手首を常に大きく移動し続ける必要があります。</p>
+
+            <h2>QWERTYのホームポジション</h2>
+            <p>QWERTYのホームキー F と J は、日本語入力での出現頻度が最低クラス。最も打ちやすい位置に、ほとんど使わないキーが配置されています。指は常にホームから離れ、疲労が蓄積します。</p>
+
+            <h2>大和配列の特徴</h2>
+            <p>日本語の「子音＋母音」という構造に正面から向き合い、誰でも導入できるよう、キーの配置を根本から再設計しました。特別なキーボードは不要 —
+                今お使いのQWERTYキーボードをそのまま使い、ソフトウェアでキー配列を変換します。</p>
+
+            <h3>左手が子音、右手が母音</h3>
+            <p>ローマ字入力は基本的に「子音 → 母音」の繰り返し。左右交互のリズミカルな打鍵が、そのまま日本語になります。この構造は英語入力とも相性がよく、バランスのよい打鍵が可能です。</p>
+
+            <h3>キー配列</h3>
+            <pre>
+上段:   M  Y  R  W  P  |  X  L  Q  C  '  [  ]
+中段:   K  S  T  N* H  |  F  A* O  I  E  /
+下段:   Z  D  B  G  J  |  V  U  -  ,  .
+（* = ホームポジション）
+左側 = 子音、右側 = 母音 + 低頻度キー
+        </pre>
+
+            <h3>あかさたなはまやらわ</h3>
+            <p>子音は50音順にそのまま配置。覚えるのではなく、思い出せる設計です。日本の言葉の響き（K-S-T-N-H-M-Y-R-W）がそのままキーボードに並んでいることが「大和」という名前の由来です。</p>
+
+            <h3>濁音は全て下段</h3>
+            <p>濁音と半濁音（ぱ行）を完全分離。下の列は「ずんだバーガー」（Z, D, B, G, J + P）と覚えましょう。</p>
+
+            <h3>母音は全て右手</h3>
+            <p>手を動かさず、全ての日本語が入力できます。ホーム行にA, O, I, E、下段にUを配置。</p>
+
+            <h3>高頻度キーをホームポジションに集中</h3>
+            <p>最も打ちやすい位置に、最もよく使う文字。日本語入力で最頻出の文字（A, K, O, I, N, U, T）がホームポジションに集中しています。</p>
+
+            <h2>他の配列との比較</h2>
+            <p>「日本語入力に最適化された配列」（41キーストローク）を打つ場合:</p>
+            <table border="1" cellpadding="5" cellspacing="0">
+                <tr>
+                    <th>配列</th>
+                    <th>ホーム列使用率</th>
+                    <th>指移動回数</th>
+                    <th>特徴</th>
+                </tr>
+                <tr>
+                    <td><strong>大和配列</strong></td>
+                    <td><strong>76%</strong></td>
+                    <td><strong>17回</strong></td>
+                    <td>日本語最適化、50音順</td>
+                </tr>
+                <tr>
+                    <td>QWERTY</td>
+                    <td>34%</td>
+                    <td>28回</td>
+                    <td>歴史的配列</td>
+                </tr>
+                <tr>
+                    <td>大西配列</td>
+                    <td>約73%</td>
+                    <td>約18回</td>
+                    <td>日本語最適化</td>
+                </tr>
+                <tr>
+                    <td>Dvorak</td>
+                    <td>約50%</td>
+                    <td>約23回</td>
+                    <td>英語最適化</td>
+                </tr>
+                <tr>
+                    <td>Colemak</td>
+                    <td>約48%</td>
+                    <td>約24回</td>
+                    <td>英語最適化</td>
+                </tr>
+            </table>
+            <p>大和配列はQWERTYと比較して、ホーム列使用率が約2.2倍（34%→76%）、指の移動回数が約40%削減（28回→17回）されます。</p>
+
+            <h2>よくある質問</h2>
+
+            <h3>Q. 特別なキーボードが必要ですか？</h3>
+            <p>いいえ。今お使いのQWERTYキーボードをそのまま使えます。ソフトウェア（AutoHotkey /
+                Karabiner-Elements）がキー入力を変換するだけです。特殊なハードウェアやカスタムキーキャップは不要です。</p>
+
+            <h3>Q. QWERTY配列が打てなくなるのでは？</h3>
+            <p>英語を覚えても日本語は忘れません。野球を覚えてサッカーを忘れることもありません。最初は忘れる感覚があっても、使っていると徐々にまた思い出します。</p>
+
+            <h3>Q. 名前の由来は？</h3>
+            <p>日本の言葉の響き（あかさたなはまやらわ）の子音（K, S, T, N, H, M, Y, R,
+                W）がそのままキーボード上に並んでいることに由来します。日本語の50音順がそのまま配列になっている、という意味を込めて「大和」と名付けられました。</p>
+
+            <h3>導入方法</h3>
+            <p><strong>Windows:</strong> <a href="https://www.autohotkey.com/">AutoHotkey</a> をインストールし、<a
+                    href="/works/yamato/Layout.ahk">Layout.ahk</a> をダウンロードして起動。</p>
+            <p><strong>Mac:</strong> <a href="https://karabiner-elements.pqrs.org/">Karabiner-Elements</a> をインストールし、<a
+                    href="/works/yamato/yamato-layout.json">yamato-layout.json</a> をダウンロードして
+                ~/.config/karabiner/assets/complex_modifications/ に配置。Karabiner-Elements の Complex Modifications で有効化。
+            </p>
+
+            <h3>参考資料</h3>
+            <p><a href="https://note.com/_honjoh/n/n6eca0fda500b">https://note.com/_honjoh/n/n6eca0fda500b</a></p>
+            <p>詳細リファレンス: <a href="https://honjoh.dev/yamato/about">日本語版</a> | <a
+                    href="https://honjoh.dev/yamato/about/en">English</a></p>
+
+            <hr>
+            <p><strong>Yamato Layout</strong> | <a href="https://honjoh.dev">honjoh.dev</a> — Created by Nobuhiro Honjoh
+                (本城靖大)</p>
+        </article>
+    </noscript>
+
     <script src="/works/yamato/typing-compare.js"></script>
+    <script src="/works/yamato/slide-nav.js"></script>
     <script src="/works/yamato/yamato.js"></script>
 </body>
 

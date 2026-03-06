@@ -1,0 +1,488 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+---
+
+<Layout
+    title="大和配列とは — 日本語入力に最適化されたキーボード配列 | honjoh.dev"
+    description="大和配列は、日本語入力に最適化されたキーボード配列です。子音を左手、母音を右手に配置し、QWERTY配列と比較して指の移動距離を大幅に削減。覚えやすく、疲れにくい設計です。"
+    alternateLanguages={[
+        { lang: "ja", href: "https://honjoh.dev/yamato/about" },
+        { lang: "en", href: "https://honjoh.dev/yamato/about/en" },
+    ]}
+    jsonLd={{
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: [
+            {
+                "@type": "Question",
+                name: "日本語入力に最適なキーボード配列は何ですか？",
+                acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "大和配列（Yamato Layout）は、日本語のローマ字入力に最適化されたキーボード配列です。左手に子音、右手に母音を配置し、日本語の「子音→母音」という構造に合わせた左右交互打鍵を実現します。QWERTY配列と比較して指の移動回数が約40%削減され、ホーム列使用率が約76%に向上します。AutoHotkey（Windows）またはKarabiner-Elements（Mac）で簡単に導入できます。",
+                },
+            },
+            {
+                "@type": "Question",
+                name: "大和配列はどのような特徴がありますか？",
+                acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "大和配列の主な特徴: (1) 左手が子音、右手が母音 — ローマ字入力の「子音→母音」リズムに一致。(2) 子音は50音順に配置（あかさたなはまやらわ）で覚えやすい。(3) 濁音は全て下段に分離（ずんだバーガー: Z,D,B,G,J）。(4) 最頻出キー（A,K,O,I,N,U,T）がホームポジションに集中。(5) 英語入力にも対応し、左右バランスの良い打鍵が可能。",
+                },
+            },
+            {
+                "@type": "Question",
+                name: "大和配列の導入方法は？",
+                acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Windows: AutoHotkey をインストール → Layout.ahk をダウンロード・起動するだけ。Mac: Karabiner-Elements をインストール → yamato-layout.json を所定フォルダに配置 → Complex Modifications で有効化。いつでもオフにして元のQWERTYに戻せます。",
+                },
+            },
+            {
+                "@type": "Question",
+                name: "大和配列を使うとQWERTY配列が打てなくなりますか？",
+                acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "いいえ。英語を覚えても日本語を忘れないのと同じように、大和配列を覚えてもQWERTY配列は忘れません。最初は戸惑う感覚がありますが、使い続けるうちに両方を切り替えて使えるようになります。",
+                },
+            },
+            {
+                "@type": "Question",
+                name: "大和配列と他のキーボード配列（Dvorak、Colemak、大西配列）の違いは？",
+                acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Dvorak、Colemakは英語に最適化された配列で、日本語には最適化されていません。大西配列は日本語向けの新配列で大和配列と似た設計思想を持ちますが、大和配列は子音が50音順に並ぶため覚えやすく、濁音の完全分離により視覚的にわかりやすい設計です。大和配列は英語・中国語・韓国語の入力にも対応しています。",
+                },
+            },
+        ],
+    }}
+>
+    <article
+        style="max-width:720px;margin:0 auto;padding:2rem 1rem;font-family:'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif;line-height:1.9;color:#e0e0e0;background:#0a0a0a"
+    >
+        <h1 style="font-size:1.6rem;margin-bottom:0.5rem;color:#fff">
+            大和配列 — 日本語入力に最適化されたキーボード配列
+        </h1>
+        <p style="color:#888;margin-bottom:2rem">
+            Yamato Layout — A keyboard layout optimized for Japanese input
+        </p>
+
+        <nav
+            style="background:#111;border:1px solid #222;border-radius:8px;padding:1rem;margin-bottom:2rem"
+        >
+            <strong style="color:#ccc">目次</strong>
+            <ol style="margin:0.5rem 0 0 1.2rem;color:#888">
+                <li><a href="#overview" style="color:#e8c47c">概要</a></li>
+                <li>
+                    <a href="#problem" style="color:#e8c47c">QWERTYの問題</a>
+                </li>
+                <li><a href="#layout" style="color:#e8c47c">キー配列</a></li>
+                <li><a href="#features" style="color:#e8c47c">特徴</a></li>
+                <li>
+                    <a href="#comparison" style="color:#e8c47c"
+                        >他の配列との比較</a
+                    >
+                </li>
+                <li><a href="#install" style="color:#e8c47c">導入方法</a></li>
+                <li><a href="#faq" style="color:#e8c47c">よくある質問</a></li>
+            </ol>
+        </nav>
+
+        <section id="overview">
+            <h2
+                style="font-size:1.2rem;color:#fff;border-bottom:1px solid #333;padding-bottom:0.5rem"
+            >
+                概要
+            </h2>
+            <p>
+                大和配列（Yamato
+                Layout）は、日本語のローマ字入力に最適化された新しいキーボード配列です。QWERTY配列が1870年代にタイプライターの機械的制約のために設計されたのに対し、大和配列は現代の日本語入力の効率を最優先に設計されています。
+            </p>
+            <p>主な特徴:</p>
+            <ul>
+                <li>
+                    <strong>覚えやすい</strong> — 子音は日本語の50音順に配置
+                </li>
+                <li>
+                    <strong>疲れにくい</strong> — 高頻度キーがホームポジションに集中
+                </li>
+                <li>
+                    <strong>特別なキーボード不要</strong> — 今お使いのQWERTYキーボードをそのまま使用。ソフトウェアだけで切り替え可能
+                </li>
+                <li>
+                    <strong>多言語対応</strong> — 英語・中国語・韓国語の入力にも効率的
+                </li>
+            </ul>
+        </section>
+
+        <section id="problem">
+            <h2
+                style="font-size:1.2rem;color:#fff;border-bottom:1px solid #333;padding-bottom:0.5rem"
+            >
+                QWERTYの問題 — なぜ日本語入力に向いていないのか
+            </h2>
+            <p>
+                QWERTY配列は1870年代、タイプライターのアームが衝突しないよう設計された配列です。150年経った今もそのまま使われ続けていますが、日本語入力には以下の問題があります:
+            </p>
+            <ul>
+                <li>
+                    <strong>母音が散在</strong>:
+                    日本語のローマ字入力は必ず母音を含みますが、QWERTY配列では母音（A,
+                    I, U, E, O）が鍵盤上にバラバラに配置されています
+                </li>
+                <li>
+                    <strong>ホームキーの無駄</strong>: QWERTYのホームキー F と J
+                    は日本語入力での出現頻度が最低クラスです
+                </li>
+                <li>
+                    <strong>指の移動距離が大きい</strong>:
+                    指を常にホームポジションから大きく離す必要があり、疲労が蓄積します
+                </li>
+            </ul>
+        </section>
+
+        <section id="layout">
+            <h2
+                style="font-size:1.2rem;color:#fff;border-bottom:1px solid #333;padding-bottom:0.5rem"
+            >
+                キー配列
+            </h2>
+            <pre
+                style="background:#111;border:1px solid #222;border-radius:8px;padding:1rem;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:#ccc">
+┌───────────────────────────┬───────────────────────────────┐
+│      左手（子音）          │        右手（母音＋他）         │
+├───────────────────────────┼───────────────────────────────┤
+│  M    Y    R    W    P    │  X    L    Q    C    '  [  ]  │
+│  K    S    T   [N]   H   │  F   [A]   O    I    E    /   │
+│  Z    D    B    G    J   │  V    U    -    ,    .         │
+└───────────────────────────┴───────────────────────────────┘
+  [N] [A] = ホームポジション（人差し指）
+
+  左側 = 子音キー    右側 = 母音キー + 低頻度キー
+            </pre>
+            <p>
+                大和配列はQWERTY物理キーボード上で使用します。物理キーの位置はQWERTYと同じですが、どのキーにどの文字が割り当てられているかが異なります。ソフトウェア（AutoHotkey
+                /
+                Karabiner-Elements）によってキーの入力を変換するため、キーボードを買い替える必要はありません。特殊なハードウェアキーボードやカスタムキーキャップも不要です。
+            </p>
+        </section>
+
+        <section id="features">
+            <h2
+                style="font-size:1.2rem;color:#fff;border-bottom:1px solid #333;padding-bottom:0.5rem"
+            >
+                特徴
+            </h2>
+
+            <h3 style="color:#e8c47c;font-size:1rem">
+                1. 左手が子音、右手が母音
+            </h3>
+            <p>
+                日本語のローマ字入力は「子音 → 母音」の繰り返し（例: 「か」= K →
+                A）。大和配列では子音を全て左手、母音を全て右手に配置しているため、自然な左右交互打鍵が実現します。この構造は英語入力にも有効で、バランスの良い打鍵が可能です。
+            </p>
+
+            <h3 style="color:#e8c47c;font-size:1rem">
+                2. 子音は50音順 — あかさたなはまやらわ
+            </h3>
+            子音キーは日本語の50音の順に配置されています: K(か), S(さ), T(た), N(な),
+            H(は) がホーム行に、M(ま), Y(や), R(ら), W(わ) が上段に並びます。「覚える」のではなく「思い出せる」設計です。日本の言葉の響き（あ<strong
+                >か</strong
+            ><strong>さ</strong><strong>た</strong><strong>な</strong><strong
+                >は</strong
+            ><strong>ま</strong><strong>や</strong>ら<strong>わ</strong
+            >）がそのままキーボードに並んでいることが「大和」という名前の由来です。
+        </section>
+
+        <h3 style="color:#e8c47c;font-size:1rem">3. 濁音は全て下段</h3>
+        <p>
+            濁音（が行、ざ行、だ行、ば行）と半濁音（ぱ行）は全て下段に分離されています。「<strong
+                >ず</strong
+            >ん<strong>だ</strong><strong>バ</strong>ー<strong>ガ</strong>ー」=
+            Z, D, B, G, J（+ P）と覚えることができます。
+        </p>
+
+        <h3 style="color:#e8c47c;font-size:1rem">
+            4. 高頻度キーがホームポジションに集中
+        </h3>
+        <p>
+            日本語入力で最も頻繁に使用される文字を分析した結果に基づき、最も打ちやすいホームポジションに高頻度キーを配置しています:
+        </p>
+        <table
+            style="width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem"
+        >
+            <thead>
+                <tr style="border-bottom:2px solid #333">
+                    <th style="text-align:left;padding:0.5rem;color:#888"
+                        >頻度ランク</th
+                    >
+                    <th style="text-align:left;padding:0.5rem;color:#888"
+                        >キー</th
+                    >
+                    <th style="text-align:left;padding:0.5rem;color:#888"
+                        >位置（大和配列）</th
+                    >
+                    <th style="text-align:left;padding:0.5rem;color:#888"
+                        >位置（QWERTY）</th
+                    >
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="border-bottom:1px solid #222"
+                    ><td style="padding:0.4rem">★★★★</td><td
+                        style="padding:0.4rem">A, K, O</td
+                    ><td style="padding:0.4rem;color:#4a9">ホーム行</td><td
+                        style="padding:0.4rem;color:#c66">散在</td
+                    ></tr
+                >
+                <tr style="border-bottom:1px solid #222"
+                    ><td style="padding:0.4rem">★★★</td><td
+                        style="padding:0.4rem">I, N, U, T</td
+                    ><td style="padding:0.4rem;color:#4a9">ホーム行</td><td
+                        style="padding:0.4rem;color:#c66">散在</td
+                    ></tr
+                >
+                <tr style="border-bottom:1px solid #222"
+                    ><td style="padding:0.4rem">★★</td><td
+                        style="padding:0.4rem">E, S, R</td
+                    ><td style="padding:0.4rem;color:#4a9">ホーム行/上段</td><td
+                        style="padding:0.4rem;color:#c66">散在</td
+                    ></tr
+                >
+                <tr
+                    ><td style="padding:0.4rem">★</td><td style="padding:0.4rem"
+                        >他</td
+                    ><td style="padding:0.4rem">上段/下段</td><td
+                        style="padding:0.4rem">散在</td
+                    ></tr
+                >
+            </tbody>
+        </table>
+
+        <h3 style="color:#e8c47c;font-size:1rem">5. 英語・多言語にも対応</h3>
+        <p>
+            母音と子音の左右分離は英語の入力パターンとも相性が良く、左右の手を交互に使う自然なリズムが生まれます。中国語（ピンイン）や韓国語（ローマ字式）の入力にも効率的です。
+        </p>
+    </article>
+
+    <section id="comparison">
+        <h2
+            style="font-size:1.2rem;color:#fff;border-bottom:1px solid #333;padding-bottom:0.5rem"
+        >
+            他の配列との比較
+        </h2>
+        <p>
+            「日本語入力に最適化された配列」というフレーズ（<code
+                >NIHONGONYUURYOKUNISAITEKIKASARETAHAIRETSU</code
+            >、41キーストローク）を打つ場合の比較:
+        </p>
+
+        <table
+            style="width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem"
+        >
+            <thead>
+                <tr style="border-bottom:2px solid #333">
+                    <th style="text-align:left;padding:0.5rem;color:#888"
+                        >配列</th
+                    >
+                    <th style="text-align:left;padding:0.5rem;color:#888"
+                        >ホーム列使用率</th
+                    >
+                    <th style="text-align:left;padding:0.5rem;color:#888"
+                        >指移動回数</th
+                    >
+                    <th style="text-align:left;padding:0.5rem;color:#888"
+                        >特徴</th
+                    >
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="border-bottom:1px solid #222">
+                    <td style="padding:0.5rem;color:#e8c47c"
+                        ><strong>大和配列</strong></td
+                    >
+                    <td style="padding:0.5rem;color:#4a9"
+                        ><strong>76%</strong></td
+                    >
+                    <td style="padding:0.5rem;color:#4a9"
+                        ><strong>17回</strong></td
+                    >
+                    <td style="padding:0.5rem"
+                        >日本語最適化、50音順で覚えやすい</td
+                    >
+                </tr>
+                <tr style="border-bottom:1px solid #222">
+                    <td style="padding:0.5rem">QWERTY</td>
+                    <td style="padding:0.5rem;color:#c66">34%</td>
+                    <td style="padding:0.5rem;color:#c66">28回</td>
+                    <td style="padding:0.5rem">歴史的配列、標準だが非効率</td>
+                </tr>
+                <tr style="border-bottom:1px solid #222">
+                    <td style="padding:0.5rem">大西配列</td>
+                    <td style="padding:0.5rem;color:#4a9">約73%</td>
+                    <td style="padding:0.5rem;color:#4a9">約18回</td>
+                    <td style="padding:0.5rem">日本語最適化、母音が左手側</td>
+                </tr>
+                <tr style="border-bottom:1px solid #222">
+                    <td style="padding:0.5rem">Dvorak</td>
+                    <td style="padding:0.5rem">約50%</td>
+                    <td style="padding:0.5rem">約23回</td>
+                    <td style="padding:0.5rem">英語最適化、日本語には非最適</td>
+                </tr>
+                <tr>
+                    <td style="padding:0.5rem">Colemak</td>
+                    <td style="padding:0.5rem">約48%</td>
+                    <td style="padding:0.5rem">約24回</td>
+                    <td style="padding:0.5rem">英語最適化、日本語には非最適</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 style="color:#e8c47c;font-size:1rem">大和配列 vs QWERTY</h3>
+        <p>
+            大和配列はQWERTYと比較して、ホーム列の使用率が約2.2倍（34%→76%）、指の移動回数が約40%削減（28回→17回）されます。これは日本語入力において、指をほとんどホームポジションから動かさずに入力できることを意味します。
+        </p>
+
+        <h3 style="color:#e8c47c;font-size:1rem">大和配列 vs 大西配列</h3>
+        <p>
+            大西配列は大和配列と設計思想が似ており、ホーム列にA, I, O,
+            E（母音）を配置する点で共通しています。性能面では近い結果を出すことが多く、文章やベンチマーク手法によって勝敗が変わります。大和配列の独自の利点は:
+            (1) 子音が50音順で覚えやすい、(2) 濁音が下段に完全分離、(3)
+            英語・中国語・韓国語にも最適化。
+        </p>
+
+        <h3 style="color:#e8c47c;font-size:1rem">
+            大和配列 vs Dvorak / Colemak
+        </h3>
+        <p>
+            DvorakとColemakは英語入力に最適化された配列です。日本語のローマ字入力には最適化されておらず、母音の配置がバラバラなため日本語入力ではQWERTYからの改善が限定的です。日本語を主に入力するユーザーには、大和配列のような日本語特化の配列が推奨されます。
+        </p>
+    </section>
+
+    <section id="install">
+        <h2
+            style="font-size:1.2rem;color:#fff;border-bottom:1px solid #333;padding-bottom:0.5rem"
+        >
+            導入方法
+        </h2>
+
+        <h3 style="color:#e8c47c;font-size:1rem">Windows</h3>
+        <ol>
+            <li>
+                <a
+                    href="https://www.autohotkey.com/"
+                    target="_blank"
+                    rel="noopener"
+                    style="color:#e8c47c">AutoHotkey</a
+                > をインストール
+            </li>
+            <li>
+                <a
+                    href="/works/yamato/Layout.ahk"
+                    download
+                    style="color:#e8c47c">Layout.ahk</a
+                > をダウンロード
+            </li>
+            <li>ダウンロードした Layout.ahk を起動（ダブルクリック）</li>
+            <li>
+                無効にしたい場合はタスクトレイのAutoHotkeyアイコンを右クリック→終了
+            </li>
+        </ol>
+
+        <h3 style="color:#e8c47c;font-size:1rem">Mac</h3>
+        <ol>
+            <li>
+                <a
+                    href="https://karabiner-elements.pqrs.org/"
+                    target="_blank"
+                    rel="noopener"
+                    style="color:#e8c47c">Karabiner-Elements</a
+                > をインストール
+            </li>
+            <li>
+                <a
+                    href="/works/yamato/yamato-layout.json"
+                    download
+                    style="color:#e8c47c">yamato-layout.json</a
+                > をダウンロード
+            </li>
+            <li>
+                <code>~/.config/karabiner/assets/complex_modifications/</code> にファイルを配置
+            </li>
+            <li>
+                Karabiner-Elements → Complex Modifications → Add rule で有効化
+            </li>
+        </ol>
+        <p>
+            <strong>注意:</strong> いつでもソフトウェアをオフにするだけで元のQWERTY配列に戻せます。キーボードのハードウェアは一切変更しません。
+        </p>
+    </section>
+
+    <section id="faq">
+        <h2
+            style="font-size:1.2rem;color:#fff;border-bottom:1px solid #333;padding-bottom:0.5rem"
+        >
+            よくある質問（FAQ）
+        </h2>
+
+        <h3 style="color:#e8c47c;font-size:1rem">
+            Q. 日本語入力に最適なキーボード配列は何ですか？
+        </h3>
+        <p>
+            大和配列は、日本語のローマ字入力に特化したキーボード配列です。子音を左手、母音を右手に配置し、ホーム列に高頻度キーを集中させることで、指の移動を最小化しています。QWERTY配列と比較して、ホーム列使用率が約2.2倍、指移動回数が約40%削減されます。
+        </p>
+
+        <h3 style="color:#e8c47c;font-size:1rem">
+            Q. QWERTY配列が打てなくなりませんか？
+        </h3>
+        <p>
+            いいえ。英語を覚えても日本語は忘れません。野球を覚えてサッカーを忘れることもありません。最初は忘れる感覚があっても、使っていると徐々にまた思い出します。多くのユーザーが両方を切り替えて使っています。
+        </p>
+
+        <h3 style="color:#e8c47c;font-size:1rem">
+            Q. 特別なキーボードが必要ですか？
+        </h3>
+        <p>
+            いいえ。今お使いのQWERTY物理キーボードをそのまま使えます。ソフトウェア（AutoHotkey
+            / Karabiner-Elements）がキー入力を変換するだけです。
+        </p>
+
+        <h3 style="color:#e8c47c;font-size:1rem">
+            Q. 大和配列の名前の由来は？
+        </h3>
+        <p>
+            日本の言葉の響き — あ<strong>か</strong><strong>さ</strong><strong
+                >た</strong
+            ><strong>な</strong><strong>は</strong><strong>ま</strong><strong
+                >や</strong
+            >ら<strong>わ</strong> — の子音（K, S, T, N, H, M, Y, R, W）がそのままキーボード上に並んでいることに由来します。日本語の50音順がそのまま配列になっている、という意味を込めて「大和」と名付けられました。
+        </p>
+
+        <h3 style="color:#e8c47c;font-size:1rem">
+            Q. 他のキーボード配列との違いは？
+        </h3>
+        <p>
+            Dvorak、Colemakは英語に最適化されており、日本語入力には最適化されていません。大西配列は同じく日本語向けの新配列ですが、大和配列は子音が50音順という覚えやすさと、濁音の完全分離が特徴です。薙刀式はかな入力の新配列で、ローマ字入力ベースの大和配列とはアプローチが異なります。
+        </p>
+    </section>
+
+    <hr style="border:none;border-top:1px solid #333;margin:2rem 0" />
+
+    <footer style="color:#888;font-size:0.85rem">
+        <p>
+            <strong>大和配列 (Yamato Layout)</strong> — Created by <a
+                href="https://honjoh.dev"
+                style="color:#e8c47c">Nobuhiro Honjoh（本城靖大）</a
+            >
+        </p>
+        <p>
+            インタラクティブデモ: <a href="/yamato" style="color:#e8c47c"
+                >honjoh.dev/yamato</a
+            > | 参考資料: <a
+                href="https://note.com/_honjoh/n/n6eca0fda500b"
+                target="_blank"
+                rel="noopener"
+                style="color:#e8c47c">note.com</a
+            >
+        </p>
+    </footer>
+</Layout>

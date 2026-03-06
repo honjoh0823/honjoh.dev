@@ -1,0 +1,1261 @@
+{
+  "metadata": {
+    "layout": "Fujin (風神配列) - lu1",
+    "description": "Typing hints for Japanese phoneme input using the Fujin left-hand layout",
+    "notation": {
+      "keyFormat": "output[physicalKey] — e.g. k[A] means physical key A outputs 'k'",
+      "arrowMeaning": "Hold previous key(s), then press the next key",
+      "primary": "Recommended (most efficient) input method",
+      "supplementary": "Alternative valid input — listed as 'alt' with a 'note'"
+    },
+    "vowelRules": {
+      "isVowelRow": "Physical keys A,S,D,F output vowels (A=e, S=i, D=o, F=a) when ANY other character key is held",
+      "spaceReverse": "Pressing Space while holding a consonant outputs that consonant key's assigned vowel",
+      "lalt": "LAlt outputs 'u' when any character key or CapsLock is held",
+      "spaceHoldVowel": "Space(hold)+C outputs 'u' (spaceVowel override)"
+    },
+    "spaceReverseVowelMap": {
+      "A": "e",
+      "S": "i",
+      "D": "o",
+      "F": "a",
+      "G": "a",
+      "Q": "e",
+      "W": "i",
+      "E": "o",
+      "R": "a",
+      "T": "a",
+      "Z": "e",
+      "X": "i",
+      "C": "o",
+      "V": "a",
+      "B": "a"
+    }
+  },
+  "keyReference": {
+    "Q": "m",
+    "W": "y",
+    "E": "r",
+    "R": "w",
+    "T": "p",
+    "A": "k",
+    "S": "s",
+    "D": "t",
+    "F": "n",
+    "G": "h",
+    "Z": "z",
+    "X": "d",
+    "C": "b",
+    "V": "g",
+    "B": "j"
+  },
+  "phonemes": {
+    "あ行": [
+      {
+        "kana": "あ",
+        "romaji": "a",
+        "primary": [
+          "Space",
+          "n[F]"
+        ]
+      },
+      {
+        "kana": "い",
+        "romaji": "i",
+        "primary": [
+          "Space",
+          "s[S]"
+        ]
+      },
+      {
+        "kana": "う",
+        "romaji": "u",
+        "primary": [
+          "Space",
+          "b[C]"
+        ],
+        "alt": {
+          "keys": [
+            "Caps",
+            "u[LAlt]"
+          ],
+          "note": "CapsLock + LAlt for u"
+        }
+      },
+      {
+        "kana": "え",
+        "romaji": "e",
+        "primary": [
+          "Space",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "お",
+        "romaji": "o",
+        "primary": [
+          "Space",
+          "t[D]"
+        ]
+      }
+    ],
+    "か行": [
+      {
+        "kana": "か",
+        "romaji": "ka",
+        "primary": [
+          "k[A]",
+          "n[F]"
+        ]
+      },
+      {
+        "kana": "き",
+        "romaji": "ki",
+        "primary": [
+          "k[A]",
+          "s[S]"
+        ]
+      },
+      {
+        "kana": "く",
+        "romaji": "ku",
+        "primary": [
+          "k[A]",
+          "u[LAlt]"
+        ],
+        "alt": {
+          "keys": [
+            "k[A](tap)",
+            "Space",
+            "b[C]"
+          ],
+          "note": "Space+C for u"
+        }
+      },
+      {
+        "kana": "け",
+        "romaji": "ke",
+        "primary": [
+          "k[A]",
+          "Space"
+        ],
+        "note": "A's reverse vowel = e. Cannot use k[A]+k[A] (same key).",
+        "alt": {
+          "keys": [
+            "k[A](tap)",
+            "Space",
+            "k[A]"
+          ],
+          "note": "tap then Space+A"
+        }
+      },
+      {
+        "kana": "こ",
+        "romaji": "ko",
+        "primary": [
+          "k[A]",
+          "t[D]"
+        ]
+      }
+    ],
+    "さ行": [
+      {
+        "kana": "さ",
+        "romaji": "sa",
+        "primary": [
+          "s[S]",
+          "n[F]"
+        ]
+      },
+      {
+        "kana": "し",
+        "romaji": "si",
+        "primary": [
+          "s[S]",
+          "Space"
+        ],
+        "note": "S's reverse vowel = i. Cannot use s[S]+s[S]."
+      },
+      {
+        "kana": "す",
+        "romaji": "su",
+        "primary": [
+          "s[S]",
+          "u[LAlt]"
+        ],
+        "alt": {
+          "keys": [
+            "s[S](tap)",
+            "Space",
+            "b[C]"
+          ],
+          "note": "Space+C for u"
+        }
+      },
+      {
+        "kana": "せ",
+        "romaji": "se",
+        "primary": [
+          "s[S]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "そ",
+        "romaji": "so",
+        "primary": [
+          "s[S]",
+          "t[D]"
+        ]
+      }
+    ],
+    "た行": [
+      {
+        "kana": "た",
+        "romaji": "ta",
+        "primary": [
+          "t[D]",
+          "n[F]"
+        ]
+      },
+      {
+        "kana": "ち",
+        "romaji": "ti",
+        "primary": [
+          "t[D]",
+          "s[S]"
+        ]
+      },
+      {
+        "kana": "つ",
+        "romaji": "tu",
+        "primary": [
+          "t[D]",
+          "u[LAlt]"
+        ],
+        "alt": {
+          "keys": [
+            "t[D](tap)",
+            "Space",
+            "b[C]"
+          ],
+          "note": "Space+C for u"
+        }
+      },
+      {
+        "kana": "て",
+        "romaji": "te",
+        "primary": [
+          "t[D]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "と",
+        "romaji": "to",
+        "primary": [
+          "t[D]",
+          "Space"
+        ],
+        "note": "D's reverse vowel = o. Cannot use t[D]+t[D]."
+      }
+    ],
+    "な行": [
+      {
+        "kana": "な",
+        "romaji": "na",
+        "primary": [
+          "n[F]",
+          "Space"
+        ],
+        "note": "F's reverse vowel = a. Cannot use n[F]+n[F] (that produces 'nn' = ん)."
+      },
+      {
+        "kana": "に",
+        "romaji": "ni",
+        "primary": [
+          "n[F]",
+          "s[S]"
+        ]
+      },
+      {
+        "kana": "ぬ",
+        "romaji": "nu",
+        "primary": [
+          "n[F]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "ね",
+        "romaji": "ne",
+        "primary": [
+          "n[F]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "の",
+        "romaji": "no",
+        "primary": [
+          "n[F]",
+          "t[D]"
+        ]
+      }
+    ],
+    "は行": [
+      {
+        "kana": "は",
+        "romaji": "ha",
+        "primary": [
+          "h[G]",
+          "n[F]"
+        ],
+        "alt": {
+          "keys": [
+            "h[G]",
+            "Space"
+          ],
+          "note": "G's reverse vowel = a"
+        }
+      },
+      {
+        "kana": "ひ",
+        "romaji": "hi",
+        "primary": [
+          "h[G]",
+          "s[S]"
+        ]
+      },
+      {
+        "kana": "ふ",
+        "romaji": "hu",
+        "primary": [
+          "h[G]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "へ",
+        "romaji": "he",
+        "primary": [
+          "h[G]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "ほ",
+        "romaji": "ho",
+        "primary": [
+          "h[G]",
+          "t[D]"
+        ]
+      }
+    ],
+    "ま行": [
+      {
+        "kana": "ま",
+        "romaji": "ma",
+        "primary": [
+          "m[Q]",
+          "n[F]"
+        ]
+      },
+      {
+        "kana": "み",
+        "romaji": "mi",
+        "primary": [
+          "m[Q]",
+          "s[S]"
+        ]
+      },
+      {
+        "kana": "む",
+        "romaji": "mu",
+        "primary": [
+          "m[Q]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "め",
+        "romaji": "me",
+        "primary": [
+          "m[Q]",
+          "k[A]"
+        ],
+        "alt": {
+          "keys": [
+            "m[Q]",
+            "Space"
+          ],
+          "note": "Q's reverse vowel = e"
+        }
+      },
+      {
+        "kana": "も",
+        "romaji": "mo",
+        "primary": [
+          "m[Q]",
+          "t[D]"
+        ]
+      }
+    ],
+    "や行": [
+      {
+        "kana": "や",
+        "romaji": "ya",
+        "primary": [
+          "y[W]",
+          "n[F]"
+        ]
+      },
+      {
+        "kana": "ゆ",
+        "romaji": "yu",
+        "primary": [
+          "y[W]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "よ",
+        "romaji": "yo",
+        "primary": [
+          "y[W]",
+          "t[D]"
+        ]
+      }
+    ],
+    "ら行": [
+      {
+        "kana": "ら",
+        "romaji": "ra",
+        "primary": [
+          "r[E]",
+          "n[F]"
+        ]
+      },
+      {
+        "kana": "り",
+        "romaji": "ri",
+        "primary": [
+          "r[E]",
+          "s[S]"
+        ]
+      },
+      {
+        "kana": "る",
+        "romaji": "ru",
+        "primary": [
+          "r[E]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "れ",
+        "romaji": "re",
+        "primary": [
+          "r[E]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "ろ",
+        "romaji": "ro",
+        "primary": [
+          "r[E]",
+          "t[D]"
+        ],
+        "alt": {
+          "keys": [
+            "r[E]",
+            "Space"
+          ],
+          "note": "E's reverse vowel = o"
+        }
+      }
+    ],
+    "わ行": [
+      {
+        "kana": "わ",
+        "romaji": "wa",
+        "primary": [
+          "w[R]",
+          "n[F]"
+        ],
+        "alt": {
+          "keys": [
+            "w[R]",
+            "Space"
+          ],
+          "note": "R's reverse vowel = a"
+        }
+      },
+      {
+        "kana": "を",
+        "romaji": "wo",
+        "primary": [
+          "w[R]",
+          "t[D]"
+        ]
+      },
+      {
+        "kana": "ん",
+        "romaji": "nn",
+        "primary": [
+          "n[F]",
+          "n[F]"
+        ],
+        "note": "Tap F twice (release then re-press). IME converts 'nn' to ん."
+      }
+    ],
+    "が行": [
+      {
+        "kana": "が",
+        "romaji": "ga",
+        "primary": [
+          "g[V]",
+          "n[F]"
+        ],
+        "alt": {
+          "keys": [
+            "g[V]",
+            "Space"
+          ],
+          "note": "V's reverse vowel = a"
+        }
+      },
+      {
+        "kana": "ぎ",
+        "romaji": "gi",
+        "primary": [
+          "g[V]",
+          "s[S]"
+        ]
+      },
+      {
+        "kana": "ぐ",
+        "romaji": "gu",
+        "primary": [
+          "g[V]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "げ",
+        "romaji": "ge",
+        "primary": [
+          "g[V]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "ご",
+        "romaji": "go",
+        "primary": [
+          "g[V]",
+          "t[D]"
+        ]
+      }
+    ],
+    "ざ行": [
+      {
+        "kana": "ざ",
+        "romaji": "za",
+        "primary": [
+          "z[Z]",
+          "n[F]"
+        ]
+      },
+      {
+        "kana": "じ",
+        "romaji": "zi",
+        "primary": [
+          "z[Z]",
+          "s[S]"
+        ]
+      },
+      {
+        "kana": "ず",
+        "romaji": "zu",
+        "primary": [
+          "z[Z]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "ぜ",
+        "romaji": "ze",
+        "primary": [
+          "z[Z]",
+          "k[A]"
+        ],
+        "alt": {
+          "keys": [
+            "z[Z]",
+            "Space"
+          ],
+          "note": "Z's reverse vowel = e"
+        }
+      },
+      {
+        "kana": "ぞ",
+        "romaji": "zo",
+        "primary": [
+          "z[Z]",
+          "t[D]"
+        ]
+      }
+    ],
+    "だ行": [
+      {
+        "kana": "だ",
+        "romaji": "da",
+        "primary": [
+          "d[X]",
+          "n[F]"
+        ]
+      },
+      {
+        "kana": "ぢ",
+        "romaji": "di",
+        "primary": [
+          "d[X]",
+          "s[S]"
+        ],
+        "alt": {
+          "keys": [
+            "d[X]",
+            "Space"
+          ],
+          "note": "X's reverse vowel = i"
+        }
+      },
+      {
+        "kana": "づ",
+        "romaji": "du",
+        "primary": [
+          "d[X]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "で",
+        "romaji": "de",
+        "primary": [
+          "d[X]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "ど",
+        "romaji": "do",
+        "primary": [
+          "d[X]",
+          "t[D]"
+        ]
+      }
+    ],
+    "ば行": [
+      {
+        "kana": "ば",
+        "romaji": "ba",
+        "primary": [
+          "b[C]",
+          "n[F]"
+        ]
+      },
+      {
+        "kana": "び",
+        "romaji": "bi",
+        "primary": [
+          "b[C]",
+          "s[S]"
+        ]
+      },
+      {
+        "kana": "ぶ",
+        "romaji": "bu",
+        "primary": [
+          "b[C]",
+          "u[LAlt]"
+        ],
+        "alt": {
+          "keys": [
+            "b[C](tap)",
+            "Space",
+            "b[C]"
+          ],
+          "note": "Space+C = u (spaceVowel)"
+        }
+      },
+      {
+        "kana": "べ",
+        "romaji": "be",
+        "primary": [
+          "b[C]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "ぼ",
+        "romaji": "bo",
+        "primary": [
+          "b[C]",
+          "t[D]"
+        ],
+        "alt": {
+          "keys": [
+            "b[C]",
+            "Space"
+          ],
+          "note": "C's reverse vowel = o"
+        }
+      }
+    ],
+    "ぱ行": [
+      {
+        "kana": "ぱ",
+        "romaji": "pa",
+        "primary": [
+          "p[T]",
+          "n[F]"
+        ],
+        "alt": {
+          "keys": [
+            "p[T]",
+            "Space"
+          ],
+          "note": "T's reverse vowel = a"
+        }
+      },
+      {
+        "kana": "ぴ",
+        "romaji": "pi",
+        "primary": [
+          "p[T]",
+          "s[S]"
+        ]
+      },
+      {
+        "kana": "ぷ",
+        "romaji": "pu",
+        "primary": [
+          "p[T]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "ぺ",
+        "romaji": "pe",
+        "primary": [
+          "p[T]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "ぽ",
+        "romaji": "po",
+        "primary": [
+          "p[T]",
+          "t[D]"
+        ]
+      }
+    ],
+    "じゃ行": [
+      {
+        "kana": "じゃ",
+        "romaji": "ja",
+        "primary": [
+          "j[B]",
+          "n[F]"
+        ],
+        "alt": {
+          "keys": [
+            "j[B]",
+            "Space"
+          ],
+          "note": "B's reverse vowel = a"
+        }
+      },
+      {
+        "kana": "じ",
+        "romaji": "ji",
+        "primary": [
+          "j[B]",
+          "s[S]"
+        ]
+      },
+      {
+        "kana": "じゅ",
+        "romaji": "ju",
+        "primary": [
+          "j[B]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "じぇ",
+        "romaji": "je",
+        "primary": [
+          "j[B]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "じょ",
+        "romaji": "jo",
+        "primary": [
+          "j[B]",
+          "t[D]"
+        ]
+      }
+    ],
+    "きゃ行": [
+      {
+        "kana": "きゃ",
+        "romaji": "kya",
+        "primary": [
+          "k[A]",
+          "y[W]",
+          "n[F]"
+        ]
+      },
+      {
+        "kana": "きぃ",
+        "romaji": "kyi",
+        "primary": [
+          "k[A]",
+          "y[W]",
+          "s[S]"
+        ]
+      },
+      {
+        "kana": "きゅ",
+        "romaji": "kyu",
+        "primary": [
+          "k[A]",
+          "y[W]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "きぇ",
+        "romaji": "kye",
+        "primary": [
+          "k[A](tap)",
+          "y[W]",
+          "k[A]"
+        ],
+        "note": "Must release A before re-pressing for vowel e"
+      },
+      {
+        "kana": "きょ",
+        "romaji": "kyo",
+        "primary": [
+          "k[A]",
+          "y[W]",
+          "t[D]"
+        ]
+      }
+    ],
+    "しゃ行": [
+      {
+        "kana": "しゃ",
+        "romaji": "sha",
+        "primary": [
+          "s[S]",
+          "h[G]",
+          "Space"
+        ],
+        "note": "G held when pressing Space → G's vowel a",
+        "alt": {
+          "keys": [
+            "s[S]",
+            "h[G]",
+            "n[F]"
+          ],
+          "note": "isVowelRow F=a"
+        }
+      },
+      {
+        "kana": "しゅ",
+        "romaji": "shu",
+        "primary": [
+          "s[S]",
+          "h[G]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "しぇ",
+        "romaji": "she",
+        "primary": [
+          "s[S]",
+          "h[G]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "しょ",
+        "romaji": "sho",
+        "primary": [
+          "s[S]",
+          "h[G]",
+          "t[D]"
+        ]
+      }
+    ],
+    "ちゃ行": [
+      {
+        "kana": "ちゃ",
+        "romaji": "tya",
+        "primary": [
+          "t[D]",
+          "y[W]",
+          "n[F]"
+        ]
+      },
+      {
+        "kana": "ちゅ",
+        "romaji": "tyu",
+        "primary": [
+          "t[D]",
+          "y[W]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "ちぇ",
+        "romaji": "tye",
+        "primary": [
+          "t[D]",
+          "y[W]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "ちょ",
+        "romaji": "tyo",
+        "primary": [
+          "t[D](tap)",
+          "y[W]",
+          "t[D]"
+        ],
+        "note": "Must release D before re-pressing for vowel o"
+      }
+    ],
+    "にゃ行": [
+      {
+        "kana": "にゃ",
+        "romaji": "nya",
+        "primary": [
+          "n[F]",
+          "y[W]",
+          "Space"
+        ],
+        "note": "Release W before Space → F still held → F's vowel a",
+        "alt": {
+          "keys": [
+            "n[F](tap)",
+            "y[W]",
+            "n[F]"
+          ],
+          "note": "re-press F for isVowelRow a"
+        }
+      },
+      {
+        "kana": "にゅ",
+        "romaji": "nyu",
+        "primary": [
+          "n[F]",
+          "y[W]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "にぇ",
+        "romaji": "nye",
+        "primary": [
+          "n[F]",
+          "y[W]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "にょ",
+        "romaji": "nyo",
+        "primary": [
+          "n[F](tap)",
+          "y[W]",
+          "t[D]"
+        ]
+      }
+    ],
+    "ひゃ行": [
+      {
+        "kana": "ひゃ",
+        "romaji": "hya",
+        "primary": [
+          "h[G]",
+          "y[W]",
+          "n[F]"
+        ],
+        "alt": {
+          "keys": [
+            "h[G]",
+            "y[W]",
+            "Space"
+          ],
+          "note": "Release W → G's vowel a"
+        }
+      },
+      {
+        "kana": "ひゅ",
+        "romaji": "hyu",
+        "primary": [
+          "h[G]",
+          "y[W]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "ひぇ",
+        "romaji": "hye",
+        "primary": [
+          "h[G]",
+          "y[W]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "ひょ",
+        "romaji": "hyo",
+        "primary": [
+          "h[G](tap)",
+          "y[W]",
+          "t[D]"
+        ]
+      }
+    ],
+    "みゃ行": [
+      {
+        "kana": "みゃ",
+        "romaji": "mya",
+        "primary": [
+          "m[Q]",
+          "y[W]",
+          "n[F]"
+        ]
+      },
+      {
+        "kana": "みゅ",
+        "romaji": "myu",
+        "primary": [
+          "m[Q]",
+          "y[W]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "みぇ",
+        "romaji": "mye",
+        "primary": [
+          "m[Q]",
+          "y[W]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "みょ",
+        "romaji": "myo",
+        "primary": [
+          "m[Q](tap)",
+          "y[W]",
+          "t[D]"
+        ]
+      }
+    ],
+    "りゃ行": [
+      {
+        "kana": "りゃ",
+        "romaji": "rya",
+        "primary": [
+          "r[E]",
+          "y[W]",
+          "n[F]"
+        ]
+      },
+      {
+        "kana": "りゅ",
+        "romaji": "ryu",
+        "primary": [
+          "r[E]",
+          "y[W]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "りぇ",
+        "romaji": "rye",
+        "primary": [
+          "r[E]",
+          "y[W]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "りょ",
+        "romaji": "ryo",
+        "primary": [
+          "r[E](tap)",
+          "y[W]",
+          "t[D]"
+        ]
+      }
+    ],
+    "ぎゃ行": [
+      {
+        "kana": "ぎゃ",
+        "romaji": "gya",
+        "primary": [
+          "g[V]",
+          "y[W]",
+          "n[F]"
+        ]
+      },
+      {
+        "kana": "ぎゅ",
+        "romaji": "gyu",
+        "primary": [
+          "g[V]",
+          "y[W]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "ぎぇ",
+        "romaji": "gye",
+        "primary": [
+          "g[V]",
+          "y[W]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "ぎょ",
+        "romaji": "gyo",
+        "primary": [
+          "g[V](tap)",
+          "y[W]",
+          "t[D]"
+        ]
+      }
+    ],
+    "びゃ行": [
+      {
+        "kana": "びゃ",
+        "romaji": "bya",
+        "primary": [
+          "b[C]",
+          "y[W]",
+          "n[F]"
+        ]
+      },
+      {
+        "kana": "びゅ",
+        "romaji": "byu",
+        "primary": [
+          "b[C]",
+          "y[W]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "びぇ",
+        "romaji": "bye",
+        "primary": [
+          "b[C]",
+          "y[W]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "びょ",
+        "romaji": "byo",
+        "primary": [
+          "b[C](tap)",
+          "y[W]",
+          "t[D]"
+        ]
+      }
+    ],
+    "ぴゃ行": [
+      {
+        "kana": "ぴゃ",
+        "romaji": "pya",
+        "primary": [
+          "p[T]",
+          "y[W]",
+          "n[F]"
+        ]
+      },
+      {
+        "kana": "ぴゅ",
+        "romaji": "pyu",
+        "primary": [
+          "p[T]",
+          "y[W]",
+          "u[LAlt]"
+        ]
+      },
+      {
+        "kana": "ぴぇ",
+        "romaji": "pye",
+        "primary": [
+          "p[T]",
+          "y[W]",
+          "k[A]"
+        ]
+      },
+      {
+        "kana": "ぴょ",
+        "romaji": "pyo",
+        "primary": [
+          "p[T](tap)",
+          "y[W]",
+          "t[D]"
+        ]
+      }
+    ],
+    "特殊": [
+      {
+        "kana": "ん",
+        "romaji": "nn",
+        "primary": [
+          "n[F]",
+          "n[F]"
+        ],
+        "note": "Tap F, release, tap F again. IME converts 'nn' to ん."
+      },
+      {
+        "kana": "っ",
+        "romaji": "(double consonant)",
+        "primary": [
+          "(consonant key twice)"
+        ],
+        "note": "e.g. っか = k[A],k[A],n[F] (tap k twice then vowel). IME converts double consonant to っ+consonant."
+      },
+      {
+        "kana": "ー",
+        "romaji": "-",
+        "primary": [
+          "(vowel output)",
+          "h[G]"
+        ],
+        "note": "After outputting a vowel (LastCharWasVowel=true), pressing G outputs '-' which IME converts to ー."
+      }
+    ]
+  }
+}

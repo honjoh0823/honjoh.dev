@@ -1,0 +1,13 @@
+# honjoh.dev - AI and Search Engine Crawler Policy
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://honjoh.dev/sitemap-index.xml
+
+# AI Crawlers: see these files for structured site information
+# LLM summary: https://honjoh.dev/llms.txt
+# LLM full reference: https://honjoh.dev/llms-full.txt
+# Yamato Layout reference (JA): https://honjoh.dev/yamato/about
+# Yamato Layout reference (EN): https://honjoh.dev/yamato/about/en

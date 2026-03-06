@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Independent Timing Prototype — Key Duration Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: hsl(230 20% 5.5%);
+            --ink: #e0e0e0;
+            --soft: #BBB;
+            --accent: hsl(210 55% 55%);
+            --k-n-bg: hsl(230 5% 12%);
+            --k-n-tx: hsl(230 5% 42%);
+            --k-q-bg: hsl(32 44% 20%);
+            --k-q-tx: hsl(32 52% 60%);
+            --tc-y-press-bg: hsl(230 8% 16%);
+            --tc-y-press-tx: #ddd;
+            --ink-muted: #666;
+            --ink-white: #fff;
+            --ink-ghost: #2a2a2a;
+            --glow-blue-soft: hsla(210, 55%, 55%, .4);
+            --glow-amber: hsla(32, 52%, 60%, .15);
+            --glow-amber-soft: hsla(32, 52%, 60%, .3);
+            --border-subtle: #333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: "Outfit", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--soft);
+        }
+
+        .controls {
+            margin-bottom: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .controls label {
+            font-size: 13px;
+            color: var(--soft);
+        }
+
+        .controls input[type=range] {
+            width: 100px;
+            accent-color: var(--accent);
+        }
+
+        .controls .val {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            min-width: 36px;
+        }
+
+        .controls button {
+            padding: 6px 14px;
+            border: 1px solid var(--border-subtle);
+            background: var(--k-n-bg);
+            color: var(--ink);
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        .controls button:hover {
+            background: hsl(230 5% 18%);
+        }
+
+        #container {
+            width: min(1100px, 94vw);
+        }
+
+        .tc-wrap {
+            display: flex;
+            gap: 32px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .tc-panel {
+            flex: 1;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tc-panel .tc-title {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: .03em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 28px;
+        }
+
+        .tc-panel.tc-q .tc-title {
+            color: var(--k-q-tx);
+        }
+
+        .tc-panel.tc-y .tc-title {
+            color: var(--accent);
+        }
+
+        .tc-kb-wrap {
+            position: relative;
+            padding: 4px;
+            margin-top: auto;
+        }
+
+        .tc-kb {
+            display: grid;
+            gap: 3px;
+        }
+
+        .tc-kb .row {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .tc-kb .row:nth-child(2) {
+            padding-left: 10px;
+        }
+
+        .tc-kb .row:nth-child(3) {
+            padding-left: 20px;
+        }
+
+        .tc-key {
+            width: clamp(24px, 2.8vw, 34px);
+            height: clamp(26px, 3vw, 36px);
+            border-radius: 4px;
+            display: grid;
+            place-items: center;
+            position: relative;
+            font-size: clamp(9px, 1vw, 12px);
+            font-weight: 400;
+            border: none;
+            box-shadow: none;
+            transition: all .1s ease;
+        }
+
+        .tc-y .tc-key {
+            background: var(--k-n-bg);
+            color: var(--k-n-tx);
+        }
+
+        .tc-q .tc-key {
+            background: var(--k-n-bg);
+            color: var(--k-n-tx);
+        }
+
+        .tc-key.home::after {
+            content: "";
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 7px;
+            height: 1.5px;
+            border-radius: 1px;
+            background: rgba(255, 255, 255, .18);
+        }
+
+        .tc-y .tc-key.tc-pressing {
+            background: var(--tc-y-press-bg);
+            color: var(--tc-y-press-tx);
+            box-shadow: 0 0 8px rgba(255, 255, 255, .06);
+            transform: scale(1.08);
+        }
+
+        .tc-q .tc-key.tc-pressing {
+            background: var(--k-q-bg);
+            color: var(--k-q-tx);
+            box-shadow: 0 0 8px var(--glow-amber);
+            transform: scale(1.08);
+        }
+
+        .tc-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            overflow: visible;
+        }
+
+        .tc-path {
+            stroke-linecap: round;
+            stroke-width: 1.5;
+            fill: none;
+            opacity: 0;
+            animation: tcFade .15s ease forwards;
+        }
+
+        @keyframes tcFade {
+            to {
+                opacity: .5;
+            }
+        }
+
+        .tc-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+            opacity: .15;
+            transition: none;
+        }
+
+        .tc-y .tc-dot.tc-lh,
+        .tc-y .tc-dot.tc-rh {
+            background: var(--accent);
+            box-shadow: 0 0 4px var(--glow-blue-soft);
+        }
+
+        .tc-q .tc-dot.tc-lh,
+        .tc-q .tc-dot.tc-rh {
+            background: var(--k-q-tx);
+            box-shadow: 0 0 4px var(--glow-amber-soft);
+        }
+
+        .tc-dot.tc-active {
+            opacity: .35;
+            transform: scale(1.3);
+            transition: left .12s cubic-bezier(.4, 0, .2, 1), top .12s cubic-bezier(.4, 0, .2, 1), opacity .1s, transform .1s;
+        }
+
+        .tc-mock-box {
+            min-height: calc(3 * clamp(50px, 5vw, 68px) + 40px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 6px;
+            padding-bottom: 20px;
+        }
+
+        .tc-stats {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: .02em;
+            margin-bottom: 6px;
+            height: 28px;
+        }
+
+        .tc-stats .tc-sep {
+            margin: 0 8px;
+            opacity: .25;
+        }
+
+        .tc-q .tc-stats {
+            color: var(--k-q-tx);
+            opacity: .6;
+        }
+
+        .tc-y .tc-stats {
+            color: var(--accent);
+            opacity: .6;
+        }
+
+        .tc-phrase {
+            font-size: clamp(16px, 2vw, 22px);
+            text-align: center;
+            margin-bottom: 8px;
+            letter-spacing: .03em;
+            min-height: 1.2em;
+        }
+
+        .tc-typing-inline {
+            display: flex;
+            gap: 1px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+            min-height: 24px;
+        }
+
+        .tc-roma {
+            font-size: clamp(11px, 1.2vw, 15px);
+            min-width: 9px;
+            text-align: center;
+            transition: all .12s;
+            letter-spacing: .02em;
+        }
+
+        .tc-q .tc-roma {
+            color: hsl(32 20% 28%);
+        }
+
+        .tc-q .tc-roma.tc-r-active {
+            color: var(--k-q-tx);
+            font-weight: 700;
+        }
+
+        .tc-q .tc-roma.tc-r-done {
+            color: hsl(32 10% 16%);
+        }
+
+        .tc-y .tc-roma {
+            color: hsl(210 15% 28%);
+        }
+
+        .tc-y .tc-roma.tc-r-active {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .tc-y .tc-roma.tc-r-done {
+            color: hsl(210 10% 16%);
+        }
+
+        .tc-word-gap {
+            width: 6px;
+        }
+
+        .tc-line-break {
+            width: 100%;
+            height: 0;
+        }
+
+        @media(max-width:860px) {
+            .tc-wrap {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .tc-panel {
+                max-width: 100%;
+            }
+
+            .tc-key {
+                width: clamp(28px, 7vw, 38px);
+                height: clamp(30px, 7.5vw, 40px);
+                font-size: clamp(10px, 2.5vw, 13px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Independent Timing Prototype — Click anywhere to replay</h1>
+    <div class="controls">
+        <label>Move/Home:</label>
+        <input type="range" id="move-ms" min="5" max="1000" value="60" step="5">
+        <span class="val" id="move-val">60ms</span>
+
+        <label>Key:</label>
+        <input type="range" id="key-ms" min="5" max="1000" value="15" step="5">
+        <span class="val" id="key-val">15ms</span>
+
+        <button onclick="startDemo('ja')">Replay</button>
+    </div>
+    <div id="container"></div>
+    <script>
+        const TC_QWERTY_R = [
+            [['Q'], ['W'], ['E'], ['R'], ['T'], ['Y'], ['U'], ['I'], ['O'], ['P'], ['['], [']']],
+            [['A'], ['S'], ['D'], ['F', 1], ['G'], ['H'], ['J', 1], ['K'], ['L'], [';'], ["'"]],
+            [['Z'], ['X'], ['C'], ['V'], ['B'], ['N'], ['M'], [','], ['.'], ['/']]
+        ];
+        const TC_QWERTY_H = { 0: 'A', 1: 'S', 2: 'D', 3: 'F', 4: 'J', 5: 'K', 6: 'L', 7: ';' };
+        const TC_QWERTY_F = { Q: 0, A: 0, Z: 0, W: 1, S: 1, X: 1, E: 2, D: 2, C: 2, R: 3, T: 3, F: 3, G: 3, V: 3, B: 3, Y: 4, H: 4, N: 4, U: 4, J: 4, M: 4, I: 5, K: 5, O: 6, L: 6, P: 7 };
+        const TC_YR = [
+            [['M'], ['Y'], ['R'], ['W'], ['P'], ['X'], ['L'], ['Q'], ['C'], ["'"], ['['], [']']],
+            [['K'], ['S'], ['T'], ['N', 1], ['H'], ['F'], ['A', 1], ['O'], ['I'], ['E'], ['/']],
+            [['Z'], ['D'], ['B'], ['G'], ['J'], ['V'], ['U'], ['-'], [','], ['.']],
+        ];
+        const TC_YH = { 0: 'K', 1: 'S', 2: 'T', 3: 'N', 4: 'A', 5: 'O', 6: 'I', 7: 'E' };
+        const TC_YF = { M: 0, K: 0, Z: 0, Y: 1, S: 1, D: 1, R: 2, T: 2, B: 2, W: 3, P: 3, N: 3, H: 3, G: 3, J: 3, X: 4, L: 4, F: 4, A: 4, V: 4, U: 4, Q: 5, O: 5, C: 6, I: 6, E: 7 };
+
+        const WRAP_AFTER = 13;
+        const TC_LANG_WORDS = {
+            ja: {
+                phrase: '日本語入力に最適化された配列',
+                word: [
+                    { ja: '', r: ['N', 'I'] }, { ja: '', r: ['H', 'O'] }, { ja: '', r: ['N'] },
+                    { ja: '', r: ['G', 'O'] }, { ja: '', r: ['N', 'Y', 'U'] }, { ja: '', r: ['U'] },
+                    { ja: '', r: ['R', 'Y', 'O'] }, { ja: '', r: ['K', 'U'] },
+                    { ja: '', r: ['N', 'I'] }, { ja: '', r: ['S', 'A'] }, { ja: '', r: ['I'] },
+                    { ja: '', r: ['T', 'E'] }, { ja: '', r: ['K', 'I'] }, { ja: '', r: ['K', 'A'] },
+                    { ja: '', r: ['S', 'A'] }, { ja: '', r: ['R', 'E'] }, { ja: '', r: ['T', 'A'] },
+                    { ja: '', r: ['H', 'A'] }, { ja: '', r: ['I'] }, { ja: '', r: ['R', 'E'] },
+                    { ja: '', r: ['T', 'U'] }
+                ],
+            },
+        };
+
+        const DOT_R = 7;
+        const PAUSE_MS = 2000;
+
+        // Read slider values
+        function getMoveMs() { return +document.getElementById('move-ms').value; }
+        function getKeyMs() { return +document.getElementById('key-ms').value; }
+
+        function ctr(el, w) { if (!el || !w) return { x: 0, y: 0 }; const k = el.getBoundingClientRect(), r = w.getBoundingClientRect(); return { x: k.left - r.left + k.width / 2, y: k.top - r.top + k.height / 2 }; }
+        function addLine(s, a, b, c) { if (!s) return; const ns = 'http://www.w3.org/2000/svg'; const l = document.createElementNS(ns, 'line'); l.setAttribute('x1', a.x); l.setAttribute('y1', a.y); l.setAttribute('x2', b.x); l.setAttribute('y2', b.y); l.setAttribute('stroke', c); l.classList.add('tc-path'); s.appendChild(l); }
+        function svgSetup(s, w) { if (!s || !w) return; const r = w.getBoundingClientRect(); s.setAttribute('viewBox', `0 0 ${r.width} ${r.height}`); }
+
+        function buildTimeline(flat, fingerMap, homeMap) {
+            const actions = [];
+            const fingerPos = {};
+            for (let f = 0; f < 8; f++) fingerPos[f] = homeMap[f];
+            for (let i = 0; i < flat.length; i++) {
+                const ch = flat[i], finger = fingerMap[ch];
+                if (fingerPos[finger] !== ch) actions.push({ type: 'move', stepIdx: i, finger });
+                actions.push({ type: 'key', stepIdx: i, char: ch, finger });
+                fingerPos[finger] = ch;
+                const next = i + 1 < flat.length ? flat[i + 1] : null;
+                if (next && fingerMap[next] !== finger && homeMap[finger] !== ch) {
+                    actions.push({ type: 'home', stepIdx: i, finger, homeChar: homeMap[finger] });
+                    fingerPos[finger] = homeMap[finger];
+                }
+            }
+            return actions;
+        }
+
+        const COLOR_TARGETS = {
+            'tc-y': { base: { h: 210, s: 5, lBg: 12, lTx: 32 }, target: { h: 210, s: 55, lBg: 27, sTx: 60, lTx: 88 } },
+            'tc-q': { base: { h: 32, s: 5, lBg: 12, lTx: 32 }, target: { h: 32, s: 50, lBg: 25, sTx: 60, lTx: 85 } }
+        };
+        function lerp(a, b, t) { return a + (b - a) * t; }
+        function applySaturationStyle(keyEl, hitCount, maxHits, panelClass) {
+            if (!keyEl) return; const ratio = Math.min(hitCount / maxHits, 1); const ct = COLOR_TARGETS[panelClass]; if (!ct) return;
+            const { base, target: tgt } = ct;
+            const h = Math.round(lerp(base.h, tgt.h, ratio)), sBg = Math.round(lerp(base.s, tgt.s, ratio)), lBg = Math.round(lerp(base.lBg, tgt.lBg, ratio)), sTx = Math.round(lerp(base.s, tgt.sTx, ratio)), lTx = Math.round(lerp(base.lTx, tgt.lTx, ratio));
+            keyEl.style.background = `hsl(${h} ${sBg}% ${lBg}%)`; keyEl.style.color = `hsl(${h} ${sTx}% ${lTx}%)`;
+        }
+
+        function renderKB(el, layout, km) { el.innerHTML = ''; layout.forEach(row => { const d = document.createElement('div'); d.className = 'row'; row.forEach(([ch, hm]) => { const k = document.createElement('div'); k.className = 'tc-key' + (hm ? ' home' : ''); k.textContent = ch; d.appendChild(k); if (!km[ch]) km[ch] = k; }); el.appendChild(d); }); }
+        function mkDots(wrap, hm, km, dots, pos) { for (let f = 0; f < 8; f++) { const ch = hm[f]; if (!ch || !km[ch]) continue; const d = document.createElement('div'); d.className = 'tc-dot ' + (f < 4 ? 'tc-lh' : 'tc-rh'); wrap.appendChild(d); dots[f] = d; d.style.left = '0px'; d.style.top = '0px'; pos[f] = { x: 0, y: 0 }; } }
+
+        let activeTimers = [];
+        function stopAll() { activeTimers.forEach(t => clearTimeout(t)); activeTimers = []; }
+
+        // Slider event handlers
+        document.getElementById('move-ms').addEventListener('input', e => {
+            document.getElementById('move-val').textContent = e.target.value + 'ms';
+        });
+        document.getElementById('key-ms').addEventListener('input', e => {
+            document.getElementById('key-val').textContent = e.target.value + 'ms';
+        });
+
+        function startDemo(lang) {
+            stopAll();
+            const container = document.getElementById('container');
+            const langData = TC_LANG_WORDS[lang || 'ja'];
+            const WORD = langData.word;
+            const FLAT = WORD.flatMap(c => c.r);
+
+            const freq = {}; FLAT.forEach(ch => freq[ch] = (freq[ch] || 0) + 1);
+            const maxHits = Math.max(1, ...Object.values(freq));
+
+            const qTimeline = buildTimeline(FLAT, TC_QWERTY_F, TC_QWERTY_H);
+            const yTimeline = buildTimeline(FLAT, TC_YF, TC_YH);
+            const qMoves = qTimeline.filter(a => a.type !== 'key').length;
+            const yMoves = yTimeline.filter(a => a.type !== 'key').length;
+
+            container.innerHTML = `
+        <div class="tc-mock-box">
+            <div class="tc-phrase">${langData.phrase}</div>
+            <div class="tc-wrap">
+                <div class="tc-panel tc-q">
+                    <span class="tc-title">QWERTY</span>
+                    <div class="tc-typing-inline" id="q-typing"></div>
+                    <div class="tc-stats">ホーム列<b>–</b><span class="tc-sep">|</span>指移動<b>${qMoves}</b>回</div>
+                    <div class="tc-kb-wrap" id="q-wrap"><div class="tc-kb" id="q-kb"></div><svg class="tc-overlay" id="q-svg"></svg></div>
+                </div>
+                <div class="tc-panel tc-y">
+                    <span class="tc-title">大和配列</span>
+                    <div class="tc-typing-inline" id="y-typing"></div>
+                    <div class="tc-stats">ホーム列<b>–</b><span class="tc-sep">|</span>指移動<b>${yMoves}</b>回</div>
+                    <div class="tc-kb-wrap" id="y-wrap"><div class="tc-kb" id="y-kb"></div><svg class="tc-overlay" id="y-svg"></svg></div>
+                </div>
+            </div>
+        </div>`;
+
+            ['q', 'y'].forEach(side => {
+                const td = document.getElementById(side + '-typing'); let s = 0;
+                WORD.forEach((ch, ci) => {
+                    ch.r.forEach(r => { const span = document.createElement('span'); span.className = 'tc-roma'; span.dataset.step = s++; span.textContent = r; td.appendChild(span); });
+                    if (ci === WRAP_AFTER) { const br = document.createElement('div'); br.className = 'tc-line-break'; td.appendChild(br); }
+                    else if (ci < WORD.length - 1) { const gap = document.createElement('span'); gap.className = 'tc-word-gap'; td.appendChild(gap); }
+                });
+            });
+
+            const qm = {}, ym = {};
+            renderKB(document.getElementById('q-kb'), TC_QWERTY_R, qm);
+            renderKB(document.getElementById('y-kb'), TC_YR, ym);
+            const qWrap = document.getElementById('q-wrap'), yWrap = document.getElementById('y-wrap');
+            const qSvg = document.getElementById('q-svg'), ySvg = document.getElementById('y-svg');
+            const qd = {}, yd = {}, qp = {}, yp = {};
+            mkDots(qWrap, TC_QWERTY_H, qm, qd, qp); mkDots(yWrap, TC_YH, ym, yd, yp);
+            container.style.cursor = 'pointer'; container.onclick = () => startDemo(lang);
+
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                svgSetup(qSvg, qWrap); svgSetup(ySvg, yWrap);
+                [{ d: qd, p: qp, h: TC_QWERTY_H, m: qm, w: qWrap }, { d: yd, p: yp, h: TC_YH, m: ym, w: yWrap }].forEach(({ d, p, h, m, w }) => {
+                    for (let f = 0; f < 8; f++) { if (!d[f] || !h[f] || !m[h[f]]) continue; const ps = ctr(m[h[f]], w); p[f] = { ...ps }; d[f].style.left = (ps.x - DOT_R) + 'px'; d[f].style.top = (ps.y - DOT_R) + 'px'; }
+                });
+
+                const cQPath = getComputedStyle(document.documentElement).getPropertyValue('--k-q-tx').trim();
+                const cYPath = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+                const qHitCount = {}; FLAT.forEach(c => qHitCount[c] = 0);
+                const yHitCount = {}; FLAT.forEach(c => yHitCount[c] = 0);
+                let qCurrentStep = -1, yCurrentStep = -1, qDone = false, yDone = false;
+
+                function highlightSide(side, stepIdx) {
+                    const panel = document.querySelector(`.tc-panel.tc-${side}`); if (!panel) return;
+                    panel.querySelectorAll('.tc-roma').forEach(el => {
+                        const s = +el.dataset.step;
+                        el.className = s < stepIdx ? 'tc-roma tc-r-done' : s === stepIdx ? 'tc-roma tc-r-active' : 'tc-roma';
+                    });
+                }
+
+                function runSide(timeline, idx, km, dots, pos, wrap, svg, pathColor, fingerMap, homeMap, hitCount, panelClass, side) {
+                    if (idx >= timeline.length) {
+                        highlightSide(side, FLAT.length);
+                        if (side === 'q') qDone = true; if (side === 'y') yDone = true;
+                        if (qDone && yDone) { const t = setTimeout(() => startDemo(lang), PAUSE_MS); activeTimers.push(t); }
+                        return;
+                    }
+                    const action = timeline[idx];
+                    const currentStep = side === 'q' ? qCurrentStep : yCurrentStep;
+
+                    // Determine delay for THIS action
+                    const delay = action.type === 'key' ? getKeyMs() : getMoveMs();
+
+                    if (action.type === 'key') {
+                        const ch = action.char, f = action.finger;
+                        if (currentStep >= 0 && currentStep !== action.stepIdx) { const prevCh = FLAT[currentStep]; km[prevCh].classList.remove('tc-pressing'); km[prevCh].classList.add('tc-pressed'); }
+                        if (currentStep >= 0) { const prevCh = FLAT[currentStep]; hitCount[prevCh] = (hitCount[prevCh] || 0) + 1; applySaturationStyle(km[prevCh], hitCount[prevCh], maxHits, panelClass); }
+                        const kt = ctr(km[ch], wrap);
+                        if (pos[f].x !== kt.x || pos[f].y !== kt.y) addLine(svg, pos[f], kt, pathColor);
+                        pos[f] = { ...kt }; dots[f].style.left = (kt.x - DOT_R) + 'px'; dots[f].style.top = (kt.y - DOT_R) + 'px';
+                        km[ch].classList.add('tc-pressing'); dots[f].classList.add('tc-active');
+                        if (side === 'q') qCurrentStep = action.stepIdx; if (side === 'y') yCurrentStep = action.stepIdx;
+                        highlightSide(side, action.stepIdx);
+                    } else if (action.type === 'home') {
+                        const f = action.finger, homeKey = action.homeChar;
+                        if (homeKey && km[homeKey]) { const hp = ctr(km[homeKey], wrap); addLine(svg, pos[f], hp, pathColor); pos[f] = { ...hp }; dots[f].style.left = (hp.x - DOT_R) + 'px'; dots[f].style.top = (hp.y - DOT_R) + 'px'; }
+                        dots[f].classList.remove('tc-active');
+                    }
+                    const t = setTimeout(() => runSide(timeline, idx + 1, km, dots, pos, wrap, svg, pathColor, fingerMap, homeMap, hitCount, panelClass, side), delay);
+                    activeTimers.push(t);
+                }
+
+                runSide(qTimeline, 0, qm, qd, qp, qWrap, qSvg, cQPath, TC_QWERTY_F, TC_QWERTY_H, qHitCount, 'tc-q', 'q');
+                runSide(yTimeline, 0, ym, yd, yp, yWrap, ySvg, cYPath, TC_YF, TC_YH, yHitCount, 'tc-y', 'y');
+            }));
+        }
+        startDemo('ja');
+    </script>
+</body>
+
+</html>

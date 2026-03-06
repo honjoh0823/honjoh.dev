@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Typing Compare — Animation Debug</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="yamato.css">
+    <style>
+        /* Debug page overrides */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .debug-controls {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: hsl(230 20% 8% / .95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--line);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 100;
+            font-family: "Outfit", sans-serif;
+            color: var(--ink);
+            flex-wrap: wrap;
+        }
+
+        .debug-controls .title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            white-space: nowrap;
+        }
+
+        .debug-controls .step-info {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--ink);
+            font-variant-numeric: tabular-nums;
+            min-width: 140px;
+        }
+
+        .debug-controls .step-info .current {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .debug-controls .char-info {
+            font-size: 13px;
+            color: var(--ink-mid);
+            flex: 1;
+        }
+
+        .debug-controls .char-info .ja {
+            font-size: 18px;
+            color: var(--ink);
+            margin-right: 4px;
+        }
+
+        .debug-controls .char-info .roma {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .debug-controls .hint {
+            font-size: 12px;
+            color: var(--ink-dim);
+            white-space: nowrap;
+        }
+
+        .debug-controls kbd {
+            display: inline-block;
+            padding: 2px 6px;
+            background: hsl(230 10% 18%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+            font-size: 11px;
+            font-family: "Outfit", monospace;
+            color: var(--ink-mid);
+        }
+
+        .debug-controls .btn {
+            padding: 6px 14px;
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            background: hsl(230 10% 14%);
+            color: var(--ink-mid);
+            font-size: 12px;
+            font-family: "Outfit", sans-serif;
+            cursor: pointer;
+            transition: all .15s ease;
+            white-space: nowrap;
+        }
+
+        .debug-controls .btn:hover {
+            background: hsl(230 10% 20%);
+            color: var(--ink);
+            border-color: var(--accent);
+        }
+
+        .debug-controls .btn.active {
+            background: hsl(210 55% 20%);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Language tabs */
+        .lang-tabs {
+            display: flex;
+            gap: 4px;
+        }
+
+        .lang-tabs .btn.lang-active {
+            background: hsl(210 55% 25%);
+            border-color: var(--accent);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .tc-mock-box {
+            margin-top: 90px;
+        }
+
+        /* Step progress bar */
+        .step-progress {
+            width: 100%;
+            max-width: 600px;
+            margin: 12px auto 0;
+            display: flex;
+            gap: 2px;
+            height: 4px;
+        }
+
+        .step-progress .sp-bar {
+            flex: 1;
+            background: hsl(230 10% 14%);
+            border-radius: 2px;
+            transition: background .15s ease;
+        }
+
+        .step-progress .sp-bar.done {
+            background: var(--accent);
+            opacity: .5;
+        }
+
+        .step-progress .sp-bar.current {
+            background: var(--accent);
+        }
+
+        /* Finger state table */
+        .debug-finger-state {
+            margin-top: 16px;
+            font-family: "Outfit", monospace;
+            font-size: 12px;
+            color: var(--ink-mid);
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+        }
+
+        .debug-finger-state table {
+            border-collapse: collapse;
+        }
+
+        .debug-finger-state th {
+            padding: 4px 8px;
+            font-weight: 600;
+            color: var(--ink-dim);
+            border-bottom: 1px solid var(--border-subtle);
+            text-align: left;
+        }
+
+        .debug-finger-state td {
+            padding: 3px 8px;
+        }
+
+        .debug-finger-state .label {
+            color: var(--ink-dim);
+        }
+
+        .debug-finger-state .moved {
+            color: hsl(345 60% 60%);
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="debug-controls">
+        <span class="title">🔍 Debug</span>
+        <div class="lang-tabs" id="langTabs">
+            <button class="btn lang-active" data-lang="ja">🇯🇵 日本語</button>
+            <button class="btn" data-lang="en">🇺🇸 English</button>
+            <button class="btn" data-lang="zh">🇨🇳 中文</button>
+            <button class="btn" data-lang="ko">🇰🇷 한국어</button>
+        </div>
+        <span class="step-info">Step <span class="current" id="dbgStep">-1</span> / <span id="dbgTotal">-</span></span>
+        <span class="char-info" id="dbgChar">Ready</span>
+        <button class="btn" id="btnReset">Reset</button>
+        <button class="btn" id="btnPlay">▶ Auto</button>
+        <span class="hint">
+            <kbd>←</kbd> prev &nbsp;
+            <kbd>→</kbd> next &nbsp;
+            <kbd>R</kbd> reset &nbsp;
+            <kbd>Space</kbd> auto &nbsp;
+            <kbd>1-4</kbd> lang
+        </span>
+    </div>
+
+    <div id="kbZone"></div>
+
+    <div class="step-progress" id="stepProgress"></div>
+
+    <div class="debug-finger-state" id="fingerState"></div>
+
+    <script src="typing-compare.js"></script>
+    <script>
+        (() => {
+            // ============================================================
+            // Language Configs
+            // ============================================================
+            const LANGS = {
+                ja: {
+                    phrase: '日本語入力に最適化された配列',
+                    word: [
+                        { ja: '', r: ['N', 'I'] }, { ja: '', r: ['H', 'O'] }, { ja: '', r: ['N'] },
+                        { ja: '', r: ['G', 'O'] }, { ja: '', r: ['N', 'Y', 'U'] }, { ja: '', r: ['U'] },
+                        { ja: '', r: ['R', 'Y', 'O'] }, { ja: '', r: ['K', 'U'] },
+                        { ja: '', r: ['N', 'I'] }, { ja: '', r: ['S', 'A'] }, { ja: '', r: ['I'] },
+                        { ja: '', r: ['T', 'E'] }, { ja: '', r: ['K', 'I'] }, { ja: '', r: ['K', 'A'] },
+                        { ja: '', r: ['S', 'A'] }, { ja: '', r: ['R', 'E'] }, { ja: '', r: ['T', 'A'] },
+                        { ja: '', r: ['H', 'A'] }, { ja: '', r: ['I'] }, { ja: '', r: ['R', 'E'] },
+                        { ja: '', r: ['T', 'U'] }
+                    ],
+                },
+                en: {
+                    phrase: '英語入力も同様に最適化されています',
+                    word: [
+                        { ja: '', r: ['E', 'N', 'G', 'L', 'I', 'S', 'H'] },
+                        { ja: '', r: ['I', 'N', 'P', 'U', 'T'] },
+                        { ja: '', r: ['I', 'S'] },
+                        { ja: '', r: ['O', 'P', 'T', 'I', 'M', 'I', 'Z', 'E', 'D'] },
+                        { ja: '', r: ['O', 'N'] },
+                        { ja: '', r: ['T', 'H', 'I', 'S'] },
+                        { ja: '', r: ['T', 'O', 'O'] }
+                    ],
+                },
+                zh: {
+                    // 中文打字也很輕鬆 (zhong wen da zi ye hen qing song)
+                    phrase: '中文打字也很輕鬆（中国語入力もラクラク）',
+                    word: [
+                        { ja: '', r: ['Z', 'H', 'O', 'N', 'G'] },
+                        { ja: '', r: ['W', 'E', 'N'] },
+                        { ja: '', r: ['D', 'A'] },
+                        { ja: '', r: ['Z', 'I'] },
+                        { ja: '', r: ['Y', 'E'] },
+                        { ja: '', r: ['H', 'E', 'N'] },
+                        { ja: '', r: ['Q', 'I', 'N', 'G'] },
+                        { ja: '', r: ['S', 'O', 'N', 'G'] }
+                    ]
+                },
+                ko: {
+                    // 한국어 입력도 턱턱해요 (han gug eo ip ryeok do teok teok hae yo)
+                    phrase: '한국어 입력도 턱턱해요（韓国語入力もサクサク）',
+                    word: [
+                        { ja: '', r: ['H', 'A', 'N'] },
+                        { ja: '', r: ['G', 'U', 'G'] },
+                        { ja: '', r: ['E', 'O'] },
+                        { ja: '', r: ['I', 'P'] },
+                        { ja: '', r: ['R', 'Y', 'E', 'O', 'K'] },
+                        { ja: '', r: ['D', 'O'] },
+                        { ja: '', r: ['T', 'E', 'O', 'K'] },
+                        { ja: '', r: ['T', 'E', 'O', 'K'] },
+                        { ja: '', r: ['H', 'A', 'E'] },
+                        { ja: '', r: ['Y', 'O'] }
+                    ]
+                }
+            };
+
+            let currentLang = 'ja';
+
+            // ============================================================
+            // Stats calculation (auto-compute from word data)
+            // ============================================================
+            function calcStats(flat, fm, hm, homeRowKeys) {
+                let moves = 0;
+                let homeHits = 0;
+                const fingerPos = {};
+                for (let f = 0; f < 8; f++) fingerPos[f] = hm[f];
+
+                for (let i = 0; i < flat.length; i++) {
+                    const key = flat[i];
+                    const finger = fm[key];
+                    if (homeRowKeys.has(key)) homeHits++;
+                    if (fingerPos[finger] !== key) moves++;
+                    fingerPos[finger] = key;
+                    const next = i + 1 < flat.length ? flat[i + 1] : null;
+                    if (next && fm[next] !== finger && hm[finger] !== key) {
+                        moves++;
+                        fingerPos[finger] = hm[finger];
+                    }
+                }
+                const homePercent = Math.round(homeHits / flat.length * 100);
+                return { home: homePercent + '%', moves: '' + moves };
+            }
+
+            // ============================================================
+            // Init TypingCompare
+            // ============================================================
+            const _cs = getComputedStyle(document.documentElement);
+            const _cv = (n) => _cs.getPropertyValue(n).trim();
+            TypingCompare.setColors(_cv('--k-q-tx'), _cv('--accent'), _cv('--k-r-tx'));
+
+            const kbZone = document.getElementById('kbZone');
+
+            const DOT_R = 7;
+            const cQPath = _cv('--k-q-tx');
+            const cYPathL = _cv('--accent');
+            const cYPathR = _cv('--k-r-tx');
+
+            // --- State ---
+            let step = -1;
+            let autoPlay = false;
+            let autoTimer = null;
+            let qm = {}, ym = {}, qd = {}, yd = {}, qp = {}, yp = {};
+            let WORD, FLAT, QF, YF, QH, YH, QR, YR;
+
+            // --- Element refs ---
+            const dbgStep = document.getElementById('dbgStep');
+            const dbgTotal = document.getElementById('dbgTotal');
+            const dbgChar = document.getElementById('dbgChar');
+            const btnReset = document.getElementById('btnReset');
+            const btnPlay = document.getElementById('btnPlay');
+            const stepProgress = document.getElementById('stepProgress');
+
+            // ============================================================
+            // Language switching
+            // ============================================================
+            function switchLang(lang) {
+                if (!LANGS[lang]) return;
+                currentLang = lang;
+
+                // Stop auto play
+                if (autoPlay) toggleAutoPlay();
+
+                // Compute stats from word data
+                const flat = LANGS[lang].word.flatMap(c => c.r);
+                // Get home row key sets from layout data
+                const cfgTmp = TypingCompare.getConfig();
+                const qHomeRow = new Set(cfgTmp.QR[1].map(k => k[0]));
+                const yHomeRow = new Set(cfgTmp.YR[1].map(k => k[0]));
+                const qStats = calcStats(flat, cfgTmp.QF, cfgTmp.QH, qHomeRow);
+                const yStats = calcStats(flat, cfgTmp.YF, cfgTmp.YH, yHomeRow);
+                const computedStats = { qHome: qStats.home, qMoves: qStats.moves, yHome: yStats.home, yMoves: yStats.moves };
+
+                // Configure and re-render
+                TypingCompare.configure({ word: LANGS[lang].word, stats: computedStats });
+                kbZone.innerHTML = TypingCompare.renderHTML();
+                document.getElementById('tcPhrase').textContent = LANGS[lang].phrase || '';
+
+                const cfg = TypingCompare.getConfig();
+                WORD = cfg.WORD; FLAT = cfg.FLAT;
+                QF = cfg.QF; YF = cfg.YF;
+                QH = cfg.QH; YH = cfg.YH;
+                QR = cfg.QR; YR = cfg.YR;
+
+                // Update tabs
+                document.querySelectorAll('#langTabs .btn').forEach(b => {
+                    b.classList.toggle('lang-active', b.dataset.lang === lang);
+                });
+
+                // Rebuild progress bar
+                stepProgress.innerHTML = '';
+                for (let i = 0; i < FLAT.length; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'sp-bar';
+                    stepProgress.appendChild(bar);
+                }
+                dbgTotal.textContent = FLAT.length - 1;
+
+                // Re-init
+                requestAnimationFrame(() => requestAnimationFrame(() => initAll()));
+            }
+
+            // Tab click handlers
+            document.querySelectorAll('#langTabs .btn').forEach(btn => {
+                btn.addEventListener('click', () => switchLang(btn.dataset.lang));
+            });
+
+            // --- Render keyboards ---
+            function renderKB(el, layout, km) {
+                el.innerHTML = '';
+                layout.forEach(row => {
+                    const d = document.createElement('div'); d.className = 'row';
+                    row.forEach(([ch, hm]) => {
+                        const k = document.createElement('div');
+                        k.className = 'tc-key' + (hm ? ' home' : '');
+                        k.textContent = ch;
+                        d.appendChild(k);
+                        if (!km[ch]) km[ch] = k;
+                    });
+                    el.appendChild(d);
+                });
+            }
+
+            function ctr(el, w) {
+                const k = el.getBoundingClientRect(), r = w.getBoundingClientRect();
+                return { x: k.left - r.left + k.width / 2, y: k.top - r.top + k.height / 2 };
+            }
+
+            function svgSetup(s, w) {
+                const r = w.getBoundingClientRect();
+                s.setAttribute('viewBox', `0 0 ${r.width} ${r.height}`);
+            }
+
+            function addLine(s, a, b, c) {
+                const ns = 'http://www.w3.org/2000/svg';
+                const l = document.createElementNS(ns, 'line');
+                l.setAttribute('x1', a.x); l.setAttribute('y1', a.y);
+                l.setAttribute('x2', b.x); l.setAttribute('y2', b.y);
+                l.setAttribute('stroke', c); l.classList.add('tc-path'); s.appendChild(l);
+            }
+
+            function mkDots(wrap, hm, km, dots, pos) {
+                for (let f = 0; f < 8; f++) {
+                    const ch = hm[f]; if (!ch || !km[ch]) continue;
+                    const d = document.createElement('div');
+                    d.className = 'tc-dot ' + (f < 4 ? 'tc-lh' : 'tc-rh');
+                    wrap.appendChild(d); dots[f] = d;
+                    const p = ctr(km[ch], wrap); pos[f] = { ...p };
+                    d.style.left = (p.x - DOT_R) + 'px'; d.style.top = (p.y - DOT_R) + 'px';
+                }
+            }
+
+            function step2char(i) {
+                let s = 0;
+                for (let j = 0; j < WORD.length; j++) {
+                    s += WORD[j].r.length;
+                    if (i < s) return j;
+                }
+                return WORD.length - 1;
+            }
+
+            function highlight(i) {
+                document.querySelectorAll('.tc-roma').forEach(el => {
+                    const s = +el.dataset.step;
+                    el.className = s < i ? 'tc-roma tc-r-done' : s === i ? 'tc-roma tc-r-active' : 'tc-roma';
+                });
+                if (i >= 0) {
+                    const ci = step2char(i);
+                    document.querySelectorAll('.tc-char').forEach(g => g.classList.toggle('tc-c-done', +g.dataset.ci < ci));
+                } else {
+                    document.querySelectorAll('.tc-char').forEach(g => g.classList.remove('tc-c-done'));
+                }
+            }
+
+            // --- Initialize ---
+            function initAll() {
+                qm = {}; ym = {}; qd = {}; yd = {}; qp = {}; yp = {};
+
+                renderKB(document.getElementById('tcKL'), QR, qm);
+                renderKB(document.getElementById('tcKY'), YR, ym);
+                const wQ = document.getElementById('tcWL'), wY = document.getElementById('tcWY');
+                mkDots(wQ, QH, qm, qd, qp);
+                mkDots(wY, YH, ym, yd, yp);
+                svgSetup(document.getElementById('tcSL'), wQ);
+                svgSetup(document.getElementById('tcSY'), wY);
+
+                // Build typing display
+                const td = document.getElementById('tcTD');
+                td.innerHTML = ''; let s = 0;
+                WORD.forEach((ch, ci) => {
+                    const g = document.createElement('div'); g.className = 'tc-char'; g.dataset.ci = ci;
+                    g.innerHTML = `<span class="tc-ja">${ch.ja}</span><div class="tc-keys">${ch.r.map(r => `<span class="tc-roma" data-step="${s++}">${r}</span>`).join('')}</div>`;
+                    td.appendChild(g);
+                });
+
+                step = -1;
+                updateUI();
+            }
+
+            // --- Step logic ---
+            function resetAll() {
+                step = -1;
+                const wQ = document.getElementById('tcWL'), wY = document.getElementById('tcWY');
+                const sQ = document.getElementById('tcSL'), sY = document.getElementById('tcSY');
+                if (!wQ || !wY) return;
+                document.querySelectorAll('.tc-key').forEach(k => k.classList.remove('tc-pressing', 'tc-pressed'));
+                sQ.innerHTML = ''; sY.innerHTML = '';
+                svgSetup(sQ, wQ); svgSetup(sY, wY);
+                [{ d: qd, p: qp, h: QH, m: qm, w: wQ }, { d: yd, p: yp, h: YH, m: ym, w: wY }].forEach(({ d, p, h, m, w }) => {
+                    for (let f = 0; f < 8; f++) {
+                        if (!d[f] || !h[f] || !m[h[f]]) continue;
+                        const ps = ctr(m[h[f]], w); p[f] = { ...ps };
+                        d[f].style.left = (ps.x - DOT_R) + 'px'; d[f].style.top = (ps.y - DOT_R) + 'px';
+                        d[f].classList.remove('tc-active');
+                    }
+                });
+                highlight(-1);
+                updateUI();
+            }
+
+            function doStepFwd() {
+                const wQ = document.getElementById('tcWL'), wY = document.getElementById('tcWY');
+                const sQ = document.getElementById('tcSL'), sY = document.getElementById('tcSY');
+                if (!wQ) return;
+
+                if (step >= FLAT.length - 1) return;
+
+                if (step >= 0) {
+                    const prev = FLAT[step];
+                    qm[prev].classList.remove('tc-pressing'); qm[prev].classList.add('tc-pressed');
+                    ym[prev].classList.remove('tc-pressing'); ym[prev].classList.add('tc-pressed');
+                    const pqf = QF[prev], pyf = YF[prev];
+                    if (qd[pqf]) qd[pqf].classList.remove('tc-active');
+                    if (yd[pyf]) yd[pyf].classList.remove('tc-active');
+
+                    // Return-to-home: if next key uses a different finger, previous finger returns home
+                    const next = step + 1 < FLAT.length ? FLAT[step + 1] : null;
+                    if (next) {
+                        // QWERTY side
+                        if (QF[next] !== pqf && QH[pqf] !== prev) {
+                            const hk = QH[pqf];
+                            if (hk && qm[hk]) {
+                                const hp = ctr(qm[hk], wQ);
+                                addLine(sQ, qp[pqf], hp, cQPath);
+                                qp[pqf] = { ...hp };
+                                qd[pqf].style.left = (hp.x - DOT_R) + 'px';
+                                qd[pqf].style.top = (hp.y - DOT_R) + 'px';
+                            }
+                        }
+                        // Yamato side
+                        if (YF[next] !== pyf && YH[pyf] !== prev) {
+                            const hk = YH[pyf];
+                            if (hk && ym[hk]) {
+                                const hp = ctr(ym[hk], wY);
+                                addLine(sY, yp[pyf], hp, pyf < 4 ? cYPathL : cYPathR);
+                                yp[pyf] = { ...hp };
+                                yd[pyf].style.left = (hp.x - DOT_R) + 'px';
+                                yd[pyf].style.top = (hp.y - DOT_R) + 'px';
+                            }
+                        }
+                    }
+                }
+
+                step++;
+                const ch = FLAT[step];
+
+                const qf = QF[ch], qt = ctr(qm[ch], wQ);
+                if (qp[qf].x !== qt.x || qp[qf].y !== qt.y) { addLine(sQ, qp[qf], qt, cQPath); }
+                qp[qf] = { ...qt };
+                qd[qf].style.left = (qt.x - DOT_R) + 'px'; qd[qf].style.top = (qt.y - DOT_R) + 'px';
+                qm[ch].classList.add('tc-pressing'); qd[qf].classList.add('tc-active');
+
+                const yf = YF[ch], yt = ctr(ym[ch], wY);
+                if (yp[yf].x !== yt.x || yp[yf].y !== yt.y) { addLine(sY, yp[yf], yt, yf < 4 ? cYPathL : cYPathR); }
+                yp[yf] = { ...yt };
+                yd[yf].style.left = (yt.x - DOT_R) + 'px'; yd[yf].style.top = (yt.y - DOT_R) + 'px';
+                ym[ch].classList.add('tc-pressing'); yd[yf].classList.add('tc-active');
+
+                highlight(step);
+                updateUI();
+            }
+
+            function doStepBack() {
+                if (step < 0) return;
+                const target = step - 1;
+                resetAll();
+                for (let i = 0; i <= target; i++) {
+                    doStepFwd();
+                }
+            }
+
+            function updateUI() {
+                dbgStep.textContent = step;
+
+                const bars = stepProgress.querySelectorAll('.sp-bar');
+                bars.forEach((bar, i) => {
+                    bar.className = 'sp-bar' + (i < step ? ' done' : i === step ? ' current' : '');
+                });
+
+                if (step < 0) {
+                    dbgChar.innerHTML = 'Ready — press <kbd>→</kbd> to start';
+                } else {
+                    const ch = FLAT[step];
+                    const ci = step2char(step);
+                    const charData = WORD[ci];
+                    const qFinger = QF[ch];
+                    const yFinger = YF[ch];
+                    const qHome = QH[qFinger] === ch;
+                    const yHome = YH[yFinger] === ch;
+
+                    dbgChar.innerHTML = `
+                        <span class="ja">${charData.ja}</span>
+                        <span class="roma">${ch}</span>
+                        &nbsp;|&nbsp;
+                        Q: finger ${qFinger} ${qHome ? '(home)' : '<span style="color:hsl(345 60% 60%)">(move)</span>'}
+                        &nbsp;|&nbsp;
+                        Y: finger ${yFinger} ${yHome ? '(home)' : '<span style="color:hsl(345 60% 60%)">(move)</span>'}
+                    `;
+                }
+            }
+
+            // --- Auto play ---
+            function toggleAutoPlay() {
+                autoPlay = !autoPlay;
+                btnPlay.textContent = autoPlay ? '⏸ Stop' : '▶ Auto';
+                btnPlay.classList.toggle('active', autoPlay);
+                if (autoPlay) {
+                    autoTick();
+                } else if (autoTimer) {
+                    clearTimeout(autoTimer);
+                    autoTimer = null;
+                }
+            }
+
+            function autoTick() {
+                if (!autoPlay) return;
+                if (step >= FLAT.length - 1) {
+                    autoPlay = false;
+                    btnPlay.textContent = '▶ Auto';
+                    btnPlay.classList.remove('active');
+                    return;
+                }
+                doStepFwd();
+                autoTimer = setTimeout(autoTick, 180);
+            }
+
+            // --- Event Listeners ---
+            document.addEventListener('keydown', e => {
+                if (e.ctrlKey || e.altKey || e.metaKey) return;
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    if (autoPlay) toggleAutoPlay();
+                    doStepFwd();
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    if (autoPlay) toggleAutoPlay();
+                    doStepBack();
+                } else if (e.key === 'r' || e.key === 'R') {
+                    e.preventDefault();
+                    if (autoPlay) toggleAutoPlay();
+                    resetAll();
+                } else if (e.key === ' ') {
+                    e.preventDefault();
+                    toggleAutoPlay();
+                } else if (e.key >= '1' && e.key <= '4') {
+                    const langs = ['ja', 'en', 'zh', 'ko'];
+                    switchLang(langs[+e.key - 1]);
+                }
+            });
+
+            btnReset.addEventListener('click', () => { if (autoPlay) toggleAutoPlay(); resetAll(); });
+            btnPlay.addEventListener('click', toggleAutoPlay);
+
+            // --- Init with Japanese (default) ---
+            switchLang('ja');
+        })();
+    </script>
+</body>
+
+</html>

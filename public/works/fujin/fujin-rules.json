@@ -1,0 +1,68 @@
+{
+    "version": 1,
+    "description": "Fujin drill display rules. Key mappings live in FujinEngine (single source of truth).",
+    "drillDisplay": {
+        "baseOverlay": {
+            "consKey": "hl2",
+            "vowelKey": "hr2",
+            "modKey": "n",
+            "space": "hr2",
+            "alt": "hr2",
+            "capslock": "hl2"
+        },
+        "consHold": {
+            "description": "When any consonant key is held, these keys show as vowel hints. No distracting background heatmaps.",
+            "vowelHintHeatmap": "hr2",
+            "space": {
+                "label": "E",
+                "heatmap": "hr2"
+            },
+            "alt": {
+                "label": "U",
+                "heatmap": "hr2"
+            },
+            "note": "All vowel hints use hr2 (subtle). Only the next-key-to-press gets hr3 (bright)."
+        },
+        "capsHold": {
+            "description": "When CapsLock is held",
+            "alt": {
+                "label": "U",
+                "heatmap": "hr2"
+            },
+            "space": {
+                "heatmap": "n",
+                "note": "mutual exclusion"
+            }
+        },
+        "spaceHold": {
+            "description": "When Space is held",
+            "capslock": {
+                "heatmap": "n",
+                "note": "mutual exclusion"
+            }
+        },
+        "nextKeyHighlight": {
+            "cons": "hl3",
+            "vowel": "hr3"
+        },
+        "error": {
+            "animation": "tg-shake",
+            "class": "tg-error",
+            "duration": 300,
+            "sound": {
+                "type": "square",
+                "frequency": 120,
+                "duration": 0.1,
+                "gain": 0.06
+            }
+        },
+        "hint": {
+            "consAnimation": "tg-pulse-cons",
+            "vowelAnimation": "tg-pulse-vowel",
+            "class": {
+                "cons": "tg-hl",
+                "vowel": "tg-hr"
+            }
+        }
+    }
+}

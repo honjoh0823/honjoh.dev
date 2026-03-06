@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Space Key Test</title>
+    <style>
+        body {
+            background: #111;
+            color: #eee;
+            font-family: monospace;
+            padding: 40px;
+        }
+
+        #out {
+            font-size: 48px;
+            margin: 20px 0;
+        }
+
+        #log {
+            font-size: 14px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Space Key Detection Test</h2>
+    <p>Click here first, then hold Space</p>
+    <div id="out">IDLE</div>
+    <div id="log"></div>
+    <script>
+        const out = document.getElementById('out');
+        const log = document.getElementById('log');
+        function addLog(msg) {
+            const t = performance.now().toFixed(1);
+            log.textContent = `[${t}] ${msg}\n` + log.textContent;
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === ' ') {
+                e.preventDefault();
+                out.textContent = 'SPACE DOWN (repeat: ' + e.repeat + ')';
+                out.style.color = '#ff4488';
+                addLog('keydown  repeat:' + e.repeat);
+            }
+        });
+        document.addEventListener('keyup', e => {
+            if (e.key === ' ') {
+                out.textContent = 'SPACE UP';
+                out.style.color = '#eee';
+                addLog('keyup');
+            }
+        });
+    </script>
+</body>
+
+</html>

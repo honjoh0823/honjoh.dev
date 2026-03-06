@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Debug: Typing Compare Step-by-Step (#18 #19)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/works/yamato/yamato.css">
+    <style>
+        body {
+            margin: 0;
+            background: #0a0a0a;
+            color: #ccc;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .debug-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #111;
+            border-bottom: 1px solid #333;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .debug-header h1 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+            color: #fff;
+        }
+
+        .debug-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .debug-controls button {
+            background: #222;
+            color: #ccc;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 6px 14px;
+            font-family: inherit;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .debug-controls button:hover {
+            background: #333;
+        }
+
+        .debug-controls button:active {
+            background: #444;
+        }
+
+        .debug-controls button.primary {
+            background: hsl(210 55% 25%);
+            border-color: hsl(210 55% 35%);
+            color: #fff;
+        }
+
+        .debug-controls button.primary:hover {
+            background: hsl(210 55% 30%);
+        }
+
+        .debug-info {
+            font-size: 13px;
+            color: #888;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .debug-info .step-num {
+            color: #fff;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .debug-info .key-char {
+            color: hsl(210 80% 70%);
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .debug-info .moves-val {
+            color: hsl(40 80% 65%);
+            font-weight: 700;
+        }
+
+        .debug-tabs {
+            display: flex;
+            gap: 4px;
+        }
+
+        .debug-tabs button {
+            font-size: 13px;
+            padding: 6px 16px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            background: #1a1a1a;
+            color: #888;
+            cursor: pointer;
+        }
+
+        .debug-tabs button.active {
+            background: hsl(148 30% 20%);
+            border-color: hsl(148 30% 35%);
+            color: #fff;
+        }
+
+        .panel-container {
+            padding: 24px;
+        }
+
+        .kb-zone {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .debug-log {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 140px;
+            background: #0d0d0d;
+            border-top: 1px solid #333;
+            overflow-y: auto;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            color: #777;
+            z-index: 100;
+        }
+
+        .debug-log .log-step {
+            color: hsl(210 60% 65%);
+        }
+
+        .debug-log .log-key {
+            color: hsl(40 80% 65%);
+            font-weight: 700;
+        }
+
+        .debug-log .log-finger {
+            color: hsl(148 40% 60%);
+        }
+
+        .debug-log .log-home {
+            color: hsl(345 50% 65%);
+        }
+
+        .shortcut-hint {
+            font-size: 11px;
+            color: #555;
+        }
+
+        kbd {
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 3px;
+            padding: 1px 6px;
+            font-size: 11px;
+            font-family: inherit;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="debug-header">
+        <h1>Debug: Typing Compare</h1>
+
+        <div class="debug-tabs">
+            <button class="active" onclick="switchConfig('onishi-custom')">大西配列との比較</button>
+            <button onclick="switchConfig('onishi-ja')">#18 大西+JA</button>
+            <button onclick="switchConfig('onishi-en')">#19 大西+EN</button>
+        </div>
+
+        <div class="debug-controls">
+            <button onclick="doReset()">Reset</button>
+            <button onclick="doStepBack()">← Back</button>
+            <button class="primary" onclick="doStep()">Step →</button>
+            <button onclick="doAutoPlay()">Auto ▶</button>
+            <button onclick="doStop()">Stop ■</button>
+        </div>
+
+        <div class="debug-info">
+            Step: <span class="step-num" id="stepNum">-1</span>
+            / <span id="totalSteps">–</span>
+            &nbsp;|&nbsp;
+            Key: <span class="key-char" id="curKey">–</span>
+            &nbsp;|&nbsp;
+            L-finger: <span id="leftFinger">–</span>
+            &nbsp;|&nbsp;
+            Y-finger: <span id="rightFinger">–</span>
+            &nbsp;|&nbsp;
+            大西moves: <span class="moves-val" id="leftMoves">0</span>
+            &nbsp;|&nbsp;
+            大和moves: <span class="moves-val" id="rightMoves">0</span>
+        </div>
+
+        <div class="shortcut-hint">
+            <kbd>→</kbd> step forward &nbsp;
+            <kbd>←</kbd> step back &nbsp;
+            <kbd>R</kbd> reset &nbsp;
+            <kbd>Space</kbd> auto/stop &nbsp;
+            <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> switch tab
+        </div>
+    </div>
+
+    <div class="panel-container">
+        <div class="kb-zone" id="kbZone"></div>
+    </div>
+
+    <div class="debug-log" id="logPanel"></div>
+
+    <script src="/works/yamato/typing-compare.js"></script>
+    <script>
+        // --- State ---
+        let tc = null;
+        let currentConfig = 'onishi-ja';
+        let autoTimer = null;
+        let currentStep = -1; // current displayed step (-1 = initial)
+
+        // Finger move tracking
+        let leftMoves = 0;
+        let rightMoves = 0;
+        let leftFingerPos = {};  // finger -> current key
+        let rightFingerPos = {}; // finger -> current key
+
+        const rootStyles = getComputedStyle(document.documentElement);
+        const cssVar = (n) => rootStyles.getPropertyValue(n).trim();
+
+        // --- Custom word data: 大西配列との比較 (おおにしはいれつとのひかく) ---
+        const CUSTOM_PHRASE = '大西配列との比較';
+        const CUSTOM_WORD = [
+            { ja: 'お', r: ['O'] },
+            { ja: 'お', r: ['O'] },
+            { ja: 'に', r: ['N', 'I'] },
+            { ja: 'し', r: ['S', 'I'] },
+            { ja: 'は', r: ['H', 'A'] },
+            { ja: 'い', r: ['I'] },
+            { ja: 'れ', r: ['R', 'E'] },
+            { ja: 'つ', r: ['T', 'U'] },
+            { ja: 'と', r: ['T', 'O'] },
+            { ja: 'の', r: ['N', 'O'] },
+            { ja: 'ひ', r: ['H', 'I'] },
+            { ja: 'か', r: ['K', 'A'] },
+            { ja: 'く', r: ['K', 'U'] },
+        ];
+
+        // --- Config definitions ---
+        const CONFIGS = {
+            'onishi-ja': { leftLayout: 'onishi', lang: 'ja', label: '#18 大西+JA (本番データ)' },
+            'onishi-en': { leftLayout: 'onishi', lang: 'en', label: '#19 大西+EN (本番データ)' },
+            'onishi-custom': { leftLayout: 'onishi', lang: null, label: '大西配列との比較', customWord: CUSTOM_WORD, customPhrase: CUSTOM_PHRASE },
+        };
+
+        function log(msg) {
+            const el = document.getElementById('logPanel');
+            const line = document.createElement('div');
+            line.innerHTML = msg;
+            el.appendChild(line);
+            el.scrollTop = el.scrollHeight;
+        }
+
+        function updateInfo() {
+            document.getElementById('stepNum').textContent = currentStep;
+            document.getElementById('totalSteps').textContent = tc ? tc.FLAT.length - 1 : '–';
+            document.getElementById('leftMoves').textContent = leftMoves;
+            document.getElementById('rightMoves').textContent = rightMoves;
+
+            if (tc && currentStep >= 0 && currentStep < tc.FLAT.length) {
+                const ch = tc.FLAT[currentStep];
+                document.getElementById('curKey').textContent = ch;
+                document.getElementById('leftFinger').textContent = tc.LF[ch] ?? '–';
+                document.getElementById('rightFinger').textContent = tc.YF[ch] ?? '–';
+            } else {
+                document.getElementById('curKey').textContent = '–';
+                document.getElementById('leftFinger').textContent = '–';
+                document.getElementById('rightFinger').textContent = '–';
+            }
+        }
+
+        function initFingerPos() {
+            leftFingerPos = {};
+            rightFingerPos = {};
+            if (!tc) return;
+            const maxLF = Object.keys(tc.LH).length;
+            for (let f = 0; f < maxLF; f++) leftFingerPos[f] = tc.LH[f];
+            const maxYF = Object.keys(tc.YH).length;
+            for (let f = 0; f < maxYF; f++) rightFingerPos[f] = tc.YH[f];
+        }
+
+        function mountTC(container) {
+            tc.root = container;
+            tc.clearMaps();
+            const kl = tc.root.querySelector('.tc-js-kl');
+            const ky = tc.root.querySelector('.tc-js-ky');
+            if (!kl || !ky) return;
+
+            tc.renderKB(kl, tc.LR, tc.qm);
+            tc.renderKB(ky, tc.YR, tc.ym);
+
+            const wQ = tc.root.querySelector('.tc-js-wl');
+            const wY = tc.root.querySelector('.tc-js-wy');
+
+            tc.mkDots(wQ, tc.LH, tc.qm, tc.qd, tc.qp);
+            tc.mkDots(wY, tc.YH, tc.ym, tc.yd, tc.yp);
+
+            tc.svgSetup(tc.root.querySelector('.tc-js-sl'), wQ);
+            tc.svgSetup(tc.root.querySelector('.tc-js-sy'), wY);
+
+            const td = tc.root.querySelector('.tc-js-td');
+            if (td) {
+                td.innerHTML = ''; let s = 0;
+                tc.WORD.forEach((ch, ci) => {
+                    const g = document.createElement('div'); g.className = 'tc-char'; g.dataset.ci = ci;
+                    g.innerHTML = `<span class="tc-ja">${ch.ja}</span><div class="tc-keys">${ch.r.map(r => `<span class="tc-roma" data-step="${s++}">${r}</span>`).join('')}</div>`;
+                    td.appendChild(g);
+                });
+            }
+
+            tc.preCalcMaxHits();
+            tc.active = true;
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                tc.reset();
+            }));
+        }
+
+        function initTC(configKey) {
+            doStop();
+            currentConfig = configKey;
+            currentStep = -1;
+            leftMoves = 0;
+            rightMoves = 0;
+
+            const cfg = CONFIGS[configKey];
+            const el = document.getElementById('kbZone');
+
+            tc = new TypingCompare();
+            tc.setColors(cssVar('--k-q-tx') || '#8a6a3a', cssVar('--accent') || '#4a7a9a');
+
+            if (cfg.leftLayout) {
+                tc.setLeftLayoutByName(cfg.leftLayout);
+            } else {
+                tc.resetLeftLayout();
+            }
+
+            if (cfg.customWord) {
+                const flat = cfg.customWord.flatMap(c => c.r);
+                const lHomeRow = new Set(tc.LR[1].map(k => k[0]));
+                const yHomeRow = new Set(tc.YR[1].map(k => k[0]));
+                const lStats = tc.calcStats(flat, tc.LF, tc.LH, lHomeRow);
+                const yStats = tc.calcStats(flat, tc.YF, tc.YH, yHomeRow);
+                tc.configure({
+                    word: cfg.customWord,
+                    stats: { qHome: lStats.home, qMoves: lStats.moves, yHome: yStats.home, yMoves: yStats.moves }
+                });
+            } else {
+                tc.configureForLang(cfg.lang);
+            }
+
+            el.innerHTML = tc.renderHTML();
+            const phraseEl = el.querySelector('.tc-js-phrase');
+            if (phraseEl) phraseEl.textContent = cfg.customPhrase || '';
+            mountTC(el);
+            initFingerPos();
+
+            // Update tab UI
+            document.querySelectorAll('.debug-tabs button').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.debug-tabs button[onclick="switchConfig('${configKey}')"]`).classList.add('active');
+
+            document.getElementById('logPanel').innerHTML = '';
+            log(`<span class="log-step">[INIT]</span> Config: ${cfg.label}, Total steps: ${tc.FLAT.length}`);
+            log(`<span class="log-step">[INIT]</span> Sequence: ${tc.FLAT.join(' ')}`);
+            updateInfo();
+        }
+
+        function switchConfig(key) {
+            initTC(key);
+        }
+
+        // --- Replay from scratch up to targetStep ---
+        // This is used for step-back: reset everything, replay steps 0..targetStep
+        function replayTo(targetStep) {
+            if (!tc) return;
+            // Full re-init of TC visual state
+            const el = document.getElementById('kbZone');
+            el.innerHTML = tc.renderHTML();
+            const phraseEl = el.querySelector('.tc-js-phrase');
+            if (phraseEl) phraseEl.textContent = '';
+            mountTC(el);
+
+            // Wait for layout, then replay
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                tc.reset();
+                initFingerPos();
+                leftMoves = 0;
+                rightMoves = 0;
+                currentStep = -1;
+
+                // Replay each step silently
+                for (let i = 0; i <= targetStep; i++) {
+                    doStepInternal(false);
+                }
+                updateInfo();
+            }));
+        }
+
+        // --- Core step logic ---
+        function doStepInternal(doLog) {
+            if (!tc) return;
+            if (currentStep >= tc.FLAT.length - 1) return;
+
+            tc.active = true;
+            if (tc.timer) { clearTimeout(tc.timer); tc.timer = null; }
+
+            const wQ = tc.root.querySelector('.tc-js-wl');
+            const wY = tc.root.querySelector('.tc-js-wy');
+            const sQ = tc.root.querySelector('.tc-js-sl');
+            const sY = tc.root.querySelector('.tc-js-sy');
+            if (!wQ) return;
+
+            // Process PREVIOUS step's aftermath
+            if (tc.step >= 0) {
+                const prev = tc.FLAT[tc.step];
+                tc.qm[prev].classList.remove('tc-pressing'); tc.qm[prev].classList.add('tc-pressed');
+                tc.ym[prev].classList.remove('tc-pressing'); tc.ym[prev].classList.add('tc-pressed');
+
+                tc.hitCount[prev] = (tc.hitCount[prev] || 0) + 1;
+                tc.applySaturationStyle(tc.qm[prev], prev, tc.leftClass);
+                tc.applySaturationStyle(tc.ym[prev], prev, 'tc-y');
+
+                const pqf = tc.LF[prev], pyf = tc.YF[prev];
+                if (tc.qd[pqf]) tc.qd[pqf].classList.remove('tc-active');
+                if (tc.yd[pyf]) tc.yd[pyf].classList.remove('tc-active');
+
+                // Return-to-home logic
+                const next = tc.step + 1 < tc.FLAT.length ? tc.FLAT[tc.step + 1] : null;
+                if (next) {
+                    if (tc.LF[next] !== pqf && tc.LH[pqf] !== prev) {
+                        const hk = tc.LH[pqf];
+                        if (hk && tc.qm[hk]) {
+                            const hp = tc.ctr(tc.qm[hk], wQ);
+                            tc.addLine(sQ, tc.qp[pqf], hp, tc.cQPath);
+                            tc.qp[pqf] = { ...hp };
+                            tc.qd[pqf].style.left = (hp.x - tc.DOT_R) + 'px';
+                            tc.qd[pqf].style.top = (hp.y - tc.DOT_R) + 'px';
+                            // Track left return-to-home move
+                            leftMoves++;
+                            leftFingerPos[pqf] = hk;
+                            if (doLog) log(`  <span class="log-home">[HOME-L]</span> finger ${pqf} → ${hk} (moves: ${leftMoves})`);
+                        }
+                    }
+                    if (tc.YF[next] !== pyf && tc.YH[pyf] !== prev) {
+                        const hk = tc.YH[pyf];
+                        if (hk && tc.ym[hk]) {
+                            const hp = tc.ctr(tc.ym[hk], wY);
+                            tc.addLine(sY, tc.yp[pyf], hp, tc.cYPath);
+                            tc.yp[pyf] = { ...hp };
+                            tc.yd[pyf].style.left = (hp.x - tc.DOT_R) + 'px';
+                            tc.yd[pyf].style.top = (hp.y - tc.DOT_R) + 'px';
+                            rightMoves++;
+                            rightFingerPos[pyf] = hk;
+                            if (doLog) log(`  <span class="log-home">[HOME-Y]</span> finger ${pyf} → ${hk} (moves: ${rightMoves})`);
+                        }
+                    }
+                }
+            }
+
+            // Advance step
+            tc.step++;
+            currentStep = tc.step;
+
+            if (tc.step >= tc.FLAT.length) {
+                tc.highlight(tc.step - 1);
+                if (doLog) log(`<span class="log-step">[END]</span> Animation complete. L-moves: ${leftMoves}, Y-moves: ${rightMoves}`);
+                updateInfo();
+                return;
+            }
+
+            const ch = tc.FLAT[tc.step];
+            const qf = tc.LF[ch], qt = tc.ctr(tc.qm[ch], wQ);
+
+            // Track left finger move
+            if (leftFingerPos[qf] !== ch) {
+                leftMoves++;
+                leftFingerPos[qf] = ch;
+            }
+
+            if (tc.qp[qf].x !== qt.x || tc.qp[qf].y !== qt.y) {
+                tc.addLine(sQ, tc.qp[qf], qt, tc.cQPath);
+            }
+            tc.qp[qf] = { ...qt };
+            tc.qd[qf].style.left = (qt.x - tc.DOT_R) + 'px';
+            tc.qd[qf].style.top = (qt.y - tc.DOT_R) + 'px';
+            tc.qm[ch].classList.add('tc-pressing');
+            tc.qd[qf].classList.add('tc-active');
+
+            const yf = tc.YF[ch], yt = tc.ctr(tc.ym[ch], wY);
+
+            // Track yamato finger move
+            if (rightFingerPos[yf] !== ch) {
+                rightMoves++;
+                rightFingerPos[yf] = ch;
+            }
+
+            if (tc.yp[yf].x !== yt.x || tc.yp[yf].y !== yt.y) {
+                tc.addLine(sY, tc.yp[yf], yt, tc.cYPath);
+            }
+            tc.yp[yf] = { ...yt };
+            tc.yd[yf].style.left = (yt.x - tc.DOT_R) + 'px';
+            tc.yd[yf].style.top = (yt.y - tc.DOT_R) + 'px';
+            tc.ym[ch].classList.add('tc-pressing');
+            tc.yd[yf].classList.add('tc-active');
+
+            tc.highlight(tc.step);
+
+            if (doLog) {
+                log(`<span class="log-step">[${tc.step}]</span> Key: <span class="log-key">${ch}</span> | <span class="log-finger">L-finger: ${qf}</span> (moves: ${leftMoves}) | <span class="log-finger">Y-finger: ${yf}</span> (moves: ${rightMoves})`);
+            }
+            updateInfo();
+        }
+
+        function doStep() {
+            if (!tc) return;
+            if (currentStep >= tc.FLAT.length - 1) {
+                log(`<span class="log-step">[END]</span> Already at end.`);
+                return;
+            }
+            doStepInternal(true);
+        }
+
+        function doStepBack() {
+            if (!tc) return;
+            if (currentStep <= -1) {
+                log(`<span class="log-step">[INFO]</span> Already at start.`);
+                return;
+            }
+            const target = currentStep - 1;
+            log(`<span class="log-step">[BACK]</span> Rewinding to step ${target}...`);
+            // Reset and replay to target
+            const el = document.getElementById('kbZone');
+            const cfg = CONFIGS[currentConfig];
+
+            // Recreate TC
+            tc = new TypingCompare();
+            tc.setColors(cssVar('--k-q-tx') || '#8a6a3a', cssVar('--accent') || '#4a7a9a');
+            if (cfg.leftLayout) tc.setLeftLayoutByName(cfg.leftLayout); else tc.resetLeftLayout();
+            tc.configureForLang(cfg.lang);
+
+            el.innerHTML = tc.renderHTML();
+            mountTC(el);
+
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                tc.reset();
+                initFingerPos();
+                leftMoves = 0;
+                rightMoves = 0;
+                currentStep = -1;
+
+                for (let i = 0; i <= target; i++) {
+                    doStepInternal(false);
+                }
+                if (currentStep >= 0 && currentStep < tc.FLAT.length) {
+                    const ch = tc.FLAT[currentStep];
+                    log(`<span class="log-step">[${currentStep}]</span> Key: <span class="log-key">${ch}</span> | L-moves: ${leftMoves} | Y-moves: ${rightMoves}`);
+                }
+                updateInfo();
+            }));
+        }
+
+        function doReset() {
+            doStop();
+            if (!tc) return;
+            const cfg = CONFIGS[currentConfig];
+            tc = new TypingCompare();
+            tc.setColors(cssVar('--k-q-tx') || '#8a6a3a', cssVar('--accent') || '#4a7a9a');
+            if (cfg.leftLayout) tc.setLeftLayoutByName(cfg.leftLayout); else tc.resetLeftLayout();
+            tc.configureForLang(cfg.lang);
+
+            const el = document.getElementById('kbZone');
+            el.innerHTML = tc.renderHTML();
+            mountTC(el);
+
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                tc.reset();
+                initFingerPos();
+                leftMoves = 0;
+                rightMoves = 0;
+                currentStep = -1;
+                document.getElementById('logPanel').innerHTML = '';
+                log(`<span class="log-step">[RESET]</span> Animation reset.`);
+                updateInfo();
+            }));
+        }
+
+        function doAutoPlay() {
+            doStop();
+            if (!tc) return;
+            autoTimer = setInterval(() => {
+                if (currentStep >= tc.FLAT.length - 1) {
+                    doStop();
+                    return;
+                }
+                doStep();
+            }, 300);
+            log(`<span class="log-step">[AUTO]</span> Auto-play started (300ms interval)`);
+        }
+
+        function doStop() {
+            if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+            if (tc && tc.timer) { clearTimeout(tc.timer); tc.timer = null; }
+        }
+
+        // --- Keyboard shortcuts ---
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey || e.altKey || e.metaKey) return;
+            if (e.key === 'ArrowRight') { e.preventDefault(); doStep(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); doStepBack(); }
+            else if (e.key === ' ') {
+                e.preventDefault();
+                if (autoTimer) doStop(); else doAutoPlay();
+            }
+            else if (e.key === 'r' || e.key === 'R') { doReset(); }
+            else if (e.key === '1') switchConfig('onishi-custom');
+            else if (e.key === '2') switchConfig('onishi-ja');
+            else if (e.key === '3') switchConfig('onishi-en');
+        });
+
+        // --- Init ---
+        initTC('onishi-custom');
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,33 @@
+# honjoh.dev
+
+> Personal site and project hub by Nobuhiro Honjoh (本城靖大).
+
+## Main Project: Yamato Layout (大和配列)
+
+> A keyboard layout optimized for Japanese input.
+> URL: https://honjoh.dev/yamato
+> Full reference: https://honjoh.dev/yamato/about
+> Full reference (English): https://honjoh.dev/yamato/about/en
+> Detailed info: https://honjoh.dev/llms-full.txt
+
+Yamato Layout is a keyboard layout designed for efficient Japanese romaji input by separating consonants (left hand) and vowels (right hand).
+
+### Key Facts
+- Consonants on the left, vowels on the right — matches Japanese "consonant → vowel" rhythm
+- Consonants follow Japanese syllabary order (50-on): Ka-Sa-Ta-Na-Ha on home row
+- Home row usage: ~76% (vs QWERTY ~34%)
+- Finger movement reduction: ~40% less than QWERTY
+- Works with standard QWERTY keyboards via AutoHotkey (Windows) or Karabiner-Elements (Mac)
+- Also optimized for English, Chinese (Pinyin), and Korean input
+
+### Key Layout
+```
+Top:    M  Y  R  W  P  |  X  L  Q  C  '  [  ]
+Home:   K  S  T  N* H  |  F  A* O  I  E  /
+Bottom: Z  D  B  G  J  |  V  U  -  ,  .
+(* = home position keys)
+```
+
+## Other Sections
+- Articles: https://honjoh.dev/article — Technical blog posts
+- GitHub: https://github.com/honjoh0823

@@ -14,11 +14,32 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+
+const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.data.title,
+    description: post.data.description,
+    datePublished: post.data.date,
+    author: {
+        "@type": "Person",
+        name: "Nobuhiro Honjoh",
+        alternateName: "本城靖大",
+        url: "https://honjoh.dev",
+    },
+    publisher: {
+        "@type": "Person",
+        name: "Nobuhiro Honjoh",
+    },
+    url: `https://honjoh.dev/article/${post.id}`,
+    ...(post.data.image && { image: `https://honjoh.dev${post.data.image}` }),
+};
 ---
 
 <TerminalLayout
     title={`${post.data.title} | honjoh.dev`}
     description={post.data.description}
+    jsonLd={articleJsonLd}
 >
     <Header slot="header" path={["article", post.id]} />
 
@@ -39,7 +60,9 @@ const { Content } = await render(post);
             <header class="article-header">
                 <h1 class="article-title">{post.data.title}</h1>
                 <div class="article-meta">
-                    <span class="meta-date">{post.data.date}</span>
+                    <time class="meta-date" datetime={post.data.date}
+                        >{post.data.date}</time
+                    >
                     <span class="meta-sep">·</span>
                     <span class="meta-author">Honjoh Nobuhiro</span>
                 </div>

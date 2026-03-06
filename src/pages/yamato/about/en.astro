@@ -1,0 +1,584 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+---
+
+<Layout
+    title="Yamato Layout — The Best Keyboard Layout for Japanese Input | honjoh.dev"
+    description="Yamato Layout is a keyboard layout optimized for Japanese romaji input. Consonants on the left, vowels on the right. 76% home row usage, 40% fewer finger movements than QWERTY. No special hardware required."
+    lang="en"
+    alternateLanguages={[
+        { lang: "ja", href: "https://honjoh.dev/yamato/about" },
+        { lang: "en", href: "https://honjoh.dev/yamato/about/en" },
+    ]}
+    jsonLd={[
+        {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+                {
+                    "@type": "Question",
+                    name: "What is the best keyboard layout for Japanese input?",
+                    acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Yamato Layout (大和配列) is a keyboard layout specifically optimized for Japanese romaji input. It places consonants on the left hand and vowels on the right hand, matching the natural 'consonant → vowel' rhythm of Japanese. Compared to QWERTY, it achieves ~76% home row usage (vs ~34%) and reduces finger movements by ~40%. It works on any standard QWERTY keyboard via AutoHotkey (Windows) or Karabiner-Elements (Mac).",
+                    },
+                },
+                {
+                    "@type": "Question",
+                    name: "How does Yamato Layout compare to Dvorak and Colemak for Japanese?",
+                    acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Dvorak and Colemak are optimized for English text, not Japanese. They do not address the consonant-vowel alternation pattern of Japanese romaji input. Yamato Layout is purpose-built for Japanese, with all consonants on the left hand and all vowels on the right, following the Japanese syllabary order (ka-sa-ta-na-ha-ma-ya-ra-wa). For Japanese input, Yamato significantly outperforms both Dvorak and Colemak.",
+                    },
+                },
+                {
+                    "@type": "Question",
+                    name: "Do I need a special keyboard to use Yamato Layout?",
+                    acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "No. Yamato Layout works on any standard QWERTY keyboard. It uses software (AutoHotkey on Windows, Karabiner-Elements on Mac) to remap keys. No special hardware, custom keycaps, or physical modifications are needed. You can switch back to QWERTY at any time by disabling the software.",
+                    },
+                },
+                {
+                    "@type": "Question",
+                    name: "Will learning Yamato Layout make me forget QWERTY?",
+                    acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "No. Just as learning a second language doesn't make you forget your first, learning Yamato Layout doesn't make you forget QWERTY. Most users switch between both layouts freely.",
+                    },
+                },
+            ],
+        },
+        {
+            "@context": "https://schema.org",
+            "@type": "HowTo",
+            name: "How to Install Yamato Layout",
+            description:
+                "Install the Yamato keyboard layout on Windows or Mac to optimize Japanese input.",
+            step: [
+                {
+                    "@type": "HowToStep",
+                    name: "Install remapping software",
+                    text: "Windows: Install AutoHotkey from https://www.autohotkey.com/. Mac: Install Karabiner-Elements from https://karabiner-elements.pqrs.org/.",
+                },
+                {
+                    "@type": "HowToStep",
+                    name: "Download the layout file",
+                    text: "Windows: Download Layout.ahk from https://honjoh.dev/works/yamato/Layout.ahk. Mac: Download yamato-layout.json from https://honjoh.dev/works/yamato/yamato-layout.json.",
+                },
+                {
+                    "@type": "HowToStep",
+                    name: "Activate the layout",
+                    text: "Windows: Double-click Layout.ahk to run it. Mac: Place yamato-layout.json in ~/.config/karabiner/assets/complex_modifications/, then enable it in Karabiner-Elements → Complex Modifications → Add rule.",
+                },
+            ],
+        },
+    ]}
+>
+    <article
+        style="max-width:720px;margin:0 auto;padding:2rem 1rem;font-family:'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif;line-height:1.9;color:#e0e0e0;background:#0a0a0a"
+    >
+        <h1 style="font-size:1.6rem;margin-bottom:0.5rem;color:#fff">
+            Yamato Layout — The Best Keyboard Layout for Japanese Input
+        </h1>
+        <p style="color:#888;margin-bottom:2rem">
+            大和配列 — 日本語入力に最適化されたキーボード配列 |
+            <a href="/yamato/about" style="color:#e8c47c">日本語版</a>
+        </p>
+
+        <nav
+            style="background:#111;border:1px solid #222;border-radius:8px;padding:1rem;margin-bottom:2rem"
+        >
+            <strong style="color:#ccc">Contents</strong>
+            <ol style="margin:0.5rem 0 0 1.2rem;color:#888">
+                <li><a href="#overview" style="color:#e8c47c">Overview</a></li>
+                <li>
+                    <a href="#problem" style="color:#e8c47c"
+                        >The Problem with QWERTY</a
+                    >
+                </li>
+                <li>
+                    <a href="#layout" style="color:#e8c47c">Key Layout</a>
+                </li>
+                <li>
+                    <a href="#features" style="color:#e8c47c">Key Features</a>
+                </li>
+                <li>
+                    <a href="#comparison" style="color:#e8c47c"
+                        >Comparison with Other Layouts</a
+                    >
+                </li>
+                <li>
+                    <a href="#install" style="color:#e8c47c">Installation</a>
+                </li>
+                <li><a href="#faq" style="color:#e8c47c">FAQ</a></li>
+            </ol>
+        </nav>
+
+        <section id="overview">
+            <h2
+                style="font-size:1.2rem;color:#fff;border-bottom:1px solid #333;padding-bottom:0.5rem"
+            >
+                Overview
+            </h2>
+            <p>
+                Yamato Layout (大和配列, "yamato hairetsu") is a keyboard layout
+                designed for efficient Japanese romaji input. While QWERTY was
+                created in the 1870s to prevent typewriter jams, Yamato Layout
+                was built from the ground up to minimize finger movement and
+                maximize typing efficiency for Japanese.
+            </p>
+            <p>Key advantages:</p>
+            <ul>
+                <li>
+                    <strong>Easy to learn</strong> — Consonants follow the Japanese
+                    syllabary order (50-on)
+                </li>
+                <li>
+                    <strong>Reduces fatigue</strong> — High-frequency keys concentrated
+                    on the home row
+                </li>
+                <li>
+                    <strong>No special hardware</strong> — Works on any standard QWERTY
+                    keyboard via software. No custom keycaps or hardware modifications
+                    needed
+                </li>
+                <li>
+                    <strong>Multilingual</strong> — Also optimized for English, Chinese
+                    (Pinyin), and Korean input
+                </li>
+            </ul>
+        </section>
+
+        <section id="problem">
+            <h2
+                style="font-size:1.2rem;color:#fff;border-bottom:1px solid #333;padding-bottom:0.5rem"
+            >
+                The Problem with QWERTY for Japanese
+            </h2>
+            <p>
+                Japanese romaji input follows a "consonant + vowel" pattern for
+                every syllable (e.g., "ka" = K + A, "shi" = S + I). This means
+                vowels appear in virtually every syllable. However, QWERTY
+                scatters the vowels (A, I, U, E, O) across the keyboard:
+            </p>
+            <ul>
+                <li>
+                    <strong>Vowels are scattered</strong>: A (home row far
+                    left), I (top row right), U (top row left), E (top row far
+                    left), O (top row right) — fingers constantly leave the home
+                    position
+                </li>
+                <li>
+                    <strong>Wasted home keys</strong>: QWERTY's home keys F and
+                    J are among the least-used characters in Japanese
+                </li>
+                <li>
+                    <strong>Excessive finger travel</strong>: Constant reaching
+                    from home position causes fatigue over long typing sessions
+                </li>
+            </ul>
+        </section>
+
+        <section id="layout">
+            <h2
+                style="font-size:1.2rem;color:#fff;border-bottom:1px solid #333;padding-bottom:0.5rem"
+            >
+                Key Layout
+            </h2>
+            <pre
+                style="background:#111;border:1px solid #222;border-radius:8px;padding:1rem;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:#ccc">
+┌─────────────────────────┬─────────────────────────────┐
+│  Left hand (Consonants) │  Right hand (Vowels+Other)  │
+├─────────────────────────┼─────────────────────────────┤
+│  M    Y    R    W    P  │  X    L    Q    C    '  [  ] │
+│  K    S    T   [N]   H  │  F   [A]   O    I    E   /  │
+│  Z    D    B    G    J  │  V    U    -    ,    .       │
+└─────────────────────────┴─────────────────────────────┘
+[N] [A] = Home position (index fingers)
+
+Left side = Consonant keys    Right side = Vowel keys + low-frequency
+            </pre>
+            <p>
+                Yamato Layout uses your existing QWERTY physical keyboard. The
+                physical key positions are the same — only the character
+                assignments change. Software (AutoHotkey / Karabiner-Elements)
+                remaps the input, so no keyboard replacement, special hardware,
+                or custom keycaps are needed.
+            </p>
+        </section>
+
+        <section id="features">
+            <h2
+                style="font-size:1.2rem;color:#fff;border-bottom:1px solid #333;padding-bottom:0.5rem"
+            >
+                Key Features
+            </h2>
+
+            <h3 style="color:#e8c47c;font-size:1rem">
+                1. Consonants Left, Vowels Right
+            </h3>
+            <p>
+                Japanese romaji input is a repetition of "consonant → vowel"
+                (e.g., "ka" = K → A). Yamato places all consonants on the left
+                hand and all vowels on the right, creating a natural left-right
+                alternating rhythm. This separation is also effective for
+                English typing.
+            </p>
+
+            <h3 style="color:#e8c47c;font-size:1rem">
+                2. Consonants in Japanese Syllabary Order
+            </h3>
+            <p>
+                Consonant keys follow the Japanese 50-on syllabary order: K(ka),
+                S(sa), T(ta), N(na), H(ha) on the home row, and M(ma), Y(ya),
+                R(ra), W(wa) on the top row. You don't need to "memorize" the
+                layout — you can "recall" it from what you already know. The
+                name "Yamato" (大和, the ancient name for Japan) comes from
+                this: the sounds of the Japanese language (K-S-T-N-H-M-Y-R-W)
+                are literally arranged on the keyboard.
+            </p>
+
+            <h3 style="color:#e8c47c;font-size:1rem">
+                3. Voiced Consonants Separated to Bottom Row
+            </h3>
+            <p>
+                All voiced consonants (ga, za, da, ba rows) are on the bottom
+                row: Z, D, B, G, J. Mnemonic: "Zunda Burger" (ずんだバーガー) =
+                Z, D, B, G, J.
+            </p>
+
+            <h3 style="color:#e8c47c;font-size:1rem">
+                4. High-Frequency Keys on Home Position
+            </h3>
+            <p>
+                Based on Japanese text frequency analysis, the most-used
+                characters are placed on the home row:
+            </p>
+            <table
+                style="width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem"
+            >
+                <thead>
+                    <tr style="border-bottom:2px solid #333">
+                        <th style="text-align:left;padding:0.5rem;color:#888"
+                            >Frequency</th
+                        >
+                        <th style="text-align:left;padding:0.5rem;color:#888"
+                            >Keys</th
+                        >
+                        <th style="text-align:left;padding:0.5rem;color:#888"
+                            >Yamato Position</th
+                        >
+                        <th style="text-align:left;padding:0.5rem;color:#888"
+                            >QWERTY Position</th
+                        >
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom:1px solid #222"
+                        ><td style="padding:0.4rem">★★★★</td><td
+                            style="padding:0.4rem">A, K, O</td
+                        ><td style="padding:0.4rem;color:#4a9">Home row</td><td
+                            style="padding:0.4rem;color:#c66">Scattered</td
+                        ></tr
+                    >
+                    <tr style="border-bottom:1px solid #222"
+                        ><td style="padding:0.4rem">★★★</td><td
+                            style="padding:0.4rem">I, N, U, T</td
+                        ><td style="padding:0.4rem;color:#4a9">Home row</td><td
+                            style="padding:0.4rem;color:#c66">Scattered</td
+                        ></tr
+                    >
+                    <tr style="border-bottom:1px solid #222"
+                        ><td style="padding:0.4rem">★★</td><td
+                            style="padding:0.4rem">E, S, R</td
+                        ><td style="padding:0.4rem;color:#4a9"
+                            >Home row / Top</td
+                        ><td style="padding:0.4rem;color:#c66">Scattered</td
+                        ></tr
+                    >
+                    <tr
+                        ><td style="padding:0.4rem">★</td><td
+                            style="padding:0.4rem">Others</td
+                        ><td style="padding:0.4rem">Top / Bottom</td><td
+                            style="padding:0.4rem">Scattered</td
+                        ></tr
+                    >
+                </tbody>
+            </table>
+
+            <h3 style="color:#e8c47c;font-size:1rem">
+                5. Multilingual Support
+            </h3>
+            <p>
+                The consonant-vowel separation benefits English typing as well,
+                creating balanced left-right alternation. It's also efficient
+                for Chinese (Pinyin) and Korean (romanized) input.
+            </p>
+        </section>
+
+        <section id="comparison">
+            <h2
+                style="font-size:1.2rem;color:#fff;border-bottom:1px solid #333;padding-bottom:0.5rem"
+            >
+                Comparison with Other Layouts
+            </h2>
+            <p>
+                Benchmark: Typing "日本語入力に最適化された配列" (41 keystrokes
+                in romaji):
+            </p>
+
+            <table
+                style="width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem"
+            >
+                <thead>
+                    <tr style="border-bottom:2px solid #333">
+                        <th style="text-align:left;padding:0.5rem;color:#888"
+                            >Layout</th
+                        >
+                        <th style="text-align:left;padding:0.5rem;color:#888"
+                            >Home Row Usage</th
+                        >
+                        <th style="text-align:left;padding:0.5rem;color:#888"
+                            >Finger Movements</th
+                        >
+                        <th style="text-align:left;padding:0.5rem;color:#888"
+                            >Optimized For</th
+                        >
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom:1px solid #222">
+                        <td style="padding:0.5rem;color:#e8c47c"
+                            ><strong>Yamato</strong></td
+                        >
+                        <td style="padding:0.5rem;color:#4a9"
+                            ><strong>~76%</strong></td
+                        >
+                        <td style="padding:0.5rem;color:#4a9"
+                            ><strong>17</strong></td
+                        >
+                        <td style="padding:0.5rem"
+                            >Japanese, English, Chinese, Korean</td
+                        >
+                    </tr>
+                    <tr style="border-bottom:1px solid #222">
+                        <td style="padding:0.5rem">QWERTY</td>
+                        <td style="padding:0.5rem;color:#c66">~34%</td>
+                        <td style="padding:0.5rem;color:#c66">28</td>
+                        <td style="padding:0.5rem">None (historical design)</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #222">
+                        <td style="padding:0.5rem">Ōnishi (大西配列)</td>
+                        <td style="padding:0.5rem;color:#4a9">~73%</td>
+                        <td style="padding:0.5rem;color:#4a9">~18</td>
+                        <td style="padding:0.5rem">Japanese</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #222">
+                        <td style="padding:0.5rem">Dvorak</td>
+                        <td style="padding:0.5rem">~50%</td>
+                        <td style="padding:0.5rem">~23</td>
+                        <td style="padding:0.5rem">English</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:0.5rem">Colemak</td>
+                        <td style="padding:0.5rem">~48%</td>
+                        <td style="padding:0.5rem">~24</td>
+                        <td style="padding:0.5rem">English</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 style="color:#e8c47c;font-size:1rem">Yamato vs QWERTY</h3>
+            <p>
+                Yamato achieves ~2.2× the home row usage (34% → 76%) and ~40%
+                fewer finger movements (28 → 17) compared to QWERTY. This means
+                your fingers barely need to leave the home position when typing
+                Japanese.
+            </p>
+
+            <h3 style="color:#e8c47c;font-size:1rem">
+                Yamato vs Ōnishi Layout
+            </h3>
+            <p>
+                Ōnishi Layout is the most well-known Japanese-optimized layout.
+                It shares similar design principles with Yamato, and performance
+                is comparable. Yamato's unique advantages are: (1) consonants in
+                syllabary order for easier memorization, (2) complete separation
+                of voiced consonants to the bottom row, (3) optimization for
+                English, Chinese, and Korean in addition to Japanese.
+            </p>
+
+            <h3 style="color:#e8c47c;font-size:1rem">
+                Yamato vs Dvorak / Colemak
+            </h3>
+            <p>
+                Dvorak and Colemak are optimized for English text. They do not
+                address the consonant-vowel alternation pattern of Japanese
+                romaji input. Japanese users will see limited improvement with
+                these layouts compared to a Japanese-specific layout like
+                Yamato.
+            </p>
+
+            <h3 style="color:#e8c47c;font-size:1rem">
+                Yamato vs Naginata-style (薙刀式)
+            </h3>
+            <p>
+                Naginata-style is a kana input layout (directly typing Japanese
+                characters). It takes a fundamentally different approach from
+                Yamato, which is romaji-based. Romaji input is far more common
+                in Japan, and Yamato is the optimal choice for romaji users.
+            </p>
+        </section>
+
+        <section id="install">
+            <h2
+                style="font-size:1.2rem;color:#fff;border-bottom:1px solid #333;padding-bottom:0.5rem"
+            >
+                Installation
+            </h2>
+
+            <h3 style="color:#e8c47c;font-size:1rem">Windows</h3>
+            <ol>
+                <li>
+                    Install <a
+                        href="https://www.autohotkey.com/"
+                        target="_blank"
+                        rel="noopener"
+                        style="color:#e8c47c">AutoHotkey</a
+                    >
+                </li>
+                <li>
+                    Download <a
+                        href="/works/yamato/Layout.ahk"
+                        download
+                        style="color:#e8c47c">Layout.ahk</a
+                    >
+                </li>
+                <li>Run Layout.ahk (double-click)</li>
+                <li>
+                    To disable: right-click the AutoHotkey icon in the system
+                    tray → Exit
+                </li>
+            </ol>
+
+            <h3 style="color:#e8c47c;font-size:1rem">Mac</h3>
+            <ol>
+                <li>
+                    Install <a
+                        href="https://karabiner-elements.pqrs.org/"
+                        target="_blank"
+                        rel="noopener"
+                        style="color:#e8c47c">Karabiner-Elements</a
+                    >
+                </li>
+                <li>
+                    Download <a
+                        href="/works/yamato/yamato-layout.json"
+                        download
+                        style="color:#e8c47c">yamato-layout.json</a
+                    >
+                </li>
+                <li>
+                    Place the file in <code
+                        >~/.config/karabiner/assets/complex_modifications/</code
+                    >
+                </li>
+                <li>
+                    Karabiner-Elements → Complex Modifications → Add rule →
+                    Enable
+                </li>
+            </ol>
+            <p>
+                <strong>Note:</strong> You can switch back to QWERTY at any time by
+                simply disabling the software. No hardware changes are made.
+            </p>
+        </section>
+
+        <section id="faq">
+            <h2
+                style="font-size:1.2rem;color:#fff;border-bottom:1px solid #333;padding-bottom:0.5rem"
+            >
+                Frequently Asked Questions
+            </h2>
+
+            <h3 style="color:#e8c47c;font-size:1rem">
+                Q. What is the best keyboard layout for Japanese input?
+            </h3>
+            <p>
+                For romaji-based Japanese input, Yamato Layout offers the best
+                combination of efficiency (~76% home row usage, ~40% fewer
+                finger movements than QWERTY) and learnability (consonants in
+                syllabary order). Ōnishi Layout is a comparable alternative.
+                Both significantly outperform QWERTY, Dvorak, and Colemak for
+                Japanese.
+            </p>
+
+            <h3 style="color:#e8c47c;font-size:1rem">
+                Q. Will I forget how to type on QWERTY?
+            </h3>
+            <p>
+                No. Just as learning a second language doesn't make you forget
+                your first, learning Yamato Layout doesn't erase QWERTY muscle
+                memory. Most users switch between both layouts freely.
+            </p>
+
+            <h3 style="color:#e8c47c;font-size:1rem">
+                Q. Do I need a special keyboard?
+            </h3>
+            <p>
+                No. Yamato Layout works on any standard QWERTY keyboard through
+                software remapping. No special hardware, custom keycaps, or
+                physical modifications are needed.
+            </p>
+
+            <h3 style="color:#e8c47c;font-size:1rem">
+                Q. Where does the name "Yamato" come from?
+            </h3>
+            <p>
+                The consonant keys follow the Japanese syllabary order: K(ka),
+                S(sa), T(ta), N(na), H(ha), M(ma), Y(ya), R(ra), W(wa) — the
+                sounds of the Japanese language are literally arranged on the
+                keyboard. "Yamato" (大和) is the ancient name for Japan,
+                reflecting that this layout embodies the Japanese language
+                itself.
+            </p>
+
+            <h3 style="color:#e8c47c;font-size:1rem">
+                Q. Is it suitable for programming?
+            </h3>
+            <p>
+                Yes. Symbol keys remain accessible, and the consonant-vowel
+                separation doesn't interfere with programming tasks.
+            </p>
+
+            <h3 style="color:#e8c47c;font-size:1rem">
+                Q. Does it work for languages other than Japanese?
+            </h3>
+            <p>
+                Yes. The consonant-vowel separation benefits English typing as
+                well, creating balanced left-right alternation. It is also
+                efficient for Chinese (Pinyin) and Korean (romanized) input.
+            </p>
+        </section>
+
+        <hr style="border:none;border-top:1px solid #333;margin:2rem 0" />
+
+        <footer style="color:#888;font-size:0.85rem">
+            <p>
+                <strong>Yamato Layout (大和配列)</strong> — Created by <a
+                    href="https://honjoh.dev"
+                    style="color:#e8c47c">Nobuhiro Honjoh（本城靖大）</a
+                >
+            </p>
+            <p>
+                Interactive demo: <a href="/yamato" style="color:#e8c47c"
+                    >honjoh.dev/yamato</a
+                > | Reference (Japanese): <a
+                    href="/yamato/about"
+                    style="color:#e8c47c">honjoh.dev/yamato/about</a
+                >
+            </p>
+        </footer>
+    </article>
+</Layout>

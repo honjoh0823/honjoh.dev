@@ -4,14 +4,14 @@
 
     /* ── UI chrome ── */
     --ink: #e0e0e0;
-    --soft: #787878;
+    --soft: #BBB;
     --line: rgba(142, 167, 154, .15);
     --accent: hsl(210 55% 55%);
     --accent-dim: hsla(210, 55%, 55%, .10);
 
     /* ── #1 Yamato key colors (Pattern 02 桜鼠×縹 Vivid) ── */
     --k-n-bg: hsl(230 5% 12%);
-    --k-n-tx: hsl(230 5% 32%);
+    --k-n-tx: hsl(230 5% 42%);
 
     --k-l-bg: hsl(210 55% 27%);
     --k-l-tx: hsl(210 60% 88%);
@@ -34,20 +34,34 @@
     --k-qn-bg: hsl(32 22% 12%);
     --k-qn-tx: hsl(32 16% 30%);
 
+    /* ── #3 Onishi key colors (green h=148) ── */
+    --k-o-tx: #4E8A5F;
+    --k-o-press-bg: hsl(148 35% 22%);
+    --k-o-press-tx: hsl(148 45% 75%);
+
     /* ── Progress bar ── */
     --prog-track: hsl(230 5% 12%);
     --prog-fill: hsl(210 55% 42%);
 
-
     /* ── UI text shades ── */
-    --ink-mid: #aaa;
-    --ink-muted: #444;
-    --ink-dim: #666;
-    --ink-soft: #888;
+    --ink-mid: #BBB;
+    --ink-muted: #666;
+    --ink-dim: #888;
+    --ink-soft: #999;
 
     --ink-white: #fff;
     --ink-ghost: #2a2a2a;
     --border-subtle: #333;
+
+    /* ── Glow / box-shadow ── */
+    --glow-blue: hsla(210, 55%, 55%, .35);
+    --glow-blue-soft: hsla(210, 55%, 55%, .4);
+    --glow-pink: hsla(345, 52%, 50%, .35);
+    --glow-pink-soft: hsla(345, 62%, 92%, .3);
+    --glow-amber: hsla(32, 52%, 60%, .15);
+    --glow-amber-soft: hsla(32, 52%, 60%, .3);
+    --glow-green: hsla(148, 45%, 50%, .15);
+    --glow-green-soft: hsla(148, 45%, 50%, .4);
 
     /* ── Typing compare key states ── */
     --tc-y-press-bg: hsl(230 8% 16%);
@@ -68,7 +82,17 @@ body {
     background: var(--bg);
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
     color: var(--ink);
-    font-family: "Outfit", "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", sans-serif
+    font-family: "Outfit", "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", sans-serif;
+    overflow-x: hidden
+}
+
+@media (max-width: 600px) {
+
+    html,
+    body {
+        height: 100%;
+        overflow: hidden
+    }
 }
 
 .page {
@@ -80,6 +104,16 @@ body {
     grid-template-rows: auto auto 1fr auto
 }
 
+@media (max-width: 600px) {
+    .page {
+        height: 100dvh;
+        min-height: unset;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column
+    }
+}
+
 .header {
     display: flex;
     align-items: baseline;
@@ -88,7 +122,7 @@ body {
 }
 
 .quest {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 400;
     letter-spacing: .04em;
     color: var(--soft);
@@ -97,15 +131,15 @@ body {
 
 .quest em {
     font-style: normal;
-    color: var(--ink-mid)
+    color: var(--soft)
 }
 
 .tagline {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 300;
     letter-spacing: .02em;
-    color: var(--ink-mid);
-    opacity: .5
+    color: var(--soft);
+    opacity: .65
 }
 
 /* progress nav */
@@ -119,6 +153,10 @@ body {
     display: flex;
     flex-direction: column;
     gap: 4px
+}
+
+.prog-col[hidden] {
+    display: none
 }
 
 .prog-seg {
@@ -179,14 +217,25 @@ body {
 }
 
 .text-zone.expanded {
-    height: auto;
     overflow: visible
+}
+
+
+.text-zone.expanded .slide-body {
+    overflow: visible
+}
+
+/* intro-slide: keep heading + body vertically anchored */
+.intro-slide {
+    --slide-heading-h: 52px;
+    --slide-body-h: 90px
 }
 
 .kb-zone {
     display: grid;
-    place-content: center;
-    min-height: calc(3 * clamp(50px, 5vw, 68px) + 80px)
+    place-content: end center;
+    height: calc(3 * clamp(50px, 5vw, 68px) + 80px);
+    overflow: visible
 }
 
 .section {
@@ -202,7 +251,7 @@ body {
     display: none;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     text-align: center
 }
 
@@ -214,7 +263,16 @@ body {
     height: 52px;
     display: grid;
     place-content: end center;
-    width: 100%
+    width: 100%;
+    flex-shrink: 0
+}
+
+.slide-heading:has(.tg-grid) {
+    height: auto
+}
+
+#sec-practice-text .slide-body {
+    height: 48px
 }
 
 .slide-heading .title {
@@ -225,59 +283,45 @@ body {
 }
 
 .slide-heading .h3 {
-    font-size: clamp(16px, 2vw, 22px);
+    font-size: clamp(16px, 2vw, 24px);
     font-weight: 600
 }
 
 .slide-body {
-    font-size: clamp(14px, 1.4vw, 16px);
+    font-size: clamp(14px, 1.4vw, 18px);
     color: var(--soft);
     line-height: 1.7;
     max-width: 600px;
     text-align: center;
-    min-height: 48px
+    height: 90px;
+    overflow: hidden;
+    flex-shrink: 0
 }
 
-.slide-nav {
-    display: flex;
-    gap: 12px;
-    margin-top: 8px
-}
-
-.nav-btn {
-    background: none;
-    border: 1px solid var(--border-subtle);
-    border-radius: 6px;
-    color: var(--ink-soft);
-    padding: 6px 16px;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 14px;
-    transition: all 160ms ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px
-}
-
-.nav-btn:hover {
-    border-color: var(--accent);
+.slide-body a {
     color: var(--accent);
-    background: var(--accent-dim)
+    text-decoration: underline;
+    text-underline-offset: 2px
 }
 
-.nav-btn kbd {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 20px;
-    height: 18px;
-    padding: 0 5px;
+/* YouTube embed (rendered inside kb-zone) */
+.slide-youtube {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.slide-youtube iframe {
+    width: 100%;
+    height: 100%;
     border: none;
-    border-radius: 3px;
-    font-size: 14px;
-    color: inherit;
-    background: rgba(255, 255, 255, .03);
-    margin: 0
+    border-radius: 8px;
+}
+
+.kb-zone:has(.slide-youtube) {
+    place-content: stretch;
+    place-items: center;
 }
 
 /* keyboard — BORDERLESS flat design */
@@ -344,10 +388,7 @@ body {
     color: var(--k-la-tx)
 }
 
-.key.st-la .ym {
-    font-size: clamp(18px, 1.8vw, 24px);
-    font-weight: 700
-}
+
 
 .key.st-r {
     background: var(--k-r-bg);
@@ -359,10 +400,7 @@ body {
     color: var(--k-ra-tx)
 }
 
-.key.st-ra .ym {
-    font-size: clamp(18px, 1.8vw, 24px);
-    font-weight: 700
-}
+
 
 .key.home::after {
     content: "";
@@ -400,28 +438,22 @@ body {
 .key.key-flash-l {
     background: var(--k-la-bg) !important;
     color: var(--k-la-tx) !important;
-    box-shadow: 0 0 14px hsla(210, 55%, 55%, .35);
+    box-shadow: 0 0 14px var(--glow-blue);
     transform: scale(1.08);
     transition: all 60ms ease
 }
 
-.key.key-flash-l .ym {
-    font-size: clamp(18px, 1.8vw, 24px);
-    font-weight: 700
-}
+
 
 .key.key-flash-r {
     background: var(--k-ra-bg) !important;
     color: var(--k-ra-tx) !important;
-    box-shadow: 0 0 14px hsla(345, 52%, 50%, .35);
+    box-shadow: 0 0 14px var(--glow-pink);
     transform: scale(1.08);
     transition: all 60ms ease
 }
 
-.key.key-flash-r .ym {
-    font-size: clamp(18px, 1.8vw, 24px);
-    font-weight: 700
-}
+
 
 
 /* prompt */
@@ -457,14 +489,118 @@ body {
 .prompt-cell.active .ro {
     color: var(--k-ra-tx);
     font-weight: 700;
-    text-shadow: 0 0 18px hsla(345, 62%, 92%, .3)
+    text-shadow: 0 0 18px var(--glow-pink-soft)
+}
+
+/* Typing Game — unified grid */
+.tg-grid {
+    display: flex;
+    justify-content: center;
+    gap: 16px
+}
+
+.tg-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px
+}
+
+.tg-k {
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    color: var(--ink-muted);
+    transition: all 200ms ease
+}
+
+.tg-k.done {
+    opacity: .3
+}
+
+.tg-k.active {
+    color: var(--ink-white);
+    font-weight: 700
+}
+
+.tg-r-cell {
+    display: flex;
+    gap: 2px;
+    justify-content: center;
+    font-family: "Outfit", sans-serif;
+    font-size: clamp(18px, 2vw, 26px);
+    letter-spacing: .03em
+}
+
+.tg-r {
+    color: var(--ink-muted)
+}
+
+.tg-r.done {
+    opacity: .4
+}
+
+/* Active romaji: vowel = pink (right hand), consonant = blue (left hand) */
+.tg-r.tg-rv {
+    color: hsl(345 58% 55%);
+    font-weight: 700
+}
+
+.tg-r.tg-rc {
+    color: var(--accent);
+    font-weight: 700
+}
+
+.tg-prog {
+    font-size: 14px;
+    color: var(--ink-muted);
+    margin-top: 4px
+}
+
+.tg-done {
+    color: var(--accent);
+    font-size: clamp(16px, 2vw, 22px);
+    line-height: 1.7
+}
+
+.key.tg-hl {
+    animation: tg-pulse-l 1.2s ease-in-out infinite
+}
+
+.key.tg-hr {
+    animation: tg-pulse-r 1.2s ease-in-out infinite
+}
+
+@keyframes tg-pulse-l {
+
+    0%,
+    100% {
+        box-shadow: 0 0 4px var(--glow-blue)
+    }
+
+    50% {
+        box-shadow: 0 0 14px var(--glow-blue-soft);
+        transform: scale(1.05)
+    }
+}
+
+@keyframes tg-pulse-r {
+
+    0%,
+    100% {
+        box-shadow: 0 0 4px var(--glow-pink)
+    }
+
+    50% {
+        box-shadow: 0 0 14px var(--glow-pink-soft);
+        transform: scale(1.05)
+    }
 }
 
 /* resources */
 .res-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
     max-width: 600px;
     margin: 0 auto
 }
@@ -472,19 +608,17 @@ body {
 .res-item {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
-    padding: 14px 18px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, .02);
-    border: 1px solid var(--line);
+    gap: 8px;
+    padding: 0;
+    background: none;
+    border: none;
     text-decoration: none;
     color: var(--ink);
-    transition: all 160ms ease
+    transition: color 160ms ease
 }
 
 .res-item:hover {
-    background: hsla(210, 55%, 55%, .06);
-    border-color: hsla(210, 55%, 55%, .2)
+    color: var(--accent)
 }
 
 .res-icon {
@@ -514,9 +648,8 @@ body {
 /* FAQ */
 .faq-section {
     max-width: 600px;
-    margin: 24px auto 0;
-    border-top: 1px solid var(--line);
-    padding-top: 20px
+    margin: 20px auto 0;
+    padding-top: 0
 }
 
 .faq-title {
@@ -528,14 +661,13 @@ body {
 }
 
 .faq-item {
-    padding: 14px 18px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, .02);
-    border: 1px solid var(--line)
+    padding: 0;
+    background: none;
+    border: none
 }
 
 .faq-item+.faq-item {
-    margin-top: 8px
+    margin-top: 16px
 }
 
 .faq-q {
@@ -564,7 +696,7 @@ body {
 .nav-hint {
     display: flex;
     gap: 16px;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 300;
     color: var(--soft);
     opacity: .45
@@ -579,14 +711,14 @@ body {
     padding: 0 4px;
     border: 1px solid var(--border-subtle);
     border-radius: 3px;
-    font-size: 14px;
-    color: var(--ink-soft);
+    font-size: 16px;
+    color: var(--soft);
     background: var(--prog-track);
     margin-right: 4px
 }
 
 .brand {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 400;
     letter-spacing: .04em;
     color: var(--soft);
@@ -595,20 +727,22 @@ body {
 
 .brand em {
     font-style: normal;
-    color: var(--ink-mid)
+    color: var(--soft)
 }
 
 /* ---- typing compare slide ---- */
 .tc-wrap {
     display: flex;
-    gap: 18px;
+    gap: 32px;
     width: 100%;
     justify-content: center
 }
 
 .tc-panel {
     flex: 1;
-    max-width: 480px
+    max-width: 480px;
+    display: flex;
+    flex-direction: column
 }
 
 .tc-panel .tc-title {
@@ -616,8 +750,10 @@ body {
     font-weight: 600;
     letter-spacing: .03em;
     margin-bottom: 8px;
-    display: block;
-    text-align: center
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px
 }
 
 .tc-panel.tc-q .tc-title {
@@ -630,7 +766,8 @@ body {
 
 .tc-kb-wrap {
     position: relative;
-    padding: 4px
+    padding: 4px;
+    margin-top: auto
 }
 
 .tc-kb {
@@ -672,8 +809,8 @@ body {
 }
 
 .tc-q .tc-key {
-    background: var(--k-qn-bg);
-    color: var(--k-qn-tx)
+    background: var(--k-n-bg);
+    color: var(--k-n-tx)
 }
 
 .tc-key.home::after {
@@ -696,20 +833,18 @@ body {
 }
 
 .tc-y .tc-key.tc-pressed {
-    background: var(--tc-y-done-bg);
-    color: var(--tc-y-done-tx)
+    /* color set by JS inline style (saturation animation) */
 }
 
 .tc-q .tc-key.tc-pressing {
     background: var(--k-q-bg);
     color: var(--k-q-tx);
-    box-shadow: 0 0 8px hsla(32, 52%, 60%, .15);
+    box-shadow: 0 0 8px var(--glow-amber);
     transform: scale(1.08)
 }
 
 .tc-q .tc-key.tc-pressed {
-    background: var(--tc-q-done-bg);
-    color: var(--tc-q-done-tx)
+    /* color set by JS inline style (saturation animation) */
 }
 
 .tc-overlay {
@@ -745,28 +880,25 @@ body {
     pointer-events: none;
     z-index: 1;
     opacity: .15;
-    transition: left .12s cubic-bezier(.4, 0, .2, 1), top .12s cubic-bezier(.4, 0, .2, 1), opacity .1s, transform .1s
+    transition: none
 }
 
-.tc-y .tc-dot.tc-lh {
-    background: var(--accent);
-    box-shadow: 0 0 4px hsla(210, 55%, 55%, .4)
-}
-
+.tc-y .tc-dot.tc-lh,
 .tc-y .tc-dot.tc-rh {
-    background: var(--k-r-tx);
-    box-shadow: 0 0 4px hsla(345, 52%, 50%, .4)
+    background: var(--accent);
+    box-shadow: 0 0 4px var(--glow-blue-soft)
 }
 
 .tc-q .tc-dot.tc-lh,
 .tc-q .tc-dot.tc-rh {
     background: var(--k-q-tx);
-    box-shadow: 0 0 4px hsla(32, 52%, 60%, .3)
+    box-shadow: 0 0 4px var(--glow-amber-soft)
 }
 
 .tc-dot.tc-active {
     opacity: .35;
-    transform: scale(1.3)
+    transform: scale(1.3);
+    transition: left .12s cubic-bezier(.4, 0, .2, 1), top .12s cubic-bezier(.4, 0, .2, 1), opacity .1s, transform .1s
 }
 
 .tc-phrase {
@@ -777,51 +909,59 @@ body {
     min-height: 1.2em
 }
 
-.tc-typing {
+/* per-panel typing roma display */
+.tc-typing-inline {
     display: flex;
-    gap: 12px;
+    gap: 1px;
     justify-content: center;
-    margin-bottom: 8px
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+    min-height: 22px
 }
 
-.tc-char {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    flex: 1
+.tc-word-gap {
+    width: 6px
 }
 
-.tc-char .tc-ja {
-    font-size: clamp(16px, 2vw, 22px);
-    line-height: 1;
-    transition: opacity .2s
-}
-
-.tc-char .tc-keys {
-    display: flex;
-    gap: 2px
+.tc-line-break {
+    width: 100%;
+    height: 0
 }
 
 .tc-roma {
-    font-size: 16px;
-    color: var(--ink-muted);
-    min-width: 12px;
+    font-size: clamp(11px, 1.2vw, 15px);
+    min-width: 9px;
     text-align: center;
-    transition: all .15s
+    transition: all .12s;
+    letter-spacing: .02em
 }
 
-.tc-roma.tc-r-active {
-    color: var(--ink-white);
+/* Shared typing display roma colors (synced to Yamato) */
+.tc-mock-box .tc-roma {
+    color: hsl(210 15% 28%)
+}
+
+.tc-mock-box .tc-roma.tc-r-active {
+    color: var(--accent);
     font-weight: 700
 }
 
-.tc-roma.tc-r-done {
-    color: var(--ink-ghost)
+.tc-mock-box .tc-roma.tc-r-done {
+    color: hsl(210 10% 16%)
 }
 
-.tc-char.tc-c-done .tc-ja {
-    opacity: .25
+/* Onishi roma colors */
+.tc-o .tc-roma {
+    color: hsl(148 15% 28%)
+}
+
+.tc-o .tc-roma.tc-r-active {
+    color: var(--k-o-tx);
+    font-weight: 700
+}
+
+.tc-o .tc-roma.tc-r-done {
+    color: hsl(148 10% 16%)
 }
 
 .tc-mock-box {
@@ -830,22 +970,36 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    gap: 6px
+    gap: 6px;
+    padding-bottom: 20px;
+    animation: tcBoxIn .15s ease
+}
+
+@keyframes tcBoxIn {
+    from {
+        opacity: 0
+    }
+
+    to {
+        opacity: 1
+    }
 }
 
 .tc-stats {
     display: flex;
     justify-content: center;
-    gap: 16px;
-    font-size: 11px;
-    font-weight: 300;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
     letter-spacing: .02em;
-    margin-bottom: 6px
+    margin-bottom: 6px;
+    height: 28px
 }
 
-.tc-stats b {
-    font-weight: 600;
-    font-size: 13px
+.tc-stats .tc-sep {
+    margin: 0 8px;
+    opacity: .25
 }
 
 .tc-q .tc-stats {
@@ -860,49 +1014,34 @@ body {
 
 /* Onishi (orange) panel */
 .tc-panel.tc-o .tc-title {
-    color: hsl(30 100% 50%)
+    color: var(--k-o-tx)
 }
 
 .tc-o .tc-key {
-    background: hsl(30 20% 12%);
-    color: hsl(30 16% 30%)
+    background: var(--k-n-bg);
+    color: var(--k-n-tx)
 }
 
 .tc-o .tc-key.tc-pressing {
-    background: hsl(30 50% 22%);
-    color: hsl(30 60% 75%);
-    box-shadow: 0 0 8px hsla(30, 60%, 50%, .15);
+    background: var(--k-o-press-bg);
+    color: var(--k-o-press-tx);
+    box-shadow: 0 0 8px var(--glow-green);
     transform: scale(1.08)
 }
 
 .tc-o .tc-key.tc-pressed {
-    background: hsl(30 14% 9%);
-    color: hsl(30 12% 24%)
+    /* color set by JS inline style (saturation animation) */
 }
 
 .tc-o .tc-dot.tc-lh,
 .tc-o .tc-dot.tc-rh {
-    background: hsl(30 100% 50%);
-    box-shadow: 0 0 4px hsla(30, 100%, 50%, .4)
+    background: var(--k-o-tx);
+    box-shadow: 0 0 4px var(--glow-green-soft)
 }
 
 .tc-o .tc-stats {
-    color: hsl(30 100% 50%);
+    color: var(--k-o-tx);
     opacity: .6
-}
-
-.tc-stats .tc-stat-win {
-    opacity: 1;
-    font-weight: 500;
-    background: rgba(255, 255, 255, .07);
-    padding: 2px 8px;
-    border-radius: 4px;
-    border: 1px solid rgba(255, 255, 255, .1)
-}
-
-.tc-stats .tc-stat-win b {
-    font-size: 15px;
-    text-shadow: 0 0 16px currentColor
 }
 
 @media(max-width:860px) {
@@ -933,5 +1072,265 @@ body {
 
     .tc-panel {
         max-width: 100%
+    }
+
+    .tc-key {
+        width: clamp(28px, 7vw, 38px);
+        height: clamp(30px, 7.5vw, 40px);
+        font-size: clamp(10px, 2.5vw, 13px)
+    }
+}
+
+/* ── Mobile ── */
+@media(max-width:600px) {
+    .page {
+        padding: 16px 12px 16px;
+        width: 100%
+    }
+
+    /* Header: stack vertically */
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+        padding-bottom: 16px;
+        flex-shrink: 0
+    }
+
+    .progress-nav {
+        flex-shrink: 0
+    }
+
+    .quest {
+        font-size: 14px
+    }
+
+    .tagline {
+        font-size: 14px
+    }
+
+    /* Progress nav labels */
+    .prog-label {
+        font-size: 14px
+    }
+
+    /* Content area: flex column, top-aligned with padding */
+    .content-area {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+        gap: 12px;
+        padding-top: 4vh
+    }
+
+    /* Text zone: fixed height to prevent shift */
+    .text-zone {
+        flex: 0 0 156px;
+        height: 156px;
+        min-height: unset;
+        display: grid;
+        place-content: center;
+        overflow: hidden
+    }
+
+    /* Intro slide: fixed-height regions so keyboard never shifts */
+    .intro-slide {
+        --slide-heading-h: 44px;
+        --slide-body-h: 100px
+    }
+
+    .slide-heading {
+        height: var(--slide-heading-h);
+        padding-bottom: 0;
+        flex-shrink: 0
+    }
+
+    .slide-heading .h3 {
+        font-size: 24px
+    }
+
+    .slide-heading .title {
+        font-size: 28px
+    }
+
+    .slide-body {
+        height: var(--slide-body-h);
+        overflow: hidden;
+        font-size: 16px;
+        line-height: 1.65;
+        flex-shrink: 0
+    }
+
+    /* Hide <br> inside slide-body on mobile */
+    .slide-body br {
+        display: none
+    }
+
+    /* Keyboard zone: directly under text, no bottom-pinning */
+    .kb-zone {
+        height: auto;
+        min-height: calc(3 * clamp(38px, 10vw, 50px) + 40px);
+        flex-shrink: 0;
+        pointer-events: none;
+        -webkit-tap-highlight-color: transparent
+    }
+
+    .footer {
+        flex-shrink: 0
+    }
+
+    /* Keys: square aspect ratio */
+    .key {
+        width: clamp(25px, 6.8vw, 46px);
+        height: clamp(25px, 6.8vw, 46px);
+        border-radius: 6px
+    }
+
+    /* Home position mark: reposition for smaller keys */
+    .key.home::after {
+        bottom: 3px;
+        width: 8px;
+        height: 1.5px
+    }
+
+    .key .ym {
+        font-size: clamp(11px, 3vw, 16px)
+    }
+
+    .kb .row {
+        gap: 2px
+    }
+
+    .kb {
+        gap: 3px
+    }
+
+    .kb .row:nth-child(2) {
+        padding-left: 8px
+    }
+
+    .kb .row:nth-child(3) {
+        padding-left: 16px
+    }
+
+    /* Disable split layout on mobile */
+    .kb.split .row .gap-sp {
+        display: none
+    }
+
+    .kb.split .lg,
+    .kb.split .rg {
+        display: contents
+    }
+
+    /* Prompt cells */
+    .prompt-cell {
+        min-width: clamp(32px, 8vw, 48px)
+    }
+
+    .prompt-cell .ja {
+        font-size: clamp(20px, 5.5vw, 32px)
+    }
+
+    .prompt-cell .ro {
+        font-size: clamp(12px, 3vw, 16px)
+    }
+
+    /* Footer: stack and hide nav hint */
+    .footer {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding-top: 12px
+    }
+
+    .nav-hint {
+        display: none
+    }
+
+    .brand {
+        font-size: 13px
+    }
+
+    /* Typing compare */
+    .tc-wrap {
+        gap: 16px
+    }
+
+    .tc-key {
+        width: clamp(20px, 6vw, 32px);
+        height: clamp(22px, 6.5vw, 34px);
+        font-size: clamp(8px, 2vw, 11px)
+    }
+
+    .tc-kb .row {
+        gap: 1px
+    }
+
+    .tc-kb {
+        gap: 2px
+    }
+
+    .tc-kb .row:nth-child(2) {
+        padding-left: 5px
+    }
+
+    .tc-kb .row:nth-child(3) {
+        padding-left: 10px
+    }
+
+    .tc-panel .tc-title {
+        font-size: 14px;
+        margin-bottom: 4px;
+        height: 22px
+    }
+
+    .tc-phrase {
+        font-size: clamp(13px, 3.5vw, 18px)
+    }
+
+    .tc-typing-inline {
+        margin-bottom: 4px;
+        min-height: 18px
+    }
+
+    .tc-roma {
+        font-size: 10px;
+        min-width: 7px
+    }
+
+    .tc-stats {
+        font-size: 11px;
+        height: 20px
+    }
+
+    .tc-mock-box {
+        min-height: calc(3 * clamp(38px, 10vw, 50px) + 20px)
+    }
+
+    /* Resources / FAQ */
+    .res-list {
+        max-width: 100%
+    }
+
+    .faq-section {
+        max-width: 100%
+    }
+
+    .res-title {
+        font-size: 13px
+    }
+
+    .res-meta {
+        font-size: 12px
+    }
+
+    .faq-q {
+        font-size: 13px
+    }
+
+    .faq-a {
+        font-size: 13px
     }
 }
