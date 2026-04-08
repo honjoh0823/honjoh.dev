@@ -8,7 +8,7 @@ Yamato Layout is a keyboard layout that fundamentally rethinks key placement for
 
 🌐 **Website:** [honjoh.dev/yamato](https://honjoh.dev/yamato)
 📖 **Full Reference:** [English](https://honjoh.dev/yamato/about/en) / [日本語](https://honjoh.dev/yamato/about)
-📝 **Article (Japanese):** [note.com](https://note.com/_honjoh/n/n6eca0fda500b)
+📝 **Article (Japanese):** [note.com](https://note.com/honjoh_/n/n6eca0fda500b)
 
 ---
 
@@ -80,13 +80,6 @@ Typing "日本語入力に最適化された配列" in romaji (41 keystrokes):
 2. Download [`Layout.ahk`](https://honjoh.dev/works/yamato/Layout.ahk)
 3. Double-click to run
 4. To disable: right-click AutoHotkey icon in system tray → Exit
-
-### Mac (Karabiner-Elements)
-
-1. Install [Karabiner-Elements](https://karabiner-elements.pqrs.org/)
-2. Download [`yamato-layout.json`](https://honjoh.dev/works/yamato/yamato-layout.json)
-3. Place in `~/.config/karabiner/assets/complex_modifications/`
-4. Karabiner-Elements → Complex Modifications → Add rule → Enable
 
 > You can switch back to QWERTY at any time by disabling the software. No hardware changes are made.
 
