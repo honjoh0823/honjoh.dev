@@ -295,7 +295,7 @@
     // --- FAQ Slide Data ---
     const FAQ_SLIDES = [
         { h3: 'Q1. QWERTY配列が打てなくなるのでは？', body: '英語を覚えても日本語は忘れません。野球を覚えてサッカーを忘れることもありません。最初は忘れる感覚が合っても、使っていると徐々にまた思い出します。' },
-        { h3: '導入方法', body: '<b>Windows</b><br>1. <a href="https://www.autohotkey.com/" target="_blank" rel="noopener">AutoHotkey</a> をインストール<br>2. <a href="/works/yamato/Layout.ahk" download>Layout.ahk</a> をダウンロード → 起動' },
+        { h3: '導入方法', body: '<b>Windows</b><br>1. <a href="https://www.autohotkey.com/" target="_blank" rel="noopener">AutoHotkey</a> をインストール<br>2. <a href="https://github.com/honjoh0823/yamato-layout/releases/download/v1.0/yamato-1.0.ahk">yamato-1.0.ahk</a> をダウンロード → 起動' },
         { h3: '参考資料', body: '<a href="https://note.com/honjoh_/n/n6eca0fda500b" target="_blank">https://note.com/honjoh_/n/n6eca0fda500b</a>' },
     ];
     const TOTAL_FAQ = FAQ_SLIDES.length;

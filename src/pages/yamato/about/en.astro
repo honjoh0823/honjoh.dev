@@ -20,7 +20,7 @@ import Layout from "../../../layouts/Layout.astro";
                     name: "What is the best keyboard layout for Japanese input?",
                     acceptedAnswer: {
                         "@type": "Answer",
-                        text: "Yamato Layout (大和配列) is a keyboard layout specifically optimized for Japanese romaji input. It places consonants on the left hand and vowels on the right hand, matching the natural 'consonant → vowel' rhythm of Japanese. Compared to QWERTY, it achieves ~76% home row usage (vs ~34%) and reduces finger movements by ~40%. It works on any standard QWERTY keyboard via AutoHotkey (Windows) or Karabiner-Elements (Mac).",
+                        text: "Yamato Layout (大和配列) is a keyboard layout specifically optimized for Japanese romaji input. It places consonants on the left hand and vowels on the right hand, matching the natural 'consonant → vowel' rhythm of Japanese. Compared to QWERTY, it achieves ~76% home row usage (vs ~34%) and reduces finger movements by ~40%. It works on any standard QWERTY keyboard via AutoHotkey (Windows).",
                     },
                 },
                 {
@@ -36,7 +36,7 @@ import Layout from "../../../layouts/Layout.astro";
                     name: "Do I need a special keyboard to use Yamato Layout?",
                     acceptedAnswer: {
                         "@type": "Answer",
-                        text: "No. Yamato Layout works on any standard QWERTY keyboard. It uses software (AutoHotkey on Windows, Karabiner-Elements on Mac) to remap keys. No special hardware, custom keycaps, or physical modifications are needed. You can switch back to QWERTY at any time by disabling the software.",
+                        text: "No. Yamato Layout works on any standard QWERTY keyboard. It uses software (AutoHotkey on Windows) to remap keys. No special hardware, custom keycaps, or physical modifications are needed. You can switch back to QWERTY at any time by disabling the software.",
                     },
                 },
                 {
@@ -59,17 +59,17 @@ import Layout from "../../../layouts/Layout.astro";
                 {
                     "@type": "HowToStep",
                     name: "Install remapping software",
-                    text: "Windows: Install AutoHotkey from https://www.autohotkey.com/. Mac: Install Karabiner-Elements from https://karabiner-elements.pqrs.org/.",
+                    text: "Windows: Install AutoHotkey from https://www.autohotkey.com/.",
                 },
                 {
                     "@type": "HowToStep",
                     name: "Download the layout file",
-                    text: "Windows: Download Layout.ahk from https://honjoh.dev/works/yamato/Layout.ahk. Mac: Download yamato-layout.json from https://honjoh.dev/works/yamato/yamato-layout.json.",
+                    text: "Windows: Download yamato-1.0.ahk from https://github.com/honjoh0823/yamato-layout/releases/download/v1.0/yamato-1.0.ahk.",
                 },
                 {
                     "@type": "HowToStep",
                     name: "Activate the layout",
-                    text: "Windows: Double-click Layout.ahk to run it. Mac: Place yamato-layout.json in ~/.config/karabiner/assets/complex_modifications/, then enable it in Karabiner-Elements → Complex Modifications → Add rule.",
+                    text: "Windows: Double-click yamato-1.0.ahk to run it.",
                 },
             ],
         },
@@ -450,45 +450,19 @@ Left side = Consonant keys    Right side = Vowel keys + low-frequency
                 </li>
                 <li>
                     Download <a
-                        href="/works/yamato/Layout.ahk"
+                        href="https://github.com/honjoh0823/yamato-layout/releases/download/v1.0/yamato-1.0.ahk"
                         download
-                        style="color:#e8c47c">Layout.ahk</a
+                        style="color:#e8c47c">yamato-1.0.ahk</a
                     >
                 </li>
-                <li>Run Layout.ahk (double-click)</li>
+                <li>Run yamato-1.0.ahk (double-click)</li>
                 <li>
                     To disable: right-click the AutoHotkey icon in the system
                     tray → Exit
                 </li>
             </ol>
 
-            <h3 style="color:#e8c47c;font-size:1rem">Mac</h3>
-            <ol>
-                <li>
-                    Install <a
-                        href="https://karabiner-elements.pqrs.org/"
-                        target="_blank"
-                        rel="noopener"
-                        style="color:#e8c47c">Karabiner-Elements</a
-                    >
-                </li>
-                <li>
-                    Download <a
-                        href="/works/yamato/yamato-layout.json"
-                        download
-                        style="color:#e8c47c">yamato-layout.json</a
-                    >
-                </li>
-                <li>
-                    Place the file in <code
-                        >~/.config/karabiner/assets/complex_modifications/</code
-                    >
-                </li>
-                <li>
-                    Karabiner-Elements → Complex Modifications → Add rule →
-                    Enable
-                </li>
-            </ol>
+
             <p>
                 <strong>Note:</strong> You can switch back to QWERTY at any time by
                 simply disabling the software. No hardware changes are made.
