@@ -17,7 +17,7 @@ Yamato Layout is a keyboard layout designed for efficient Japanese romaji input 
 - Consonants follow Japanese syllabary order (50-on): Ka-Sa-Ta-Na-Ha on home row
 - Home row usage: ~76% (vs QWERTY ~34%)
 - Finger movement reduction: ~40% less than QWERTY
-- Works with standard QWERTY keyboards via AutoHotkey (Windows) or Karabiner-Elements (Mac)
+- Windows-only. Works with standard QWERTY keyboards via AutoHotkey
 - Also optimized for English, Chinese (Pinyin), and Korean input
 
 ### Key Layout

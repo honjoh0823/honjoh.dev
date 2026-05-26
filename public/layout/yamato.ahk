@@ -1,13 +1,7 @@
-; Yamato Layout (大和配列) for AutoHotKey
-; Author: Honjoh Nobuhiro
-; https://honjoh.dev/layout
-;
-; When Ctrl, Alt, or Win is held, reverts to QWERTY for shortcuts.
-; Shift alone keeps Yamato layout active.
-
+; 修飾キーが押されていない場合のみ、以下のリマップを有効にする
 #If !GetKeyState("Ctrl","P") && !GetKeyState("Alt","P") && !GetKeyState("LWin","P") && !GetKeyState("RWin","P")
 
-; Yamato Layout
+; 大和配列
 q::m
 w::y
 e::r
@@ -34,6 +28,7 @@ v::g
 b::j
 n::v
 m::u
+
 sc027::e
 -::sc027
 '::/
@@ -41,5 +36,5 @@ sc027::e
 .::,
 /::.
 
-; End conditional block
+; 条件ブロックを終了
 #If

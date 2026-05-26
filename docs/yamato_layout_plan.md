@@ -18,7 +18,6 @@ URL: `honjoh.dev/layout`
 ### C. 導入方法 (Installation)
 - **Windows**: AutoHotKey (スクリプト配布予定)
     - 記事内のスクリプトを `yamato.ahk` としてダウンロード可能にする。
-- **macOS**: (今回は対象外、または「募集中」とする)
 - **Linux/自作キーボード**: (Remap等のリンク紹介)
 
 ### D. コンテンツ構成案
