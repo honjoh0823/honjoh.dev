@@ -21,9 +21,9 @@ const navItems = [
 	{
 		key: "4",
 		label: "chat",
-		href: "/chat",
+		href: "#",
 		desc: "ai agent",
-		disabled: false,
+		disabled: true,
 	},
 	{
 		key: "5",
@@ -70,20 +70,8 @@ const navItems = [
 	</div>
 
 	<SiteFooter slot="footer">
-		<div class="prompt-area home-prompt-area" slot="prompt">
-			<span class="prompt-symbol">❯</span>
-			<input
-				type="text"
-				id="chat-inline-input"
-				class="prompt-input"
-				placeholder="こんにちは！"
-				autocomplete="off"
-				autofocus
-			/>
-		</div>
 		<span><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> 移動</span>
 		<span><kbd>enter</kbd> open</span>
-		<span>入力 + <kbd>enter</kbd> chat</span>
 	</SiteFooter>
 </TerminalLayout>
 
@@ -139,23 +127,11 @@ const navItems = [
 	.page-body .nav-item.nav-active {
 		border-left-color: transparent;
 	}
-
-	.home-prompt-area {
-		padding-bottom: 0.8rem;
-	}
-
-	.home-prompt-area .prompt-input::placeholder {
-		opacity: 0.42;
-	}
 </style>
 
 <script>
 	const items = document.querySelectorAll<HTMLAnchorElement>(".nav-item");
-	const chatInput = document.getElementById(
-		"chat-inline-input",
-	) as HTMLInputElement;
 	let idx = 0;
-	let inMenuMode = false; // Track if we're in menu navigation mode
 
 	function update(i: number) {
 		items.forEach((el) => el.classList.remove("nav-active"));
@@ -172,117 +148,41 @@ const navItems = [
 		}
 	}
 
-	function moveToChat() {
-		const query = chatInput?.value.trim() ?? "";
-		const url = query ? `/chat?q=${encodeURIComponent(query)}` : "/chat";
-		window.location.href = url;
-	}
-
-	function enterMenuMode() {
-		inMenuMode = true;
-		update(0); // Start at first item
-		if (chatInput) chatInput.blur();
-	}
-
-	function exitMenuMode() {
-		inMenuMode = false;
-		items.forEach((el) => el.classList.remove("nav-active"));
-		if (chatInput) chatInput.focus();
-	}
-
 	document.addEventListener("keydown", (e: KeyboardEvent) => {
-		// Chat input is focused
-		if (document.activeElement === chatInput) {
-			if (e.key === "Enter" && !e.shiftKey) {
-				e.preventDefault();
-				moveToChat();
-				return;
-			}
-			if (e.key === "ArrowDown") {
-				e.preventDefault();
-				enterMenuMode();
-				return;
-			}
-			if (e.key === "ArrowUp") {
-				e.preventDefault();
-				inMenuMode = true;
-				update(items.length - 1); // Start at last item
-				if (chatInput) chatInput.blur();
-				return;
-			}
-			// Other keys handled by chat input
-			return;
-		}
-
-		// Menu mode navigation
-		if (inMenuMode) {
-			if (e.ctrlKey || e.altKey || e.metaKey) return;
-
-			switch (e.key) {
-				case "ArrowDown":
-				case "j":
-					e.preventDefault();
-					if (idx === items.length - 1) {
-						// At last item, go back to chat
-						exitMenuMode();
-					} else {
-						update(idx + 1);
-					}
-					break;
-				case "ArrowUp":
-				case "k":
-					e.preventDefault();
-					if (idx === 0) {
-						// At first item, go back to chat
-						exitMenuMode();
-					} else {
-						update(idx - 1);
-					}
-					break;
-				case "ArrowRight":
-				case "Enter":
-					e.preventDefault();
-					navigate();
-					break;
-				case "Escape":
-					e.preventDefault();
-					exitMenuMode();
-					break;
-				case "/":
-					e.preventDefault();
-					exitMenuMode();
-					break;
-			}
-			return;
-		}
-
-		// Global shortcuts (not in menu mode, not in chat)
 		if (e.ctrlKey || e.altKey || e.metaKey) return;
 
 		switch (e.key) {
 			case "ArrowDown":
+			case "j":
 				e.preventDefault();
-				enterMenuMode();
+				update(idx < items.length - 1 ? idx + 1 : 0);
 				break;
-			case "/":
+			case "ArrowUp":
+			case "k":
 				e.preventDefault();
-				exitMenuMode();
+				update(idx > 0 ? idx - 1 : items.length - 1);
+				break;
+			case "ArrowRight":
+			case "Enter":
+				e.preventDefault();
+				navigate();
+				break;
+			default:
+				const num = parseInt(e.key);
+				if (num >= 1 && num <= items.length) {
+					e.preventDefault();
+					update(num - 1);
+					navigate();
+				}
 				break;
 		}
 	});
 
 	items.forEach((item, i) => {
-		item.addEventListener("mouseenter", () => {
-			if (!inMenuMode) {
-				enterMenuMode();
-			}
-			update(i);
-		});
+		item.addEventListener("mouseenter", () => update(i));
 		item.addEventListener("click", () => navigate());
 	});
 
-	// Initial focus on chat input
-	if (chatInput) {
-		chatInput.focus();
-	}
+	// Highlight first item on load
+	update(0);
 </script>

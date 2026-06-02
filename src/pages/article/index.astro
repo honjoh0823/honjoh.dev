@@ -17,6 +17,9 @@ const posts = (await getCollection("article")).sort(
 
     <div class="page-body">
         <nav class="nav-menu" id="nav-menu" aria-label="Article navigation">
+            {posts.length === 0 && (
+                <p class="empty-state">準備中です</p>
+            )}
             {
                 posts.map((post, idx) => (
                     <a
@@ -50,6 +53,12 @@ const posts = (await getCollection("article")).sort(
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+
+    .empty-state {
+        color: var(--dim);
+        font-size: 0.9rem;
+        padding: 0.5rem 0;
+    }
 </style>
 
 <script>
@@ -65,6 +74,7 @@ const posts = (await getCollection("article")).sort(
     }
 
     function navigate() {
+        if (navItems.length === 0) return;
         const href = navItems[activeIdx].getAttribute("href");
         if (href && href !== "#") {
             window.location.href = href;
