@@ -1,0 +1,433 @@
+:root {
+  --bg: #0b0f14;
+  --panel: #121821;
+  --panel-2: #1a222e;
+  --line: #2a3645;
+  --text: #e8eef5;
+  --muted: #8595a8;
+  --accent: #4ea1ff;
+  --good: #46d39a;
+  --warn: #ffb454;
+  --bad: #ff6b6b;
+  --shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Sans",
+    "Noto Sans JP", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ---------- Top HUD ---------- */
+/* thin life bar pinned to the very top edge */
+.stakes-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  z-index: 520;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.hud {
+  position: absolute;
+  top: 6px;
+  left: 0;
+  right: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 14px;
+  pointer-events: none;
+}
+.hud .hud-restart { pointer-events: auto; }
+.stat .v.pool { color: var(--warn); }
+
+.hud .brand {
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  font-size: 15px;
+}
+.hud .brand span { color: var(--accent); }
+
+.hud .spacer { flex: 1; }
+
+.stat {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  line-height: 1;
+}
+.stat .k { font-size: 10px; color: var(--muted); letter-spacing: 0.06em; }
+.stat .v { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.stat .v.pool { color: var(--warn); }
+.stat .v.total { color: var(--good); }
+
+/* ---------- Play area: two full-height square panes ---------- */
+.play-panels {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.play-pane {
+  position: relative;
+  width: var(--pane, 600px);
+  height: var(--pane, 600px);
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px var(--line), 0 12px 48px rgba(0, 0, 0, 0.5);
+  background: #07131d;
+}
+/* the puzzle (clue) map fills its pane */
+#puzzle-map {
+  position: absolute;
+  inset: 0;
+  background: #07131d; /* dark ocean — softens any tile-load flash */
+  cursor: default;
+}
+/* hide leaflet attribution flag overlap a touch */
+.leaflet-control-attribution { font-size: 10px !important; opacity: 0.6; }
+
+/* caption tab on each pane (top-left, clear of the Leaflet attribution) */
+.pane-cap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 460;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--text);
+  background: rgba(7, 11, 16, 0.8);
+  border-bottom-right-radius: 8px;
+  pointer-events: none;
+}
+
+/* action buttons overlaid on each pane (引く on the clue, 確定 on the map) */
+.pane-action {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 470;
+  background: rgba(13, 20, 29, 0.86);
+  border-color: var(--line);
+  backdrop-filter: blur(2px);
+}
+.pane-action.primary {
+  background: rgba(78, 161, 255, 0.92);
+  border-color: var(--accent);
+  color: #04121f;
+}
+.pane-action.primary:hover { background: rgba(111, 180, 255, 0.95); }
+.btn-zoom .sub { color: var(--warn); font-weight: 600; }
+
+/* the thin top life-bar fill */
+.stakes-fill {
+  height: 100%;
+  width: 100%;
+  background: var(--good);
+  transition: width 0.28s ease, background 0.28s ease;
+}
+
+/* flash the 持ち点 number when it drops */
+.stat .v.drop { animation: pooldrop 0.45s ease; }
+@keyframes pooldrop {
+  0% { color: var(--bad); transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+/* restart chip in the HUD */
+.hud-restart {
+  pointer-events: auto;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(7, 11, 16, 0.5);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+}
+.hud-restart:hover { color: var(--text); background: rgba(7, 11, 16, 0.7); }
+
+/* first-visit coach tooltip (teaches 引く → 回答 by doing) */
+.coach {
+  position: absolute;
+  bottom: 150px;
+  left: 50%;
+  z-index: 510;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: #04121f;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 9px 15px;
+  border-radius: 11px;
+  white-space: nowrap;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+  animation: coachpulse 1.4s ease-in-out infinite;
+}
+.coach::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 7px solid transparent;
+  border-top-color: var(--accent);
+}
+.coach[hidden] { display: none; }
+@keyframes coachpulse {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-4px); }
+}
+
+/* the point you must locate — fixed at the puzzle frame centre */
+.puzzle-target {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translate(-50%, -50%);
+  z-index: 400;
+  pointer-events: none;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.55), 0 0 10px rgba(0, 0, 0, 0.5);
+}
+.puzzle-target::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--text);
+  padding: 13px 22px;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: transform 0.05s ease, background 0.15s ease, border-color 0.15s ease,
+    opacity 0.15s ease;
+}
+button:hover { background: #222d3c; border-color: #38465a; }
+button:active { transform: translateY(1px); }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #04121f;
+}
+button.primary:hover { background: #6fb4ff; border-color: #6fb4ff; }
+
+.btn-zoom .sub {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+kbd {
+  font-family: "SFMono-Regular", ui-monospace, "Cascadia Mono", Menlo, monospace;
+  font-size: 0.82em;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  background: #0d141d;
+  color: var(--muted);
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+button kbd {
+  background: rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: inherit;
+  margin-left: 6px;
+}
+button.primary kbd {
+  background: rgba(0, 0, 0, 0.18);
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+/* ---------- Overlays ---------- */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 900;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(5, 8, 12, 0.72);
+  backdrop-filter: blur(3px);
+}
+.overlay.show { display: flex; }
+
+.card {
+  width: min(560px, 100%);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.card h2 {
+  margin: 0;
+  padding: 18px 22px;
+  font-size: 17px;
+  border-bottom: 1px solid var(--line);
+}
+.card .body { padding: 18px 22px; }
+.card .foot {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 16px 22px;
+  border-top: 1px solid var(--line);
+}
+
+/* answer map fills the right pane */
+#answer-map {
+  position: absolute;
+  inset: 0;
+  background: #aadaff;
+  outline: none;
+}
+
+/* grid of selectable blocks over the answer map */
+.answer-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 455;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(20, 30, 50, 0.16) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(20, 30, 50, 0.16) 1px, transparent 1px);
+  background-size: var(--cw, 40px) 100%, 100% var(--ch, 40px);
+}
+.grid-sel {
+  position: absolute;
+  z-index: 456;
+  pointer-events: none;
+  box-sizing: border-box;
+  border: 2px solid var(--accent);
+  background: rgba(78, 161, 255, 0.28);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.55), 0 0 16px rgba(78, 161, 255, 0.55);
+  transition: left 0.08s ease, top 0.08s ease;
+}
+/* result */
+.result-band {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  margin-bottom: 14px;
+}
+.result-band.band-full { color: var(--good); }
+.result-band.band-area { color: var(--accent); }
+.result-band.band-near { color: var(--warn); }
+.result-band.band-miss { color: var(--bad); }
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.result-grid .cell {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.result-grid .cell .k { font-size: 11px; color: var(--muted); letter-spacing: 0.06em; }
+.result-grid .cell .v { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.result-truth { font-size: 15px; }
+.result-truth b { color: var(--accent); }
+.result-pts { color: var(--good); }
+
+/* lean start card — one line, then play */
+.start-card {
+  width: min(380px, 100%);
+  padding: 30px 26px 26px;
+  text-align: center;
+}
+.start-brand {
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+.start-brand span { color: var(--accent); }
+.start-tag {
+  margin: 6px 0 22px;
+  color: var(--muted);
+  font-size: 15px;
+  letter-spacing: 0.04em;
+}
+.mode-pick {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+.mode-btn {
+  flex: 1;
+  max-width: 150px;
+  padding: 15px 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.final-score {
+  text-align: center;
+  font-size: 56px;
+  font-weight: 800;
+  color: var(--good);
+  font-variant-numeric: tabular-nums;
+  margin: 6px 0 2px;
+}
+.final-sub { text-align: center; color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+.final-pattern {
+  text-align: center;
+  font-size: 22px;
+  letter-spacing: 3px;
+  line-height: 1.3;
+  word-break: break-all;
+}
+
+@media (max-width: 560px) {
+  .hud .brand { font-size: 15px; }
+  .stat .v { font-size: 15px; }
+}
