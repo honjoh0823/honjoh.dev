@@ -8,6 +8,7 @@
     "dev:chat": "node src/server/chat-proxy.mjs",
     "build": "astro build",
     "preview": "astro preview",
+    "deploy": "astro build && wrangler pages deploy dist --project-name=honjoh-dev --commit-dirty=true --branch=master",
     "astro": "astro"
   },
   "repository": {
