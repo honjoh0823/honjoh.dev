@@ -1,10 +1,9 @@
-# Astro Starter Kit: Minimal
+# honjoh.dev
 
-```sh
-npm create astro@latest -- --template minimal
-```
+Personal site of Honjoh Nobuhiro — a terminal/CLI-inspired site built with Astro
+and deployed to Cloudflare Pages.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+> 📖 **Start here:** [`AGENTS.md`](AGENTS.md) — stack, commands, deploy, structure, and branch workflow.
 
 ## 🚀 Project Structure
 
@@ -35,6 +34,7 @@ All commands are run from the root of the project, from a terminal:
 | `npm run dev`             | Starts local dev server at `localhost:4321`      |
 | `npm run build`           | Build your production site to `./dist/`          |
 | `npm run preview`         | Preview your build locally, before deploying     |
+| `npm run deploy`          | Build and deploy to Cloudflare Pages             |
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `npm run astro -- --help` | Get help using the Astro CLI                     |
 
