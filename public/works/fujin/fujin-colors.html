@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Fujin Colors</title>
+    <link rel="stylesheet" href="fujin.css">
+    <style>
+        body { padding: 40px; color: #fff; background: hsl(230 20% 5.5%); }
+        .grid { display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 40px; }
+        .item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .label { font-size: 14px; color: #aaa; font-family: monospace; }
+        .section-title { margin-top: 40px; margin-bottom: 20px; font-size: 24px; color: #e0e0e0; }
+    </style>
+</head>
+<body>
+    <div class="page" style="min-height: unset; padding: 0;">
+        <h1 class="section-title">Fujin Heatmap Colors</h1>
+        <p style="color: #aaa; margin-bottom: 24px;">指定された15キー（myrwpkstnhzdbgj）を使って、定義されている状態の色を一覧表示しています。</p>
+        <div id="container" class="grid kb"></div>
+    </div>
+
+    <script src="fujin-engine.js"></script>
+    <script src="fujin-kb.js"></script>
+    <script>
+        const keys = "myrwpkstnhzdbgj".split("");
+        
+        // Heatmap + base states to show
+        const states = [
+            { name: "hl1 (Cons dim)", style: FujinKB.heatmapStyle('hl', 1), class: "" },
+            { name: "hl2 (Cons base)", style: FujinKB.heatmapStyle('hl', 2), class: "" },
+            { name: "hl3 (Cons next)", style: FujinKB.heatmapStyle('hl', 3), class: "" },
+            { name: "hl4 (Cons pulse)", style: FujinKB.heatmapStyle('hl', 4), class: "" },
+            { name: "hr1 (Vow dim)", style: FujinKB.heatmapStyle('hr', 1), class: "" },
+            { name: "hr2 (Vow base)", style: FujinKB.heatmapStyle('hr', 2), class: "" },
+            { name: "hr3 (Vow next)", style: FujinKB.heatmapStyle('hr', 3), class: "" },
+            { name: "hr4 (Vow pulse)", style: FujinKB.heatmapStyle('hr', 4), class: "" },
+            { name: "n (Neutral)", style: "", class: "st-n" },
+            { name: "cons", style: "", class: "st-cons" },
+            { name: "cons-a", style: "", class: "st-cons-a" },
+            { name: "vowel", style: "", class: "st-vowel" },
+            { name: "vowel-a", style: "", class: "st-vowel-a" },
+            { name: "mod", style: "", class: "st-mod" },
+            { name: "mod-a", style: "", class: "st-mod-a" }
+        ];
+
+        const container = document.getElementById('container');
+        
+        keys.forEach((k, i) => {
+            if (i >= states.length) return;
+            const state = states[i];
+            
+            const item = document.createElement('div');
+            item.className = 'item';
+            
+            const keyDiv = document.createElement('div');
+            keyDiv.className = 'key ' + state.class;
+            if (state.style) {
+                keyDiv.setAttribute('style', state.style);
+            }
+            keyDiv.innerHTML = `<span class="ym">${k.toUpperCase()}</span>`;
+            
+            const labelDiv = document.createElement('div');
+            labelDiv.className = 'label';
+            labelDiv.textContent = state.name;
+            
+            item.appendChild(keyDiv);
+            item.appendChild(labelDiv);
+            container.appendChild(item);
+        });
+    </script>
+</body>
+</html>

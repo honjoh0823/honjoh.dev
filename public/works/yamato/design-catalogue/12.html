@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESIGN 07 // KINETIC</title>
+    <style>
+        :root {
+            --bg: #eee;
+            /* Radical Low-Contrast Light Theme? Or High Contrast? Let's go High Contrast Light */
+            --fg: #000;
+            --accent: #f00;
+            --font: 'Helvetica Neue', 'Inter', sans-serif;
+            /* Swiss Style */
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: var(--font);
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem;
+        }
+
+        /* Huge Typography */
+        .big-text {
+            font-size: 8vw;
+            font-weight: 900;
+            line-height: 0.9;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.2s;
+            mix-blend-mode: exclusion;
+        }
+
+        .big-text:hover {
+            transform: skewX(-10deg);
+            color: var(--accent);
+            z-index: 10;
+        }
+
+        /* Navigation List */
+        .nav {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        /* Detail Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--accent);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem;
+            clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+            transition: clip-path 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+            pointer-events: none;
+            /* Let clicks pass unless active */
+        }
+
+        .overlay.active {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            pointer-events: all;
+        }
+
+        .close-btn {
+            font-size: 2rem;
+            cursor: pointer;
+            margin-bottom: 2rem;
+            border: 2px solid #fff;
+            width: max-content;
+            padding: 0 1rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="nav">
+        <div class="big-text" onclick="openNav('WORKS')">WORKS</div>
+        <div class="big-text" onclick="openNav('ABOUT')">ABOUT</div>
+        <div class="big-text" onclick="openNav('LOGS')">LOGS</div>
+        <div class="big-text" onclick="openNav('CONTACT')">CONTACT</div>
+    </div>
+
+    <div class="overlay" id="overlay">
+        <div class="close-btn" onclick="closeNav()">[x] CLOSE</div>
+        <h1 id="ov-title" style="font-size: 6vw; margin:0;">TITLE</h1>
+        <p style="font-size: 2vw; max-width: 60%;">
+            This is the content detail. It slides up aggressively.
+            The focus is on KINETIC movement and typography, breaking the "grid" logic entirely
+            for a more poster-like feel while retaining raw text power.
+        </p>
+    </div>
+
+    <script>
+        const overlay = document.getElementById('overlay');
+        const title = document.getElementById('ov-title');
+
+        function openNav(txt) {
+            title.innerText = txt;
+            overlay.classList.add('active');
+        }
+
+        function closeNav() {
+            overlay.classList.remove('active');
+        }
+    </script>
+</body>
+
+</html>

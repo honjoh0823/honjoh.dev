@@ -1,0 +1,39 @@
+/* ============================================================
+   Prompt Area — Design 20 Component
+   
+   CLI-style input prompt used across:
+   - Top page (ask anything)
+   - Chat page (message input)
+   ============================================================ */
+
+.prompt-area {
+    margin-top: auto;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1ch;
+    position: relative;
+    z-index: 1;
+}
+
+.prompt-symbol {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.prompt-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--fg);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-base);
+    caret-color: var(--accent);
+}
+
+.prompt-input::placeholder {
+    color: var(--dim);
+    opacity: 0.55;
+}

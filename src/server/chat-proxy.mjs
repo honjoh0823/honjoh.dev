@@ -1,16 +1,28 @@
 import http from "node:http";
 import { exec } from "node:child_process";
+import { readFileSync } from "node:fs";
 
-const PORT = 3001;
+// Load .env
+try {
+    const env = readFileSync(".env", "utf-8");
+    for (const line of env.split("\n")) {
+        const [key, ...vals] = line.split("=");
+        if (key && vals.length) process.env[key.trim()] = vals.join("=").trim();
+    }
+} catch { }
+
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+
+const PORT = 3002;
 const OPENCLAW_TIMEOUT = 60; // seconds
 
 /**
  * Local development proxy server for OpenClaw chat.
  * Calls `openclaw agent` CLI in WSL and returns the response.
  *
- * POST /api/chat
- * Body: { "message": "hello", "sessionId": "optional-session-id" }
- * Response: { "reply": "...", "sessionId": "..." }
+ * POST /api/chat   — chat with AI (no data sent externally)
+ * POST /api/notify — user-initiated: send conversation to admin via Telegram
  */
 
 function generateSessionId() {
@@ -50,6 +62,28 @@ function callOpenClaw(message, sessionId) {
             resolve({ reply: output });
         });
     });
+}
+
+/**
+ * Send a conversation log to Telegram. Returns a promise.
+ */
+async function sendToTelegram(text) {
+    if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
+        throw new Error("Telegram credentials not configured");
+    }
+
+    const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            chat_id: Number(TELEGRAM_CHAT_ID),
+            text: text.slice(0, 4096),
+        }),
+    });
+
+    if (!res.ok) {
+        throw new Error(`Telegram API error: ${res.status}`);
+    }
 }
 
 const server = http.createServer(async (req, res) => {
@@ -105,6 +139,42 @@ const server = http.createServer(async (req, res) => {
                         error: "Failed to get response from AI",
                     })
                 );
+            }
+        });
+        return;
+    }
+
+    // POST /api/notify — user-initiated conversation send
+    if (req.method === "POST" && req.url === "/api/notify") {
+        let body = "";
+        req.on("data", (chunk) => (body += chunk));
+        req.on("end", async () => {
+            try {
+                const { messages } = JSON.parse(body);
+
+                if (!Array.isArray(messages) || messages.length === 0) {
+                    res.writeHead(400, { "Content-Type": "application/json" });
+                    res.end(JSON.stringify({ error: "messages array is required" }));
+                    return;
+                }
+
+                // Format conversation for Telegram
+                const lines = messages.map((m) => {
+                    const icon = m.role === "user" ? "👤" : "🤖";
+                    return `${icon} ${m.role}:\n${m.text}`;
+                });
+                const text = `💬 honjoh.dev — user sent conversation\n\n${lines.join("\n\n")}`;
+
+                await sendToTelegram(text);
+
+                console.log(`[notify] Conversation sent to Telegram (${messages.length} messages)`);
+
+                res.writeHead(200, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ ok: true }));
+            } catch (err) {
+                console.error("[notify] Error:", err.message);
+                res.writeHead(500, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ error: "Failed to send notification" }));
             }
         });
         return;

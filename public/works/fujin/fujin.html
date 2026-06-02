@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <title>風神配列 | 左手だけで日本語入力を</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/works/fujin/fujin.css">
+    <link rel="icon" type="image/png" href="/works/yamato/favicon.png">
+    <link rel="canonical" href="https://honjoh.dev/fujin" />
+    <meta property="og:title" content="風神配列 | 左手だけで日本語入力を" />
+    <meta property="og:description" content="左手だけで両手分の働きをする片手用キーボード配列。大和配列の思想を受け継ぎ、片手入力に最適化しました。" />
+    <meta property="og:url" content="https://honjoh.dev/fujin" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="honjoh.dev" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="description" content="左手だけで両手分の働きをする片手用キーボード配列。大和配列の思想を受け継ぎ、片手入力に最適化しました。" />
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "風神配列 (Fujin Layout)",
+        "alternateName": "Fujin Keyboard Layout",
+        "description": "左手だけで両手分の働きをする片手用キーボード配列。大和配列の思想を受け継ぎ、片手入力に最適化しました。",
+        "url": "https://honjoh.dev/fujin",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Windows",
+        "author": {
+            "@type": "Person",
+            "name": "Nobuhiro Honjoh",
+            "alternateName": "本城靖大",
+            "url": "https://honjoh.dev"
+        },
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "JPY"
+        }
+    }
+    </script>
+</head>
+
+<body>
+    <div class="page">
+        <header class="header">
+            <span class="quest"><em>風神配列</em></span>
+            <span class="tagline">日本語入力に最適化された左手用配列</span>
+        </header>
+
+        <nav class="progress-nav" id="progNav">
+            <div class="prog-col active" data-s="0">
+                <div class="prog-seg">
+                    <div class="fill"></div>
+                </div>
+                <div class="prog-label" id="pl0"></div>
+            </div>
+            <div class="prog-col" data-s="1">
+                <div class="prog-seg">
+                    <div class="fill"></div>
+                </div>
+                <div class="prog-label" id="pl1"></div>
+            </div>
+            <div class="prog-col" data-s="2">
+                <div class="prog-seg">
+                    <div class="fill"></div>
+                </div>
+                <div class="prog-label" id="pl2"></div>
+            </div>
+        </nav>
+
+        <div class="content-area">
+            <div class="kb-zone" id="kbZone"></div>
+            <div class="text-zone" id="textZone">
+                <div class="section active" id="sec-intro-text"></div>
+                <div class="section" id="sec-practice-text">
+                    <div class="intro-slide active">
+                        <div class="slide-heading"><span class="title" id="tg-head">あ</span></div>
+                        <div class="slide-body" id="tg-body"></div>
+                    </div>
+                </div>
+                <div class="section" id="sec-faq-text"></div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="nav-hint"><span><kbd>←</kbd><kbd>↑</kbd> <kbd>↓</kbd><kbd>→</kbd> キーボードで操作できます</span></div>
+            <span class="brand"><em>Fujin Layout</em> | honjoh.dev</span>
+        </footer>
+    </div>
+
+    <!-- Noscript: Full content for AI crawlers and non-JS environments -->
+    <noscript>
+        <article style="max-width:720px;margin:2rem auto;padding:0 1rem;font-family:sans-serif;line-height:1.8">
+            <h1>風神配列 — 左手だけで日本語入力を</h1>
+            <p>左手だけで両手分の働きをする片手用キーボード配列です。大和配列の思想を受け継ぎ、片手入力に最適化しました。</p>
+
+            <h2>風神配列とは</h2>
+            <p>片手で日本語を自由自在に入力するための、左手専用キーボード配列です。ファンクションキーからスペースキーまで、6段すべてを使用します。</p>
+
+            <h2>キーボードレイアウト</h2>
+            <p>左手だけで使用するため、キーボードの左半分のみを使用します。6段構成で、通常の3段に加え、ファンクションキー行、数字行、修飾キー行を活用します。</p>
+
+            <h3>通常入力（子音）</h3>
+            <pre>
+上段:   M  Y  R  W  P
+中段:   K  S  T  N  H
+下段:   Z  D  B  G  J
+            </pre>
+
+            <h3>母音の入力</h3>
+            <p>キーを押しながら別のキーを押すことで母音が入力されます。同時押しの組み合わせにより、左手だけで子音と母音の両方を打鍵できます。</p>
+
+            <h2>よくある質問</h2>
+
+            <h3>Q. 誰のための配列ですか？</h3>
+            <p>右手が使えない方、利き手を怪我された方、片手操作を好む方など、左手だけでキーボード入力をしたい全ての方のための配列です。</p>
+
+            <h3>Q. 大和配列との違いは？</h3>
+            <p>大和配列は左手で子音、右手で母音を打つ両手配列です。風神配列は左手だけで子音と母音の両方を入力します。子音の配列位置（50音順）は同じです。</p>
+
+            <h3>導入方法</h3>
+            <p><strong>Windows:</strong> <a href="https://www.autohotkey.com/">AutoHotkey v2</a> をインストールし、<a
+                    href="/works/fujin/lu1.ahk">lu1.ahk</a> をダウンロードして起動。</p>
+
+            <hr>
+            <p><strong>Fujin Layout (風神配列)</strong> | <a href="https://honjoh.dev">honjoh.dev</a> — Created by Nobuhiro
+                Honjoh (本城靖大)</p>
+        </article>
+    </noscript>
+
+    <div id="debugMode" class="debug-mode">mode: normal</div>
+
+    <script src="/works/yamato/slide-nav.js"></script>
+    <script src="/works/fujin/fujin-slides.js"></script>
+    <script src="/works/fujin/fujin-engine.js"></script>
+    <script src="/works/fujin/fujin-drill.js"></script>
+    <script src="/works/fujin/fujin-kb.js"></script>
+    <script src="/works/fujin/fujin.js"></script>
+</body>
+
+</html>

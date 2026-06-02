@@ -8,6 +8,7 @@
     "dev:chat": "node src/server/chat-proxy.mjs",
     "build": "astro build",
     "preview": "astro preview",
+    "deploy": "astro build && wrangler pages deploy dist --project-name=honjoh-dev --commit-dirty=true --branch=master",
     "astro": "astro"
   },
   "repository": {
@@ -16,6 +17,7 @@
   },
   "homepage": "https://github.com/honjoh0823/honjoh.dev#readme",
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.0",
     "astro": "^5.17.1"
   },
   "devDependencies": {

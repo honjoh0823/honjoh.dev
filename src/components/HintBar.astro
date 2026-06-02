@@ -1,0 +1,38 @@
+---
+/**
+ * Hint bar component — sits at the bottom of the terminal.
+ * Design 20 style: inline kbd badges, minimal.
+ *
+ * Usage:
+ *   <HintBar>
+ *     <span><kbd>↑</kbd><kbd>↓</kbd> move</span>
+ *     <span><kbd>→</kbd> open</span>
+ *   </HintBar>
+ */
+---
+
+<footer class="hint-bar" id="hint-bar">
+    <slot />
+</footer>
+
+<style>
+    .hint-bar {
+        display: flex;
+        align-items: center;
+        gap: 2ch;
+        font-size: 0.7rem;
+        color: var(--dim-deep);
+        position: relative;
+        z-index: 1;
+        margin-top: 0.6rem;
+        flex-shrink: 0;
+        user-select: none;
+    }
+
+    @media (max-width: 640px) {
+        .hint-bar {
+            gap: 1ch;
+            font-size: 0.65rem;
+        }
+    }
+</style>

@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>カラーシステム代替案 — ヒートマップ表現の比較</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0e0e10;
+            --ink: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg);
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            background-size: 256px 256px;
+            color: var(--ink);
+            font-family: "Outfit", sans-serif;
+            padding: 32px 24px 64px;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px
+        }
+
+        .sub {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 32px;
+            line-height: 1.6
+        }
+
+        /* ---------- proposal card ---------- */
+        .proposal {
+            margin-bottom: 48px;
+            padding: 24px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .015);
+            border: 1px solid rgba(255, 255, 255, .04);
+        }
+
+        .proposal-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 6px
+        }
+
+        .proposal-num {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            color: #555;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, .04);
+        }
+
+        .proposal-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .proposal-desc {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 20px;
+            line-height: 1.6
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .03em;
+            margin-left: 6px;
+        }
+
+        .tag.vars {
+            background: rgba(80, 200, 120, .12);
+            color: #60c080
+        }
+
+        .tag.rec {
+            background: rgba(120, 160, 255, .12);
+            color: #88b0ff
+        }
+
+        .tag.new {
+            background: rgba(255, 180, 60, .12);
+            color: #e0a840
+        }
+
+        /* ---------- hue group ---------- */
+        .hue-group {
+            margin-bottom: 16px
+        }
+
+        .hue-label {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: .04em;
+            margin-bottom: 6px
+        }
+
+        .hue-label.amber {
+            color: #b89060
+        }
+
+        .hue-label.blue {
+            color: #6898c8
+        }
+
+        .hue-label.pink {
+            color: #c86898
+        }
+
+        .keys {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap
+        }
+
+        .key {
+            width: 54px;
+            height: 58px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: "Outfit", sans-serif;
+            transition: transform 80ms ease;
+        }
+
+        .key:hover {
+            transform: scale(1.06)
+        }
+
+        .key .label {
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1
+        }
+
+        .key .lvl {
+            font-size: 9px;
+            opacity: .5;
+            margin-top: 3px
+        }
+
+        /* ---------- comparison notes ---------- */
+        .notes {
+            margin-top: 12px;
+            padding: 10px 14px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, .02);
+            font-size: 12px;
+            color: #666;
+            line-height: 1.7
+        }
+
+        .notes strong {
+            color: #999
+        }
+
+        /* ---------- verdict section ---------- */
+        .verdict {
+            margin-top: 48px;
+            padding: 20px 24px;
+            border-radius: 12px;
+            background: rgba(104, 152, 200, .04);
+            border: 1px solid rgba(104, 152, 200, .1);
+        }
+
+        .verdict h2 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #6898c8;
+            margin-bottom: 10px
+        }
+
+        .verdict-table {
+            width: 100%;
+            font-size: 13px;
+            border-collapse: collapse;
+        }
+
+        .verdict-table th {
+            text-align: left;
+            font-weight: 600;
+            color: #888;
+            padding: 6px 12px 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+            font-size: 12px;
+            letter-spacing: .03em
+        }
+
+        .verdict-table td {
+            padding: 6px 12px 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .03);
+            color: #aaa
+        }
+
+        .verdict-table .check {
+            color: #60c080
+        }
+
+        .verdict-table .cross {
+            color: #e06060
+        }
+
+        .verdict-table .mid {
+            color: #e0a840
+        }
+    </style>
+</head>
+
+<body>
+    <h1>カラーシステム代替案</h1>
+    <p class="sub">
+        4.html の「透明度計算方式」がやや地味に感じたため、複数のアプローチを比較。<br>
+        ボーダーの有無、グラデーション、グロー効果など様々な表現を検討する。
+    </p>
+
+    <!-- ==================== A: ボーダーなし (フラット) ==================== -->
+    <div class="proposal" id="propA">
+        <div class="proposal-header">
+            <span class="proposal-num">案 A</span>
+            <span class="proposal-title">ボーダーなし・フラット</span>
+            <span class="tag new">新提案</span>
+        </div>
+        <p class="proposal-desc">
+            ボーダーを完全に除去し、背景色のみでヒートマップを表現。<br>
+            より洗練された最小限のデザイン。テキスト色のコントラストを上げて視認性を確保。
+        </p>
+        <div class="hue-group">
+            <div class="hue-label amber">QWERTY（アンバー）</div>
+            <div class="keys" id="a-q"></div>
+        </div>
+        <div class="hue-group">
+            <div class="hue-label blue">左手 / 子音（ブルー）</div>
+            <div class="keys" id="a-l"></div>
+        </div>
+        <div class="hue-group">
+            <div class="hue-label pink">右手 / 母音（ピンク）</div>
+            <div class="keys" id="a-r"></div>
+        </div>
+        <div class="notes">
+            <strong>特徴:</strong> 変数数は最少（色相+彩度のみ）。ボーダーなしで情報密度が低く軽い印象。<br>
+            <strong>懸念:</strong> レベル1〜3の低ヒートキーの境界が分かりにくくなる可能性あり。
+        </div>
+    </div>
+
+    <!-- ==================== B: ボーダーなし + 微グロー ==================== -->
+    <div class="proposal" id="propB">
+        <div class="proposal-header">
+            <span class="proposal-num">案 B</span>
+            <span class="proposal-title">ボーダーなし + 微グロー</span>
+            <span class="tag rec">推奨</span>
+        </div>
+        <p class="proposal-desc">
+            ボーダーを除去しつつ、高レベルキーに微妙な発光感（box-shadow glow）を追加。<br>
+            フラットだが高ヒートキーに存在感がある。
+        </p>
+        <div class="hue-group">
+            <div class="hue-label amber">QWERTY（アンバー）</div>
+            <div class="keys" id="b-q"></div>
+        </div>
+        <div class="hue-group">
+            <div class="hue-label blue">左手 / 子音（ブルー）</div>
+            <div class="keys" id="b-l"></div>
+        </div>
+        <div class="hue-group">
+            <div class="hue-label pink">右手 / 母音（ピンク）</div>
+            <div class="keys" id="b-r"></div>
+        </div>
+        <div class="notes">
+            <strong>特徴:</strong> ボーダーレスの軽さと、グロー効果による段階的な視覚強調の両立。<br>
+            <strong>利点:</strong> 高頻度キーの「光っている感」があり、ヒートマップとして直感的。
+        </div>
+    </div>
+
+    <!-- ==================== C: 手動チューニング（ハンドクラフト） ==================== -->
+    <div class="proposal" id="propC">
+        <div class="proposal-header">
+            <span class="proposal-num">案 C</span>
+            <span class="proposal-title">手動チューニング（現行方式ベース）</span>
+        </div>
+        <p class="proposal-desc">
+            現行の90変数方式をそのまま維持し、ボーダーのみ除去。<br>
+            手動で丁寧にチューニングされた色が最も美しいが、変数管理コストは高い。
+        </p>
+        <div class="hue-group">
+            <div class="hue-label amber">QWERTY（アンバー）</div>
+            <div class="keys" id="c-q"></div>
+        </div>
+        <div class="hue-group">
+            <div class="hue-label blue">左手 / 子音（ブルー）</div>
+            <div class="keys" id="c-l"></div>
+        </div>
+        <div class="hue-group">
+            <div class="hue-label pink">右手 / 母音（ピンク）</div>
+            <div class="keys" id="c-r"></div>
+        </div>
+        <div class="notes">
+            <strong>特徴:</strong> 現行のハンドクラフトされた色味を活かしつつ、ボーダーだけ除去してスッキリ。<br>
+            <strong>懸念:</strong> 変数90個の管理コスト。ただし一度決めたら変更頻度は低い。
+        </div>
+    </div>
+
+    <!-- ==================== D: 透明度計算 + ボーダーあり（4.htmlと同じ） ==================== -->
+    <div class="proposal" id="propD">
+        <div class="proposal-header">
+            <span class="proposal-num">案 D</span>
+            <span class="proposal-title">透明度計算 + ボーダーあり（4.html と同じ）</span>
+        </div>
+        <p class="proposal-desc">
+            4.html で提案した透明度計算方式。参考用に再掲。<br>
+            変数6個で管理できるが、均一的でやや魅力に欠ける。
+        </p>
+        <div class="hue-group">
+            <div class="hue-label amber">QWERTY（アンバー）</div>
+            <div class="keys" id="d-q"></div>
+        </div>
+        <div class="hue-group">
+            <div class="hue-label blue">左手 / 子音（ブルー）</div>
+            <div class="keys" id="d-l"></div>
+        </div>
+        <div class="hue-group">
+            <div class="hue-label pink">右手 / 母音（ピンク）</div>
+            <div class="keys" id="d-r"></div>
+        </div>
+        <div class="notes">
+            <strong>特徴:</strong> 変数最少で完全自動計算。管理は楽。<br>
+            <strong>懸念:</strong> 数学的に均一すぎて手動チューニングの「味」がない。
+        </div>
+    </div>
+
+    <!-- ==================== E: 透明度計算カスタムカーブ + ボーダーなし ==================== -->
+    <div class="proposal" id="propE">
+        <div class="proposal-header">
+            <span class="proposal-num">案 E</span>
+            <span class="proposal-title">カスタムカーブ計算 + ボーダーなし</span>
+            <span class="tag vars">6変数</span>
+        </div>
+        <p class="proposal-desc">
+            透明度計算のカーブを非線形（指数的）に調整し、低レベルは限りなく暗く・高レベルに急激に明るくなるように。<br>
+            ボーダーなしで、計算方式でも「手動チューニング」に近いメリハリを実現。
+        </p>
+        <div class="hue-group">
+            <div class="hue-label amber">QWERTY（アンバー）</div>
+            <div class="keys" id="e-q"></div>
+        </div>
+        <div class="hue-group">
+            <div class="hue-label blue">左手 / 子音（ブルー）</div>
+            <div class="keys" id="e-l"></div>
+        </div>
+        <div class="hue-group">
+            <div class="hue-label pink">右手 / 母音（ピンク）</div>
+            <div class="keys" id="e-r"></div>
+        </div>
+        <div class="notes">
+            <strong>特徴:</strong> 非線形カーブで低ヒートキーはほぼ無色、高ヒートキーだけ目立つ。自然な印象。<br>
+            <strong>利点:</strong> 変数数の少なさと見た目の品質を両立。管理しやすく美しい。
+        </div>
+    </div>
+
+    <!-- ==================== 比較まとめ ==================== -->
+    <div class="verdict">
+        <h2>比較まとめ</h2>
+        <table class="verdict-table">
+            <thead>
+                <tr>
+                    <th>案</th>
+                    <th>アプローチ</th>
+                    <th>変数数</th>
+                    <th>ボーダー</th>
+                    <th>視覚的魅力</th>
+                    <th>管理性</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>A</td>
+                    <td>フラット</td>
+                    <td class="check">6</td>
+                    <td>なし</td>
+                    <td class="mid">△</td>
+                    <td class="check">◎</td>
+                </tr>
+                <tr>
+                    <td>B</td>
+                    <td>フラット + グロー</td>
+                    <td class="check">6</td>
+                    <td>なし</td>
+                    <td class="check">◎</td>
+                    <td class="check">◎</td>
+                </tr>
+                <tr>
+                    <td>C</td>
+                    <td>手動（現行ベース）</td>
+                    <td class="cross">60</td>
+                    <td>なし</td>
+                    <td class="check">◎</td>
+                    <td class="cross">×</td>
+                </tr>
+                <tr>
+                    <td>D</td>
+                    <td>透明度計算（4.html）</td>
+                    <td class="check">6</td>
+                    <td>あり</td>
+                    <td class="cross">△</td>
+                    <td class="check">◎</td>
+                </tr>
+                <tr>
+                    <td>E</td>
+                    <td>カスタムカーブ</td>
+                    <td class="check">6</td>
+                    <td>なし</td>
+                    <td class="check">○</td>
+                    <td class="check">◎</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const LETTERS = ['Z', 'D', 'B', 'G', 'K', 'S', 'T', 'N', 'H', 'A'];
+
+        // Handcrafted colors from current A.css (used in Proposal C)
+        const HAND = {
+            q: [
+                { bg: '#141312', tx: '#2e2a22' }, { bg: '#181614', tx: '#38322a' },
+                { bg: '#1c1a16', tx: '#4a4230' }, { bg: '#201c16', tx: '#5c5038' },
+                { bg: '#242018', tx: '#706040' }, { bg: '#28241c', tx: '#887048' },
+                { bg: '#2c2820', tx: '#a08858' }, { bg: '#302c22', tx: '#b89860' },
+                { bg: '#343028', tx: '#d0a868' }, { bg: '#38342c', tx: '#e8c080' },
+            ],
+            l: [
+                { bg: '#121418', tx: '#283040' }, { bg: '#131820', tx: '#344868' },
+                { bg: '#141c28', tx: '#446088' }, { bg: '#162030', tx: '#5478a0' },
+                { bg: '#182438', tx: '#6890b8' }, { bg: '#1a2840', tx: '#78a8d0' },
+                { bg: '#1c2c44', tx: '#88b8e0' }, { bg: '#1e3450', tx: '#a0d0f0' },
+                { bg: '#203858', tx: '#b8e0ff' }, { bg: '#244060', tx: '#d0f0ff' },
+            ],
+            r: [
+                { bg: '#181214', tx: '#402830' }, { bg: '#201318', tx: '#683448' },
+                { bg: '#281420', tx: '#884460' }, { bg: '#301628', tx: '#a05478' },
+                { bg: '#381830', tx: '#b86890' }, { bg: '#401a38', tx: '#d078a8' },
+                { bg: '#441c2c', tx: '#e088b8' }, { bg: '#501e34', tx: '#f0a0d0' },
+                { bg: '#582040', tx: '#ffb8e0' }, { bg: '#602448', tx: '#ffd0f0' },
+            ]
+        };
+
+        // ─── Proposal A: Flat, no border ───
+        function renderA(el, h, s) {
+            el.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const t = i / 10;
+                const bgL = 6 + t * 12;
+                const bgS = s * t;
+                const txL = 18 + t * 68;
+                const txS = s * (0.3 + t * 0.7);
+                const k = document.createElement('div');
+                k.className = 'key';
+                k.style.background = `hsl(${h} ${bgS}% ${bgL}%)`;
+                k.style.border = 'none';
+                k.style.color = `hsl(${h} ${txS}% ${txL}%)`;
+                k.innerHTML = `<span class="label">${LETTERS[i - 1]}</span><span class="lvl">${i}</span>`;
+                el.appendChild(k);
+            }
+        }
+
+        // ─── Proposal B: Flat + subtle glow ───
+        function renderB(el, h, s) {
+            el.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const t = i / 10;
+                const bgL = 6 + t * 12;
+                const bgS = s * t;
+                const txL = 18 + t * 68;
+                const txS = s * (0.3 + t * 0.7);
+                const glowA = Math.max(0, (t - 0.4) * 0.5);  // glow only for level 5+
+                const k = document.createElement('div');
+                k.className = 'key';
+                k.style.background = `hsl(${h} ${bgS}% ${bgL}%)`;
+                k.style.border = 'none';
+                k.style.color = `hsl(${h} ${txS}% ${txL}%)`;
+                k.style.boxShadow = glowA > 0
+                    ? `0 0 ${8 + t * 12}px hsl(${h} ${s}% 50% / ${glowA}), inset 0 1px 0 rgba(255,255,255,.03)`
+                    : 'inset 0 1px 0 rgba(255,255,255,.03), 0 2px 6px rgba(0,0,0,.15)';
+                k.innerHTML = `<span class="label">${LETTERS[i - 1]}</span><span class="lvl">${i}</span>`;
+                el.appendChild(k);
+            }
+        }
+
+        // ─── Proposal C: Handcrafted, no border ───
+        function renderC(el, type) {
+            el.innerHTML = '';
+            const colors = HAND[type];
+            for (let i = 0; i < 10; i++) {
+                const k = document.createElement('div');
+                k.className = 'key';
+                k.style.background = colors[i].bg;
+                k.style.border = 'none';
+                k.style.color = colors[i].tx;
+                k.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,.03), 0 2px 6px rgba(0,0,0,.15)';
+                k.innerHTML = `<span class="label">${LETTERS[i]}</span><span class="lvl">${i + 1}</span>`;
+                el.appendChild(k);
+            }
+        }
+
+        // ─── Proposal D: Same as 4.html (linear opacity + border) ───
+        function renderD(el, h, s) {
+            el.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const t = i / 10;
+                const bgL = 6 + t * 10;
+                const bgS = s * t;
+                const bdL = 10 + t * 28;
+                const bdA = 0.3 + t * 0.7;
+                const txL = 15 + t * 70;
+                const txS = s * (0.3 + t * 0.7);
+                const k = document.createElement('div');
+                k.className = 'key';
+                k.style.background = `hsl(${h} ${bgS}% ${bgL}%)`;
+                k.style.border = `1px solid hsl(${h} ${s}% ${bdL}% / ${bdA})`;
+                k.style.color = `hsl(${h} ${txS}% ${txL}%)`;
+                k.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,.03), 0 2px 6px rgba(0,0,0,.15)';
+                k.innerHTML = `<span class="label">${LETTERS[i - 1]}</span><span class="lvl">${i}</span>`;
+                el.appendChild(k);
+            }
+        }
+
+        // ─── Proposal E: Custom exponential curve, no border ───
+        function renderE(el, h, s) {
+            el.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const t = i / 10;
+                // Exponential ease-in curve: low levels are very dark, high levels pop
+                const curve = t * t * t;  // cubic easing
+                const bgL = 5 + curve * 18;
+                const bgS = s * (curve * 0.6 + t * 0.4);
+                const txL = 12 + curve * 50 + t * 24;
+                const txS = s * (0.2 + curve * 0.8);
+                const glowA = Math.max(0, (curve - 0.2) * 0.4);
+                const k = document.createElement('div');
+                k.className = 'key';
+                k.style.background = `hsl(${h} ${bgS}% ${bgL}%)`;
+                k.style.border = 'none';
+                k.style.color = `hsl(${h} ${txS}% ${txL}%)`;
+                k.style.boxShadow = glowA > 0
+                    ? `0 0 ${6 + curve * 14}px hsl(${h} ${s}% 45% / ${glowA}), inset 0 1px 0 rgba(255,255,255,.02)`
+                    : 'inset 0 1px 0 rgba(255,255,255,.02), 0 2px 6px rgba(0,0,0,.15)';
+                k.innerHTML = `<span class="label">${LETTERS[i - 1]}</span><span class="lvl">${i}</span>`;
+                el.appendChild(k);
+            }
+        }
+
+        // ─── Render all proposals ───
+        const hues = { q: [40, 60], l: [212, 55], r: [330, 55] };
+
+        // A: Flat
+        renderA(document.getElementById('a-q'), ...hues.q);
+        renderA(document.getElementById('a-l'), ...hues.l);
+        renderA(document.getElementById('a-r'), ...hues.r);
+
+        // B: Flat + glow
+        renderB(document.getElementById('b-q'), ...hues.q);
+        renderB(document.getElementById('b-l'), ...hues.l);
+        renderB(document.getElementById('b-r'), ...hues.r);
+
+        // C: Handcrafted, no border
+        renderC(document.getElementById('c-q'), 'q');
+        renderC(document.getElementById('c-l'), 'l');
+        renderC(document.getElementById('c-r'), 'r');
+
+        // D: Linear opacity + border (same as 4.html proposed)
+        renderD(document.getElementById('d-q'), ...hues.q);
+        renderD(document.getElementById('d-l'), ...hues.l);
+        renderD(document.getElementById('d-r'), ...hues.r);
+
+        // E: Custom curve, no border
+        renderE(document.getElementById('e-q'), ...hues.q);
+        renderE(document.getElementById('e-l'), ...hues.l);
+        renderE(document.getElementById('e-r'), ...hues.r);
+    </script>
+</body>
+
+</html>

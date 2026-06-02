@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Stats Display — Pipe Separator Prototype</title>
+    <style>
+        :root {
+            --bg: hsl(230 20% 5.5%);
+            --ink: #e0e0e0;
+            --soft: #787878;
+            --accent: hsl(210 55% 55%);
+            --k-n-bg: hsl(230 8% 13%);
+            --k-n-tx: hsl(230 5% 32%);
+            --k-q-tx: hsl(32 60% 70%);
+            --k-o-tx: hsl(148 35% 55%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0
+        }
+
+        b {
+            font-variant-numeric: tabular-nums;
+            font-family: "Outfit", "SF Mono", "Cascadia Code", "Consolas", monospace;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--ink);
+            font-family: "Outfit", "Inter", system-ui, sans-serif;
+            padding: 40px 24px;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--soft);
+        }
+
+        .pattern-section {
+            margin-bottom: 48px;
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .pattern-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 20px;
+            letter-spacing: .04em;
+        }
+
+        /* --- Shared panel structure --- */
+        .tc-wrap {
+            display: flex;
+            gap: 18px;
+            justify-content: center;
+        }
+
+        .tc-panel {
+            flex: 1;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tc-title {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: .03em;
+            margin-bottom: 8px;
+            text-align: center;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tc-q .tc-title {
+            color: var(--k-q-tx)
+        }
+
+        .tc-y .tc-title {
+            color: var(--accent)
+        }
+
+        .tc-o .tc-title {
+            color: var(--k-o-tx)
+        }
+
+        /* Mini keyboard mock */
+        .tc-kb {
+            display: grid;
+            gap: 3px
+        }
+
+        .tc-kb .row {
+            display: flex;
+            justify-content: center;
+            gap: 2px
+        }
+
+        .tc-kb .row:nth-child(2) {
+            padding-left: 10px
+        }
+
+        .tc-kb .row:nth-child(3) {
+            padding-left: 20px
+        }
+
+        .tc-key {
+            width: clamp(24px, 2.8vw, 34px);
+            height: clamp(26px, 3vw, 36px);
+            border-radius: 4px;
+            display: grid;
+            place-items: center;
+            font-size: clamp(9px, 1vw, 12px);
+            font-weight: 400;
+            background: var(--k-n-bg);
+            color: var(--k-n-tx);
+        }
+
+        /* ======================================
+           Pipe-separated, flat, panel-color only
+           ====================================== */
+        .tc-stats {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: .02em;
+            margin-bottom: 6px;
+            height: 28px;
+        }
+
+        .tc-stats .sep {
+            margin: 0 8px;
+            opacity: .25;
+        }
+
+        .tc-q .tc-stats {
+            color: var(--k-q-tx);
+            opacity: .6
+        }
+
+        .tc-y .tc-stats {
+            color: var(--accent);
+            opacity: .6
+        }
+
+        .tc-o .tc-stats {
+            color: var(--k-o-tx);
+            opacity: .6
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Stats Display — パイプ区切り / 配列色のみ</h1>
+
+    <!-- QWERTY vs Yamato -->
+    <div class="pattern-section">
+        <div class="pattern-label">QWERTY vs 大和配列（日本語）</div>
+        <div class="tc-wrap">
+            <div class="tc-panel tc-q">
+                <span class="tc-title">QWERTY</span>
+                <div class="tc-stats">ホーム列<b>24%</b><span class="sep">|</span>指移動<b>20</b>回</div>
+                <div class="tc-kb" id="kb-1-q"></div>
+            </div>
+            <div class="tc-panel tc-y">
+                <span class="tc-title">大和配列</span>
+                <div class="tc-stats">ホーム列<b>57%</b><span class="sep">|</span>指移動<b>12</b>回</div>
+                <div class="tc-kb" id="kb-1-y"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onishi vs Yamato -->
+    <div class="pattern-section">
+        <div class="pattern-label">大西配列 vs 大和配列（日本語）</div>
+        <div class="tc-wrap">
+            <div class="tc-panel tc-o">
+                <span class="tc-title">大西配列</span>
+                <div class="tc-stats">ホーム列<b>43%</b><span class="sep">|</span>指移動<b>16</b>回</div>
+                <div class="tc-kb" id="kb-2-o"></div>
+            </div>
+            <div class="tc-panel tc-y">
+                <span class="tc-title">大和配列</span>
+                <div class="tc-stats">ホーム列<b>57%</b><span class="sep">|</span>指移動<b>12</b>回</div>
+                <div class="tc-kb" id="kb-2-y"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const QWERTY = [
+            ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']'],
+            ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', "'"],
+            ['Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/']
+        ];
+        const YAMATO = [
+            ['M', 'Y', 'R', 'W', 'P', 'X', 'L', 'Q', 'C', "'", '[', ']'],
+            ['K', 'S', 'T', 'N', 'H', 'F', 'A', 'O', 'I', 'E', '/'],
+            ['Z', 'D', 'B', 'G', 'J', 'V', 'U', '-', ',', '.']
+        ];
+        const ONISHI = [
+            ['Q', 'L', 'U', ',', '.', 'F', 'W', 'R', 'Y', 'P', ' ', ' '],
+            ['E', 'I', 'A', 'O', '-', 'K', 'T', 'N', 'S', 'H', ' '],
+            ['Z', 'X', 'C', 'V', ';', 'G', 'D', 'M', 'J', 'B']
+        ];
+
+        function renderKB(id, layout) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            layout.forEach(row => {
+                const d = document.createElement('div');
+                d.className = 'row';
+                row.forEach(ch => {
+                    const k = document.createElement('div');
+                    k.className = 'tc-key';
+                    k.textContent = ch;
+                    d.appendChild(k);
+                });
+                el.appendChild(d);
+            });
+        }
+
+        renderKB('kb-1-q', QWERTY);
+        renderKB('kb-1-y', YAMATO);
+        renderKB('kb-2-o', ONISHI);
+        renderKB('kb-2-y', YAMATO);
+    </script>
+</body>
+
+</html>

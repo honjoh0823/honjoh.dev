@@ -3,3 +3,9 @@ node_modules/
 dist/
 .astro/
 .wrangler/
+.env
+
+# local scratch / machine-local
+tmp/
+*.log
+.claude/settings.local.json

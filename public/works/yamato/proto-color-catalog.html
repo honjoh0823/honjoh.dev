@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Keyboard Color Catalog</title>
+    <style>
+        body {
+            background: hsl(230 20% 5.5%);
+            color: #e0e0e0;
+            font-family: "Outfit", sans-serif;
+            padding: 40px;
+        }
+
+        h2 {
+            font-size: 18px;
+            margin: 32px 0 12px;
+            color: #bbb;
+            font-weight: 400;
+        }
+
+        h3 {
+            font-size: 14px;
+            margin: 16px 0 8px;
+            color: #888;
+            font-weight: 400;
+        }
+
+        .row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            align-items: flex-start;
+        }
+
+        .group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .key {
+            width: 64px;
+            height: 68px;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            font-size: 22px;
+            font-weight: 400;
+        }
+
+        .label {
+            font-size: 11px;
+            color: #666;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .sep {
+            width: 2px;
+            height: 68px;
+            background: #333;
+            margin: 0 12px;
+            align-self: center;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .compare {
+            display: flex;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+    </style>
+    <script>
+        // Reproduce heatmap formula from yamato.js
+        const HEATMAP_HSL = { h: [32, 52, 27], hl: [210, 55, 27], hr: [345, 58, 30] };
+        function heatBg(pfx, lvl) {
+            const [h, s, maxL] = HEATMAP_HSL[pfx]; const t = lvl / 4;
+            return `hsl(${h} ${s * t}% ${6 + t * (maxL - 6)}%)`;
+        }
+        function heatTx(pfx, lvl) {
+            const [h, s, maxL] = HEATMAP_HSL[pfx]; const t = lvl / 4;
+            return `hsl(${h} ${s * (.3 + t * .7)}% ${15 + t * 80}%)`;
+        }
+
+        function makeKey(letter, bg, tx, label) {
+            return `<div class="group">
+    <div class="key" style="background:${bg};color:${tx}">${letter}</div>
+    <div class="label">${label}</div>
+  </div>`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Section 1: Right hand (vowels) - hr levels ---
+            let html = '';
+
+            // Fixed reference colors
+            const nBg = 'hsl(230 5% 12%)', nTx = 'hsl(230 5% 42%)';
+            const raBg = 'hsl(345 58% 30%)', raTx = 'hsl(345 62% 92%)';
+            const laBg = 'hsl(210 55% 27%)', laTx = 'hsl(210 60% 95%)';
+
+            // === RIGHT HAND (pink / vowels) ===
+            html += '<div class="section"><div class="section-title">Right Hand (Vowels) — Pink</div>';
+
+            // Current hr2 vs ra
+            html += '<h3>Current: hr2 (level 2) vs ra</h3><div class="row">';
+            html += makeKey('I', heatBg('hr', 2), heatTx('hr', 2), 'hr2 (current)<br>standby');
+            html += '<div class="sep"></div>';
+            html += makeKey('A', raBg, raTx, 'ra<br>active');
+            html += '</div>';
+
+            // Brighter options for standby
+            html += '<h3>Brighter standby options</h3><div class="row">';
+            const hrLevels = [2, 2.5, 3, 3.5];
+            hrLevels.forEach(lvl => {
+                html += makeKey('I', heatBg('hr', lvl), heatTx('hr', lvl), `hr${lvl}<br>t=${(lvl / 4).toFixed(2)}`);
+            });
+            html += '<div class="sep"></div>';
+            html += makeKey('A', raBg, raTx, 'ra<br>(reference)');
+            html += '</div>';
+
+            // Custom options (manually tuned)
+            html += '<h3>Custom standby options (hand-tuned)</h3><div class="row">';
+            const customHr = [
+                { bg: 'hsl(345 35% 20%)', tx: 'hsl(345 40% 60%)', label: 'Custom A<br>s35 l20' },
+                { bg: 'hsl(345 40% 22%)', tx: 'hsl(345 45% 65%)', label: 'Custom B<br>s40 l22' },
+                { bg: 'hsl(345 45% 24%)', tx: 'hsl(345 50% 70%)', label: 'Custom C<br>s45 l24' },
+                { bg: 'hsl(345 50% 26%)', tx: 'hsl(345 55% 78%)', label: 'Custom D<br>s50 l26' },
+            ];
+            customHr.forEach(c => { html += makeKey('I', c.bg, c.tx, c.label); });
+            html += '<div class="sep"></div>';
+            html += makeKey('A', raBg, raTx, 'ra<br>(reference)');
+            html += '</div>';
+
+            html += '</div>'; // end section
+
+            // === LEFT HAND (blue / consonants) ===
+            html += '<div class="section"><div class="section-title">Left Hand (Consonants) — Blue</div>';
+
+            // Current hl2 vs la
+            html += '<h3>Current: hl2 (level 2) vs la</h3><div class="row">';
+            html += makeKey('K', heatBg('hl', 2), heatTx('hl', 2), 'hl2 (current)<br>standby');
+            html += '<div class="sep"></div>';
+            html += makeKey('K', laBg, laTx, 'la<br>active');
+            html += '</div>';
+
+            // Brighter options
+            html += '<h3>Brighter standby options</h3><div class="row">';
+            const hlLevels = [2, 2.5, 3, 3.5];
+            hlLevels.forEach(lvl => {
+                html += makeKey('K', heatBg('hl', lvl), heatTx('hl', lvl), `hl${lvl}<br>t=${(lvl / 4).toFixed(2)}`);
+            });
+            html += '<div class="sep"></div>';
+            html += makeKey('K', laBg, laTx, 'la<br>(reference)');
+            html += '</div>';
+
+            // Custom options
+            html += '<h3>Custom standby options (hand-tuned)</h3><div class="row">';
+            const customHl = [
+                { bg: 'hsl(210 32% 18%)', tx: 'hsl(210 38% 58%)', label: 'Custom A<br>s32 l18' },
+                { bg: 'hsl(210 38% 20%)', tx: 'hsl(210 42% 65%)', label: 'Custom B<br>s38 l20' },
+                { bg: 'hsl(210 42% 22%)', tx: 'hsl(210 48% 70%)', label: 'Custom C<br>s42 l22' },
+                { bg: 'hsl(210 48% 24%)', tx: 'hsl(210 52% 78%)', label: 'Custom D<br>s48 l24' },
+            ];
+            customHl.forEach(c => { html += makeKey('K', c.bg, c.tx, c.label); });
+            html += '<div class="sep"></div>';
+            html += makeKey('K', laBg, laTx, 'la<br>(reference)');
+            html += '</div>';
+
+            html += '</div>'; // end section
+
+            // === NEUTRAL BASE (hr1/hl1 → n) ===
+            html += '<div class="section"><div class="section-title">Base Keys (non-active) — Neutral</div>';
+            html += '<h3>hr1/hl1 → neutral (same as slide #9 X, L, Q, C)</h3><div class="row">';
+            html += makeKey('X', heatBg('hr', 1), heatTx('hr', 1), 'hr1 (old)<br>dim pink');
+            html += makeKey('X', heatBg('hl', 1), heatTx('hl', 1), 'hl1 (old)<br>dim blue');
+            html += '<div class="sep"></div>';
+            html += makeKey('X', nBg, nTx, 'st-n (new)<br>neutral');
+            html += '</div>';
+
+            html += '</div>';
+
+            // === FULL COMPARISON ===
+            html += '<div class="section"><div class="section-title">Full Comparison: n → standby → active</div>';
+            html += '<h3>Right hand (pink)</h3><div class="row">';
+            html += makeKey('X', nBg, nTx, 'n<br>base');
+            hrLevels.forEach(lvl => {
+                html += makeKey('I', heatBg('hr', lvl), heatTx('hr', lvl), `hr${lvl}<br>standby`);
+            });
+            html += '<div class="sep"></div>';
+            html += makeKey('A', raBg, raTx, 'ra<br>active+glow');
+            html += '</div>';
+
+            html += '<h3>Left hand (blue)</h3><div class="row">';
+            html += makeKey('X', nBg, nTx, 'n<br>base');
+            hlLevels.forEach(lvl => {
+                html += makeKey('K', heatBg('hl', lvl), heatTx('hl', lvl), `hl${lvl}<br>standby`);
+            });
+            html += '<div class="sep"></div>';
+            html += makeKey('K', laBg, laTx, 'la<br>active+glow');
+            html += '</div>';
+
+            html += '</div>';
+
+            document.getElementById('catalog').innerHTML = html;
+        });
+    </script>
+</head>
+
+<body>
+    <h2>Keyboard Color Catalog — Standby (hr2/hl2) Options</h2>
+    <div id="catalog"></div>
+</body>
+
+</html>

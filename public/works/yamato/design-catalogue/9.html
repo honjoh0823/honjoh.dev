@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESIGN 04 // CONCEPT V2</title>
+    <style>
+        :root {
+            --bg: #1a1b26;
+            /* Tokyo Night style dark but friendly */
+            --fg: #a9b1d6;
+            --sel-bg: #7aa2f7;
+            /* Soft Blue */
+            --sel-fg: #1a1b26;
+            --dim: #565f89;
+            --accent: #bb9af7;
+            /* Soft Purple */
+            --success: #9ece6a;
+            /* Green */
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-mono);
+            font-size: 15px;
+            /* Readable */
+            margin: 0;
+            padding: 3rem 10vw;
+            /* Breathing room */
+            height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 1. Friendly Header */
+        header {
+            margin-bottom: 4rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        /* 2. The Content (Simple) */
+        .main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .menu-item {
+            font-size: 1.2rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            width: max-content;
+            border-radius: 4px;
+            transition: all 0.1s;
+        }
+
+        .menu-item.active {
+            background-color: var(--sel-bg);
+            color: var(--sel-fg);
+            font-weight: bold;
+            transform: translateX(10px);
+            /* Subtle physics */
+        }
+
+        .desc-text {
+            color: var(--dim);
+            margin-top: 0.5rem;
+            height: 1.5em;
+            /* Reserve space */
+            padding-left: 1rem;
+        }
+
+        /* 3. The "Chat" Footer */
+        .footer {
+            border-top: 1px solid #2f354b;
+            padding-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .chat-history {
+            color: var(--dim);
+            font-size: 0.9em;
+            margin-bottom: 0.5rem;
+        }
+
+        .input-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .prompt-symbol {
+            color: var(--accent);
+        }
+
+        .cursor {
+            width: 0.6ch;
+            height: 1.2em;
+            background: var(--accent);
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="status-dot"></div>
+        <span>honjoh.dev</span>
+        <span class="desc-text" style="margin:0; padding:0;">:: online</span>
+    </header>
+
+    <div class="main">
+        <!-- Defined as simple words, not jargon -->
+        <div class="menu-item active" data-desc="My Portfolio & Projects">Works</div>
+        <div class="menu-item" data-desc="Articles & Thoughts">Articles</div>
+        <div class="menu-item" data-desc="About Me">About</div>
+        <div class="menu-item" data-desc="System Settings">Settings</div>
+
+        <div class="desc-text" id="description">My Portfolio & Projects</div>
+    </div>
+
+    <div class="footer">
+        <!-- Suggesting conversation -->
+        <div class="chat-history">
+            AI: "Welcome back. How can I help you today?"
+        </div>
+        <div class="input-area">
+            <span class="prompt-symbol">❯</span>
+            <!-- The input changes based on context, but feels like chat -->
+            <span id="user-input">Navigate to Works...</span>
+            <span class="cursor"></span>
+        </div>
+    </div>
+
+    <script>
+        const items = document.querySelectorAll('.menu-item');
+        const descEl = document.getElementById('description');
+        const inputEl = document.getElementById('user-input');
+        let idx = 0;
+
+        function update(i) {
+            items.forEach(el => el.classList.remove('active'));
+            items[i].classList.add('active');
+
+            const desc = items[i].dataset.desc;
+            descEl.innerText = desc;
+
+            // "Type" into the chat input
+            inputEl.innerText = "Navigate to " + items[i].innerText + "...";
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'j') { idx = (idx + 1) % items.length; update(idx); }
+            if (e.key === 'ArrowUp' || e.key === 'k') { idx = (idx - 1 + items.length) % items.length; update(idx); }
+        });
+    </script>
+</body>
+
+</html>

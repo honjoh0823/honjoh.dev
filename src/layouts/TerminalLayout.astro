@@ -1,0 +1,25 @@
+---
+interface Props {
+    title: string;
+    description?: string;
+    class?: string;
+    jsonLd?: object;
+}
+
+const {
+    title,
+    description = "Honjoh Nobuhiro - Global Automation Platform",
+    class: extraClass = "",
+    jsonLd,
+} = Astro.props;
+
+import Layout from "./Layout.astro";
+---
+
+<Layout title={title} description={description} jsonLd={jsonLd}>
+    <main class={`page ${extraClass}`}>
+        <slot name="header" />
+        <slot />
+        <slot name="footer" />
+    </main>
+</Layout>

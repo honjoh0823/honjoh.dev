@@ -1,0 +1,128 @@
+---
+import TerminalLayout from "../../layouts/TerminalLayout.astro";
+import Header from "../../components/Header.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("article")).sort(
+    (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
+);
+---
+
+<TerminalLayout
+    title="article | honjoh.dev"
+    description="Honjoh Nobuhiro のブログ"
+>
+    <Header slot="header" path={["article"]} />
+
+    <div class="page-body">
+        <nav class="nav-menu" id="nav-menu" aria-label="Article navigation">
+            {posts.length === 0 && (
+                <p class="empty-state">準備中です</p>
+            )}
+            {
+                posts.map((post, idx) => (
+                    <a
+                        class={`nav-item ${idx === 0 ? "nav-active" : ""}`}
+                        href={`/article/${post.id}`}
+                        data-idx={idx}
+                        data-key={String(idx + 1)}
+                        id={`nav-${idx}`}
+                    >
+                        <span class="nav-key">{idx + 1}</span>
+                        <span class="nav-label">{post.data.title}</span>
+                        <span class="nav-date">{post.data.date}</span>
+                    </a>
+                ))
+            }
+        </nav>
+    </div>
+
+    <SiteFooter slot="footer">
+        <span><kbd>←</kbd> back</span>
+        <span><kbd>↑</kbd><kbd>↓</kbd> move</span>
+        <span><kbd>→</kbd> open</span>
+    </SiteFooter>
+</TerminalLayout>
+
+<style>
+    .nav-label {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .empty-state {
+        color: var(--dim);
+        font-size: 0.9rem;
+        padding: 0.5rem 0;
+    }
+</style>
+
+<script>
+    const navItems = document.querySelectorAll<HTMLAnchorElement>(".nav-item");
+    let activeIdx = 0;
+
+    function setActive(idx: number) {
+        if (idx < 0 || idx >= navItems.length) return;
+        navItems[activeIdx].classList.remove("nav-active");
+        activeIdx = idx;
+        navItems[activeIdx].classList.add("nav-active");
+        navItems[activeIdx].focus({ preventScroll: true });
+    }
+
+    function navigate() {
+        if (navItems.length === 0) return;
+        const href = navItems[activeIdx].getAttribute("href");
+        if (href && href !== "#") {
+            window.location.href = href;
+        }
+    }
+
+    document.addEventListener("keydown", (e: KeyboardEvent) => {
+        const tag = (e.target as HTMLElement).tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+        if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+        switch (e.key) {
+            case "ArrowDown":
+            case "j":
+                e.preventDefault();
+                setActive(activeIdx < navItems.length - 1 ? activeIdx + 1 : 0);
+                break;
+            case "ArrowUp":
+            case "k":
+                e.preventDefault();
+                setActive(activeIdx > 0 ? activeIdx - 1 : navItems.length - 1);
+                break;
+            case "ArrowRight":
+            case "Enter":
+            case " ":
+                e.preventDefault();
+                navigate();
+                break;
+            case "ArrowLeft":
+                e.preventDefault();
+                window.location.href = "/";
+                break;
+            default:
+                const num = parseInt(e.key);
+                if (num >= 1 && num <= navItems.length) {
+                    e.preventDefault();
+                    setActive(num - 1);
+                    navigate();
+                }
+                break;
+        }
+    });
+
+    navItems.forEach((item, idx) => {
+        item.addEventListener("mouseenter", () => {
+            navItems[activeIdx].classList.remove("nav-active");
+            activeIdx = idx;
+            item.classList.add("nav-active");
+        });
+    });
+</script>

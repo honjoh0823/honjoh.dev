@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESIGN 22 // PATH JOURNAL</title>
+    <style>
+        :root {
+            --bg: #0d1014;
+            --fg: #d7dde4;
+            --dim: #7a8592;
+            --accent: #a7c1da;
+            --accent-dim: rgba(167, 193, 218, 0.14);
+            --line: #1b222b;
+            --font: "JetBrains Mono", "Cascadia Mono", "SFMono-Regular", monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: var(--font);
+            font-size: 14px;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 2.5rem 3.5rem;
+            line-height: 1.65;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            right: 8%;
+            top: 10%;
+            width: 46vw;
+            height: 46vw;
+            background: radial-gradient(circle, rgba(167, 193, 218, 0.09) 0%, rgba(167, 193, 218, 0) 68%);
+            pointer-events: none;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            z-index: 1;
+        }
+
+        .brand {
+            letter-spacing: 0.12em;
+            font-weight: 700;
+        }
+
+        .mode {
+            color: var(--dim);
+            font-size: 0.82rem;
+        }
+
+        .path {
+            color: var(--dim);
+            margin-bottom: 2rem;
+            z-index: 1;
+        }
+
+        main {
+            flex: 1;
+            max-width: 66ch;
+            z-index: 1;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            padding: 0.58rem 0.8rem;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        li.active {
+            background: var(--accent-dim);
+        }
+
+        .key {
+            width: 3ch;
+            color: var(--dim);
+            font-weight: 700;
+        }
+
+        li.active .key,
+        li.active .label {
+            color: var(--accent);
+        }
+
+        .label {
+            text-transform: lowercase;
+            letter-spacing: 0.06em;
+        }
+
+        .meta {
+            margin-left: auto;
+            color: var(--dim);
+            font-size: 0.8rem;
+        }
+
+        .preview {
+            color: var(--dim);
+            padding: 1.2rem 0 0 calc(3ch + 0.8rem);
+            min-height: 3.8rem;
+        }
+
+        .prompt-wrap {
+            margin-top: auto;
+            border-top: 1px solid var(--line);
+            padding-top: 0.9rem;
+            display: flex;
+            gap: 1ch;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .ps {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        #input {
+            flex: 1;
+            font-family: inherit;
+            font-size: inherit;
+            color: var(--fg);
+            background: transparent;
+            border: 0;
+            outline: 0;
+        }
+
+        #input::placeholder {
+            color: #566273;
+        }
+
+        .hint {
+            margin-top: 0.55rem;
+            color: #5d6b7a;
+            font-size: 0.72rem;
+            display: flex;
+            gap: 2ch;
+            z-index: 1;
+        }
+
+        .tag {
+            position: fixed;
+            right: 1rem;
+            bottom: 0.8rem;
+            color: #2f3843;
+            font-size: 0.62rem;
+            z-index: 1;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 1.2rem;
+                font-size: 13px;
+            }
+
+            .meta {
+                display: none;
+            }
+        }
+
+        @media (max-height: 760px) {
+            body {
+                padding-top: 1.3rem;
+                padding-bottom: 1.1rem;
+            }
+
+            header {
+                margin-bottom: 0.6rem;
+            }
+
+            .path {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">HONJOH.DEV</div>
+        <div class="mode">PATH JOURNAL</div>
+    </header>
+
+    <div class="path" id="path">home &gt; works</div>
+
+    <main>
+        <ul id="menu">
+            <li class="active" data-path="home > works" data-desc="Selected projects and practical experiments." data-cmd="open works">
+                <span class="key">1</span><span class="label">works</span><span class="meta">projects</span>
+            </li>
+            <li data-path="home > articles" data-desc="Notes and logs from product building." data-cmd="open articles">
+                <span class="key">2</span><span class="label">articles</span><span class="meta">writing</span>
+            </li>
+            <li data-path="home > about" data-desc="A short profile without decoration." data-cmd="open about">
+                <span class="key">3</span><span class="label">about</span><span class="meta">profile</span>
+            </li>
+            <li data-path="home > chat" data-desc="Talk directly with honjoh.ai at any time." data-cmd="chat --new">
+                <span class="key">4</span><span class="label">chat</span><span class="meta">assistant</span>
+            </li>
+            <li data-path="home > setting" data-desc="Theme, language, and keybinding preferences." data-cmd="open setting">
+                <span class="key">5</span><span class="label">setting</span><span class="meta">config</span>
+            </li>
+        </ul>
+        <div class="preview" id="preview">Selected projects and practical experiments.</div>
+    </main>
+
+    <div class="prompt-wrap">
+        <span class="ps">❯</span>
+        <input id="input" type="text" placeholder="ask anything..." aria-label="chat input">
+    </div>
+
+    <div class="hint">j/k: move  enter: open  1-5: jump  esc: focus menu</div>
+    <div class="tag">GPT-5 Codex // #22</div>
+
+    <script>
+        const items = [...document.querySelectorAll("#menu li")];
+        const pathEl = document.getElementById("path");
+        const previewEl = document.getElementById("preview");
+        const input = document.getElementById("input");
+        let index = 0;
+
+        function update(next) {
+            items[index].classList.remove("active");
+            index = next;
+            const row = items[index];
+            row.classList.add("active");
+            pathEl.textContent = row.dataset.path;
+            previewEl.textContent = row.dataset.desc;
+            if (document.activeElement !== input || input.value.trim() === "") {
+                input.value = row.dataset.cmd + " ";
+            }
+        }
+
+        document.addEventListener("keydown", (e) => {
+            const navKeys = ["ArrowUp", "ArrowDown", "j", "k", "Enter", "Escape"];
+            if (document.activeElement === input && !navKeys.includes(e.key) && !/^[1-5]$/.test(e.key)) {
+                return;
+            }
+            if (e.key === "ArrowDown" || e.key === "j") {
+                e.preventDefault();
+                update((index + 1) % items.length);
+            } else if (e.key === "ArrowUp" || e.key === "k") {
+                e.preventDefault();
+                update((index - 1 + items.length) % items.length);
+            } else if (/^[1-5]$/.test(e.key)) {
+                e.preventDefault();
+                update(Number(e.key) - 1);
+            } else if (e.key === "Enter") {
+                e.preventDefault();
+                previewEl.textContent = "Opening " + items[index].querySelector(".label").textContent + "...";
+            } else if (e.key === "Escape") {
+                input.blur();
+            }
+        });
+
+        items.forEach((item, i) => {
+            item.addEventListener("mouseenter", () => update(i));
+            item.addEventListener("click", () => update(i));
+        });
+
+        update(0);
+    </script>
+</body>
+</html>

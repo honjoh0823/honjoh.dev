@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>Unzoom | ズームアウト地理クイズ</title>
+    <meta name="description"
+        content="衛星写真をズームアウトして現在地を当てる地理クイズ。海かと思ったら湖だった — 早く・正確に当てるほど高得点。" />
+    <!-- speed: no web fonts (system stack), and warm up the tile hosts early -->
+    <link rel="preconnect" href="https://server.arcgisonline.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="dns-prefetch" href="https://basemaps.cartocdn.com">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="/works/unzoom/unzoom.css?v=16" />
+    <link rel="icon" type="image/png" href="/works/yamato/favicon.png">
+</head>
+
+<body>
+    <div id="app">
+        <!-- thin life bar pinned to the very top -->
+        <div class="stakes-top"><div class="stakes-fill" id="stakes-fill"></div></div>
+
+        <!-- HUD (overlay, top) -->
+        <div class="hud">
+            <div class="brand">Un<span>zoom</span></div>
+            <button class="hud-restart" id="hud-restart">最初から <kbd>Esc</kbd></button>
+            <div class="spacer"></div>
+            <div class="stat"><span class="k">ステージ</span><span class="v" id="stat-q">1</span></div>
+            <div class="stat"><span class="k">スコア</span><span class="v total" id="stat-total">0</span></div>
+            <div class="stat"><span class="k">持ち点</span><span class="v pool" id="stat-pool">50</span></div>
+        </div>
+
+        <!-- Play area: two full-height squares; controls overlay each pane -->
+        <div class="play-panels" id="play-panels">
+            <div class="play-pane" id="clue-pane">
+                <div id="puzzle-map"></div>
+                <div class="puzzle-target" id="puzzle-target" aria-hidden="true"></div>
+                <span class="pane-cap">ここはどこ？</span>
+                <button id="btn-zoom" class="btn-zoom pane-action">
+                    引く ▽ <kbd>−</kbd><span class="sub">−1</span>
+                </button>
+            </div>
+            <div class="play-pane" id="map-pane">
+                <div id="answer-map"></div>
+                <div class="answer-grid" id="answer-grid" aria-hidden="true"></div>
+                <div class="grid-sel" id="grid-sel" aria-hidden="true"></div>
+                <span class="pane-cap">ここだと思う場所</span>
+                <button id="btn-answer" class="primary pane-action">確定 <kbd>↵</kbd></button>
+            </div>
+        </div>
+
+        <!-- first-visit coachmark -->
+        <div class="coach" id="coach" hidden></div>
+
+        <!-- Start overlay — kept intentionally tiny: one line, then play -->
+        <div class="overlay show" id="overlay-start">
+            <div class="card start-card">
+                <div class="start-brand">Un<span>zoom</span></div>
+                <p class="start-tag">引いて、当てる。</p>
+                <div class="mode-pick">
+                    <button id="btn-start-jp" class="primary mode-btn">日本 <kbd>1</kbd></button>
+                    <button id="btn-start-world" class="mode-btn">世界 <kbd>2</kbd></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result overlay -->
+        <div class="overlay" id="overlay-result">
+            <div class="card">
+                <h2>結果</h2>
+                <div class="body">
+                    <div class="result-band" id="res-band">エリア正解</div>
+                    <div class="result-grid">
+                        <div class="cell">
+                            <div class="k">減点</div>
+                            <div class="v" id="res-dist">−0</div>
+                        </div>
+                        <div class="cell">
+                            <div class="k">残り持ち点</div>
+                            <div class="v result-pts" id="res-pts">50</div>
+                        </div>
+                    </div>
+                    <p class="result-truth" id="res-truth"></p>
+                </div>
+                <div class="foot">
+                    <button id="btn-next" class="primary">次の問題へ</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Final overlay -->
+        <div class="overlay" id="overlay-final">
+            <div class="card">
+                <h2>ゲームオーバー</h2>
+                <div class="body">
+                    <div class="final-score" id="final-score">0</div>
+                    <div class="final-sub" id="final-sub"></div>
+                    <div class="final-pattern" id="final-pattern"></div>
+                </div>
+                <div class="foot">
+                    <button id="btn-share">結果をシェア</button>
+                    <button id="btn-replay" class="primary">もう一度</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script type="module" src="/works/unzoom/js/main.js"></script>
+</body>
+
+</html>

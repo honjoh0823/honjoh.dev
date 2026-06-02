@@ -1,0 +1,136 @@
+/* ============================================================
+   Global Styles
+
+   CSS reset, base styles, and page layout shell.
+   Component styles live in src/styles/components/*.css
+   All values reference tokens.css variables.
+   ============================================================ */
+
+/* --- Reset --- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* --- Links --- */
+a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+
+a:hover {
+    border-bottom-color: var(--accent);
+}
+
+/* --- Animations --- */
+@keyframes breathe {
+
+    0%,
+    100% {
+        opacity: 0.4;
+        transform: scale(0.95);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================================
+   Page Layout — Design 20 (shared shell for all pages)
+   ============================================================ */
+
+.page {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-lg) var(--space-xl);
+    position: relative;
+}
+
+/* Subtle warm ambient */
+.page::before {
+    content: '';
+    position: fixed;
+    top: 40%;
+    left: 30%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(232, 196, 124, 0.025) 0%, transparent 70%);
+    animation: breathe 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* --- Page Body (content area) --- */
+.page-body {
+    flex: 1;
+    max-width: var(--max-width);
+    position: relative;
+    z-index: 1;
+    overflow-y: auto;
+}
+
+.page-body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.page-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.page-body::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: var(--radius-sm);
+}
+
+/* ============================================================
+   kbd element
+   ============================================================ */
+kbd {
+    display: inline-block;
+    padding: 0 4px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-secondary);
+    font-family: inherit;
+    font-size: inherit;
+    margin: 0 0.3ch;
+    background: var(--color-bg-surface);
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 640px) {
+    .page {
+        padding: 1.5rem 1.5rem;
+    }
+}

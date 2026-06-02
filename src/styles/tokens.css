@@ -1,0 +1,82 @@
+/* ============================================================
+   Design Tokens — Ash & Linen Theme System
+   
+   Semantic color tokens that adapt to dark/light themes.
+   ============================================================ */
+
+:root {
+    /* Color Tokens - Light theme (Linen Classic) by default */
+    color-scheme: light;
+    --color-bg-primary: #fafaf9;
+    --color-bg-surface: #f5f5f4;
+    --color-text-primary: #292524;
+    --color-text-secondary: #57534e;
+    --color-text-bright: #1c1714;
+    --color-accent-primary: #57534e;
+    --color-accent-focus: #44403c;
+    --color-accent-subtle: rgba(87, 83, 78, 0.08);
+    --color-border: #e7e5e4;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+        --color-bg-primary: #1c1917;
+        --color-bg-surface: #292524;
+        --color-text-primary: #e7e5e4;
+        --color-text-secondary: #a8a29e;
+        --color-text-bright: #fafaf9;
+        --color-accent-primary: #a8a29e;
+        --color-accent-focus: #78716c;
+        --color-accent-subtle: rgba(168, 162, 158, 0.12);
+        --color-border: #3f3f46;
+    }
+}
+
+:root {
+
+    /* Legacy tokens for backward compatibility */
+    --bg: var(--color-bg-primary);
+    --bg-surface: var(--color-bg-surface);
+    --fg: var(--color-text-primary);
+    --fg-bright: var(--color-text-bright);
+    --dim: var(--color-text-secondary);
+    --dim-deep: var(--color-text-secondary);
+    --accent: var(--color-accent-primary);
+    --accent-dim: var(--color-accent-subtle);
+    --accent-subtle: var(--color-accent-subtle);
+    --border: var(--color-border);
+
+    /* --- Typography --- */
+    --font-mono: 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+    --font-sans: 'Noto Sans JP', sans-serif;
+    --font-serif: 'Noto Serif JP', serif;
+    --font-size-base: 14px;
+    --line-height: 1.6;
+
+    /* --- Spacing --- */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 2rem;
+    --space-lg: 3rem;
+    --space-xl: 4rem;
+
+    /* --- Layout --- */
+    --max-width: 60ch;
+    --radius-sm: 2px;
+    --radius-md: 4px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
+
+    /* --- Washi Theme (legacy, used by /layout/ page) --- */
+    --color-bg: #f5f0e8;
+    --color-bg-alt: #ebe5d8;
+    --color-surface: #faf7f0;
+    --color-text: #2c2418;
+    --color-text-muted: #6b5e4f;
+    --color-accent: #8b4513;
+    --color-accent-light: #c4956a;
+    --color-ink: #1a1a2e;
+    --color-sumi: #2d2d2d;
+    --color-border: #d4c9b8;
+}

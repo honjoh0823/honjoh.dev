@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Score Calculator: Onishi vs Yamato</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #ccc;
+            font-family: 'Outfit', sans-serif;
+            padding: 32px;
+        }
+
+        h1 {
+            font-size: 20px;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+
+        .input-area {
+            margin-bottom: 24px;
+        }
+
+        label {
+            font-size: 13px;
+            color: #888;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        textarea {
+            width: 100%;
+            max-width: 700px;
+            height: 80px;
+            padding: 12px;
+            background: #151515;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #eee;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: hsl(210 55% 40%);
+        }
+
+        .romaji-display {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #666;
+            word-break: break-all;
+            max-width: 700px;
+        }
+
+        .romaji-display span {
+            color: hsl(210 50% 60%);
+        }
+
+        .results {
+            display: flex;
+            gap: 24px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .result-card {
+            background: #141414;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 20px 28px;
+            min-width: 220px;
+        }
+
+        .result-card h2 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .result-card.onishi h2 {
+            color: hsl(148 40% 60%);
+        }
+
+        .result-card.yamato h2 {
+            color: hsl(210 60% 65%);
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 4px 0;
+            font-size: 14px;
+        }
+
+        .stat-label {
+            color: #888;
+        }
+
+        .stat-val {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .stat-val.better {
+            color: hsl(148 50% 55%);
+        }
+
+        .stat-val.worse {
+            color: hsl(0 40% 55%);
+        }
+
+        .stat-val.tie {
+            color: hsl(40 60% 60%);
+        }
+
+        .summary {
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: #111;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #999;
+            max-width: 700px;
+        }
+
+        .summary strong {
+            color: #ddd;
+        }
+
+        .hint {
+            font-size: 12px;
+            color: #555;
+            margin-top: 8px;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 13px;
+        }
+
+        th,
+        td {
+            padding: 4px 12px;
+            text-align: left;
+            border-bottom: 1px solid #222;
+        }
+
+        th {
+            color: #888;
+            font-weight: 500;
+        }
+
+        td {
+            color: #ccc;
+        }
+
+        .tbl-key {
+            font-weight: 700;
+            color: hsl(40 70% 65%);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Score Calculator: 大西 vs 大和</h1>
+
+    <div class="input-area">
+        <label>日本語テキストを入力（ひらがな / カタカナ / 漢字混じり → ひらがな読みを入力）</label>
+        <textarea id="input" placeholder="例: おおにしはいれつとのひかくけんしょう">おおにしはいれつとのひかくけんしょう</textarea>
+        <div class="hint">※ ひらがな入力のみ対応。漢字は読みをひらがなで入力してください。</div>
+        <div class="romaji-display" id="romajiDisplay"></div>
+    </div>
+
+    <div class="results" id="results"></div>
+    <div class="summary" id="summary"></div>
+
+    <script>
+        // --- Hiragana to Romaji key sequence mapping ---
+        const H2R = {
+            'あ': ['A'], 'い': ['I'], 'う': ['U'], 'え': ['E'], 'お': ['O'],
+            'か': ['K', 'A'], 'き': ['K', 'I'], 'く': ['K', 'U'], 'け': ['K', 'E'], 'こ': ['K', 'O'],
+            'さ': ['S', 'A'], 'し': ['S', 'I'], 'す': ['S', 'U'], 'せ': ['S', 'E'], 'そ': ['S', 'O'],
+            'た': ['T', 'A'], 'ち': ['T', 'I'], 'つ': ['T', 'U'], 'て': ['T', 'E'], 'と': ['T', 'O'],
+            'な': ['N', 'A'], 'に': ['N', 'I'], 'ぬ': ['N', 'U'], 'ね': ['N', 'E'], 'の': ['N', 'O'],
+            'は': ['H', 'A'], 'ひ': ['H', 'I'], 'ふ': ['H', 'U'], 'へ': ['H', 'E'], 'ほ': ['H', 'O'],
+            'ま': ['M', 'A'], 'み': ['M', 'I'], 'む': ['M', 'U'], 'め': ['M', 'E'], 'も': ['M', 'O'],
+            'や': ['Y', 'A'], 'ゆ': ['Y', 'U'], 'よ': ['Y', 'O'],
+            'ら': ['R', 'A'], 'り': ['R', 'I'], 'る': ['R', 'U'], 'れ': ['R', 'E'], 'ろ': ['R', 'O'],
+            'わ': ['W', 'A'], 'を': ['W', 'O'],
+            'ん': ['N', 'N'],
+            'が': ['G', 'A'], 'ぎ': ['G', 'I'], 'ぐ': ['G', 'U'], 'げ': ['G', 'E'], 'ご': ['G', 'O'],
+            'ざ': ['Z', 'A'], 'じ': ['Z', 'I'], 'ず': ['Z', 'U'], 'ぜ': ['Z', 'E'], 'ぞ': ['Z', 'O'],
+            'だ': ['D', 'A'], 'ぢ': ['D', 'I'], 'づ': ['D', 'U'], 'で': ['D', 'E'], 'ど': ['D', 'O'],
+            'ば': ['B', 'A'], 'び': ['B', 'I'], 'ぶ': ['B', 'U'], 'べ': ['B', 'E'], 'ぼ': ['B', 'O'],
+            'ぱ': ['P', 'A'], 'ぴ': ['P', 'I'], 'ぷ': ['P', 'U'], 'ぺ': ['P', 'E'], 'ぽ': ['P', 'O'],
+            // 拗音
+            'きゃ': ['K', 'Y', 'A'], 'きゅ': ['K', 'Y', 'U'], 'きょ': ['K', 'Y', 'O'],
+            'しゃ': ['S', 'Y', 'A'], 'しゅ': ['S', 'Y', 'U'], 'しょ': ['S', 'Y', 'O'],
+            'ちゃ': ['T', 'Y', 'A'], 'ちゅ': ['T', 'Y', 'U'], 'ちょ': ['T', 'Y', 'O'],
+            'にゃ': ['N', 'Y', 'A'], 'にゅ': ['N', 'Y', 'U'], 'にょ': ['N', 'Y', 'O'],
+            'ひゃ': ['H', 'Y', 'A'], 'ひゅ': ['H', 'Y', 'U'], 'ひょ': ['H', 'Y', 'O'],
+            'みゃ': ['M', 'Y', 'A'], 'みゅ': ['M', 'Y', 'U'], 'みょ': ['M', 'Y', 'O'],
+            'りゃ': ['R', 'Y', 'A'], 'りゅ': ['R', 'Y', 'U'], 'りょ': ['R', 'Y', 'O'],
+            'ぎゃ': ['G', 'Y', 'A'], 'ぎゅ': ['G', 'Y', 'U'], 'ぎょ': ['G', 'Y', 'O'],
+            'じゃ': ['Z', 'Y', 'A'], 'じゅ': ['Z', 'Y', 'U'], 'じょ': ['Z', 'Y', 'O'],
+            'びゃ': ['B', 'Y', 'A'], 'びゅ': ['B', 'Y', 'U'], 'びょ': ['B', 'Y', 'O'],
+            'ぴゃ': ['P', 'Y', 'A'], 'ぴゅ': ['P', 'Y', 'U'], 'ぴょ': ['P', 'Y', 'O'],
+            // 小文字
+            'ぁ': ['A'], 'ぃ': ['I'], 'ぅ': ['U'], 'ぇ': ['E'], 'ぉ': ['O'],
+            'ゃ': ['Y', 'A'], 'ゅ': ['Y', 'U'], 'ょ': ['Y', 'O'],
+            'っ': [], // handled separately (double next consonant)
+            'ー': ['-'],
+        };
+
+        function hiraganaToRomaji(text) {
+            const result = [];
+            let i = 0;
+            while (i < text.length) {
+                // Try 2-char match first (拗音)
+                if (i + 1 < text.length) {
+                    const pair = text[i] + text[i + 1];
+                    if (H2R[pair]) {
+                        result.push(...H2R[pair]);
+                        i += 2;
+                        continue;
+                    }
+                }
+                const ch = text[i];
+                if (ch === 'っ' || ch === 'ッ') {
+                    // Double the next consonant
+                    let next = i + 1;
+                    // Try 2-char for next
+                    let nextKeys = null;
+                    if (next + 1 < text.length && H2R[text[next] + text[next + 1]]) {
+                        nextKeys = H2R[text[next] + text[next + 1]];
+                    } else if (next < text.length && H2R[text[next]]) {
+                        nextKeys = H2R[text[next]];
+                    }
+                    if (nextKeys && nextKeys.length > 0) {
+                        result.push(nextKeys[0]); // double consonant
+                    }
+                    i++;
+                    continue;
+                }
+                // Katakana to hiragana conversion
+                let c = ch;
+                const cp = ch.charCodeAt(0);
+                if (cp >= 0x30A1 && cp <= 0x30F6) {
+                    c = String.fromCharCode(cp - 0x60);
+                }
+                if (H2R[c]) {
+                    result.push(...H2R[c]);
+                } else if (ch === ' ' || ch === '　') {
+                    // skip spaces
+                } else {
+                    // Unknown char, try uppercase as-is (for romaji passthrough)
+                    const upper = ch.toUpperCase();
+                    if (upper >= 'A' && upper <= 'Z') result.push(upper);
+                }
+                i++;
+            }
+            return result;
+        }
+
+        // Special handling for ん: single N before consonant, NN before vowel/end
+        function fixNN(flat) {
+            const vowels = new Set(['A', 'I', 'U', 'E', 'O', 'N', 'Y']);
+            const result = [];
+            for (let i = 0; i < flat.length; i++) {
+                result.push(flat[i]);
+                // If we just pushed the first N of NN, check if we can optimize
+                // Actually, the H2R already maps ん→NN. But the original TC_LANG_WORDS
+                // uses single N before consonants. Let's match that behavior.
+            }
+            return result;
+        }
+
+        // --- Layout Data (same as typing-compare.js) ---
+        const OF = { Q: 0, E: 0, Z: 0, L: 1, I: 1, X: 1, U: 2, A: 2, C: 2, ',': 3, '.': 3, O: 3, '-': 3, V: 3, F: 4, K: 4, ';': 4, G: 4, W: 4, T: 4, D: 4, R: 5, N: 5, M: 5, Y: 6, S: 6, J: 6, P: 7, H: 7, B: 7 };
+        const OH = { 0: 'E', 1: 'I', 2: 'A', 3: 'O', 4: 'T', 5: 'N', 6: 'S', 7: 'H' };
+        const OR1 = ['E', 'I', 'A', 'O', '-', 'K', 'T', 'N', 'S', 'H'];
+
+        const YF = { M: 0, K: 0, Z: 0, Y: 1, S: 1, D: 1, R: 2, T: 2, B: 2, W: 3, P: 3, N: 3, H: 3, G: 3, J: 3, X: 4, L: 4, F: 4, A: 4, V: 4, U: 4, Q: 5, O: 5, C: 6, I: 6, E: 7 };
+        const YH = { 0: 'K', 1: 'S', 2: 'T', 3: 'N', 4: 'A', 5: 'O', 6: 'I', 7: 'E' };
+        const YR1 = ['K', 'S', 'T', 'N', 'H', 'F', 'A', 'O', 'I', 'E'];
+
+        // QWERTY
+        const QF = { Q: 0, A: 0, Z: 0, W: 1, S: 1, X: 1, E: 2, D: 2, C: 2, R: 3, T: 3, F: 3, G: 3, V: 3, B: 3, Y: 4, H: 4, N: 4, U: 4, J: 4, M: 4, I: 5, K: 5, O: 6, L: 6, P: 7 };
+        const QH = { 0: 'A', 1: 'S', 2: 'D', 3: 'F', 4: 'J', 5: 'K', 6: 'L', 7: ';' };
+        const QR1 = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';'];
+
+        function calcStats(flat, fm, hm, homeRowKeys, maxF) {
+            let moves = 0, homeHits = 0;
+            const fingerPos = {};
+            for (let f = 0; f < maxF; f++) fingerPos[f] = hm[f];
+            for (let i = 0; i < flat.length; i++) {
+                const key = flat[i], finger = fm[key];
+                if (finger === undefined) continue;
+                if (homeRowKeys.has(key)) homeHits++;
+                if (fingerPos[finger] !== key) moves++;
+                fingerPos[finger] = key;
+                const next = i + 1 < flat.length ? flat[i + 1] : null;
+                if (next && fm[next] !== finger && hm[finger] !== key) {
+                    moves++;
+                    fingerPos[finger] = hm[finger];
+                }
+            }
+            return {
+                home: flat.length > 0 ? Math.round(homeHits / flat.length * 100) + '%' : '–',
+                moves
+            };
+        }
+
+        const oHome = new Set(OR1);
+        const yHome = new Set(YR1);
+        const qHome = new Set(QR1);
+
+        function calculate() {
+            const text = document.getElementById('input').value.trim();
+            if (!text) {
+                document.getElementById('results').innerHTML = '';
+                document.getElementById('summary').innerHTML = '';
+                document.getElementById('romajiDisplay').innerHTML = '';
+                return;
+            }
+
+            const flat = hiraganaToRomaji(text);
+            document.getElementById('romajiDisplay').innerHTML =
+                `Romaji (${flat.length} keys): <span>${flat.join(' ')}</span>`;
+
+            const oStats = calcStats(flat, OF, OH, oHome, 8);
+            const yStats = calcStats(flat, YF, YH, yHome, 8);
+            const qStats = calcStats(flat, QF, QH, qHome, 8);
+
+            const minM = Math.min(oStats.moves, yStats.moves, qStats.moves);
+            const maxM = Math.max(oStats.moves, yStats.moves, qStats.moves);
+
+            function cls(v) {
+                if (v === minM && minM !== maxM) return 'better';
+                if (v === maxM && minM !== maxM) return 'worse';
+                return 'tie';
+            }
+
+            document.getElementById('results').innerHTML = `
+                <div class="result-card">
+                    <h2 style="color:hsl(40 60% 60%)">QWERTY</h2>
+                    <div class="stat-row"><span class="stat-label">Home rate</span> <span class="stat-val ${cls(-1)}">${qStats.home}</span></div>
+                    <div class="stat-row"><span class="stat-label">Moves</span> <span class="stat-val ${cls(qStats.moves)}">${qStats.moves}</span></div>
+                </div>
+                <div class="result-card onishi">
+                    <h2>大西配列</h2>
+                    <div class="stat-row"><span class="stat-label">Home rate</span> <span class="stat-val">${oStats.home}</span></div>
+                    <div class="stat-row"><span class="stat-label">Moves</span> <span class="stat-val ${cls(oStats.moves)}">${oStats.moves}</span></div>
+                </div>
+                <div class="result-card yamato">
+                    <h2>大和配列</h2>
+                    <div class="stat-row"><span class="stat-label">Home rate</span> <span class="stat-val">${yStats.home}</span></div>
+                    <div class="stat-row"><span class="stat-label">Moves</span> <span class="stat-val ${cls(yStats.moves)}">${yStats.moves}</span></div>
+                </div>
+            `;
+
+            const diff = oStats.moves - yStats.moves;
+            let msg = '';
+            if (diff > 0) msg = `大和が <strong>${diff}</strong> moves 少ない（大和有利）`;
+            else if (diff < 0) msg = `大西が <strong>${-diff}</strong> moves 少ない（大西有利）`;
+            else msg = `<strong>同スコア</strong>（moves同数）`;
+            document.getElementById('summary').innerHTML =
+                `大西 vs 大和: ${msg} ｜ QWERTY: ${qStats.moves} moves`;
+        }
+
+        document.getElementById('input').addEventListener('input', calculate);
+        calculate();
+    </script>
+</body>
+
+</html>

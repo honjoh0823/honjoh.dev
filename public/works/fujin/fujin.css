@@ -1,0 +1,962 @@
+/* ===================================================================
+   Fujin Layout (風神配列) — Styles
+   Base: inherited from Yamato Layout design system
+   Differences: side-by-side layout, 6-row left-half keyboard
+   =================================================================== */
+
+:root {
+    /* ── Background ── */
+    --bg: hsl(230 20% 5.5%);
+
+    /* ── UI chrome ── */
+    --ink: #e0e0e0;
+    --soft: #BBB;
+    --line: rgba(142, 167, 154, .15);
+    --accent: hsl(210 55% 55%);
+    --accent-dim: hsla(210, 55%, 55%, .10);
+
+    /* ── Keyboard sizing ── */
+    --kb-1u: clamp(48px, 5vw, 64px);
+    --kb-gap: 6px;
+
+    /* ── Fujin key colors (identical to Yamato palette) ── */
+    /* Mapping: cons dim = Yamato neutral, cons active = Yamato left,
+       vowel dim = Yamato right, vowel active = Yamato right-active */
+
+    /* Neutral — non-functional / disabled keys */
+    --fj-n-bg: hsl(230 5% 12%);
+    --fj-n-tx: hsl(230 5% 42%);
+
+    /* Consonant dim — idle character keys (= Yamato neutral) */
+    --fj-cons-bg: hsl(230 5% 12%);
+    --fj-cons-tx: hsl(230 5% 42%);
+
+    /* Consonant active — highlighted consonant (= Yamato left) */
+    --fj-cons-a-bg: hsl(210 55% 27%);
+    --fj-cons-a-tx: hsl(210 60% 88%);
+
+    /* Vowel dim — idle vowel keys (= Yamato right) */
+    --fj-vowel-bg: hsl(345 48% 24%);
+    --fj-vowel-tx: hsl(345 52% 86%);
+
+    /* Vowel active — highlighted vowel (= Yamato right-active) */
+    --fj-vowel-a-bg: hsl(345 58% 30%);
+    --fj-vowel-a-tx: hsl(345 62% 92%);
+
+    /* Modifier / special — Tab, Shift, blank mods (= Yamato neutral) */
+    --fj-mod-bg: hsl(230 5% 12%);
+    --fj-mod-tx: hsl(230 5% 42%);
+
+    /* Modifier active */
+    --fj-mod-a-bg: hsl(45 55% 28%);
+    --fj-mod-a-tx: hsl(45 60% 90%);
+
+    /* ── Progress bar ── */
+    --prog-track: hsl(230 5% 12%);
+    --prog-fill: hsl(210 55% 42%);
+
+    /* ── UI text shades ── */
+    --ink-mid: #BBB;
+    --ink-muted: #666;
+    --ink-dim: #888;
+    --ink-soft: #999;
+
+    --ink-white: #fff;
+    --ink-ghost: #2a2a2a;
+    --border-subtle: #333;
+
+    /* ── Glow / box-shadow ── */
+    --glow-blue: hsla(210, 55%, 55%, .35);
+    --glow-blue-soft: hsla(210, 55%, 55%, .4);
+    --glow-pink: hsla(345, 52%, 50%, .35);
+    --glow-pink-soft: hsla(345, 62%, 92%, .3);
+    --glow-yellow: hsla(45, 55%, 55%, .35);
+    --glow-yellow-soft: hsla(45, 55%, 55%, .4);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0
+}
+
+body {
+    min-height: 100vh;
+    background: var(--bg);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    color: var(--ink);
+    font-family: "Outfit", "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", sans-serif;
+    overflow-x: hidden
+}
+
+@media (max-width: 600px) {
+
+    html,
+    body {
+        height: 100%;
+        overflow: hidden
+    }
+}
+
+.page {
+    min-height: 100vh;
+    width: min(1100px, 94vw);
+    margin: 0 auto;
+    padding: 28px 20px 24px;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto
+}
+
+@media (max-width: 600px) {
+    .page {
+        height: 100dvh;
+        min-height: unset;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column
+    }
+}
+
+.header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 16px
+}
+
+.quest {
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: .04em;
+    color: var(--soft);
+    opacity: .7
+}
+
+.quest em {
+    font-style: normal;
+    color: var(--soft)
+}
+
+.tagline {
+    font-size: 16px;
+    font-weight: 300;
+    letter-spacing: .02em;
+    color: var(--soft);
+    opacity: .65
+}
+
+/* progress nav */
+.progress-nav {
+    display: flex;
+    gap: 3px
+}
+
+.prog-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px
+}
+
+.prog-col[hidden] {
+    display: none
+}
+
+.prog-seg {
+    height: 3px;
+    background: var(--prog-track);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative
+}
+
+.prog-seg .fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0%;
+    background: var(--prog-fill);
+    border-radius: 2px;
+    transition: width 300ms ease
+}
+
+.prog-label {
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: .02em;
+    color: var(--ink-muted);
+    cursor: pointer;
+    transition: all 140ms ease;
+    user-select: none;
+    padding: 2px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+.prog-label:hover {
+    color: var(--ink-dim)
+}
+
+.prog-col.active .prog-label {
+    color: var(--accent)
+}
+
+/* ================================================================
+   Content area — SIDE-BY-SIDE layout (keyboard left, text right)
+   ================================================================ */
+.content-area {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 48px;
+    align-items: center;
+    justify-items: center;
+}
+
+.kb-zone {
+    display: grid;
+    place-content: center;
+    overflow: visible;
+}
+
+.text-zone {
+    display: grid;
+    place-content: center;
+    text-align: left;
+    overflow: hidden;
+    max-width: 480px;
+}
+
+.text-zone.expanded {
+    overflow: visible
+}
+
+.text-zone.expanded .slide-body {
+    overflow: visible
+}
+
+.section {
+    display: none
+}
+
+.section.active {
+    display: contents
+}
+
+/* intro slides */
+.intro-slide {
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    text-align: left
+}
+
+.intro-slide.active {
+    display: flex
+}
+
+.slide-heading {
+    display: grid;
+    place-content: end start;
+    width: 100%;
+    flex-shrink: 0
+}
+
+.slide-heading .title {
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    letter-spacing: .06em;
+    line-height: 1
+}
+
+.slide-heading .h3 {
+    font-size: clamp(16px, 2vw, 24px);
+    font-weight: 600
+}
+
+.slide-body {
+    font-size: clamp(14px, 1.4vw, 18px);
+    color: var(--soft);
+    line-height: 1.7;
+    max-width: 480px;
+    text-align: left;
+    flex-shrink: 0
+}
+
+.slide-body a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px
+}
+
+/* ================================================================
+   Keyboard — 6-row left-half BORDERLESS flat design
+   ================================================================ */
+.kb {
+    display: grid;
+    gap: 8px;
+}
+
+/* Fn row hidden by default; add .show-fn to .kb to reveal */
+.kb .row:first-child {
+    display: none
+}
+
+.kb.show-fn .row:first-child {
+    display: flex
+}
+
+.kb .row {
+    display: flex;
+    gap: var(--kb-gap);
+}
+
+/* Key base */
+.key {
+    height: var(--kb-1u);
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    position: relative;
+    font-family: "Outfit", sans-serif;
+    border: none;
+    box-shadow: none;
+    transition: all 160ms ease;
+}
+
+/* Default 1u key width */
+.key {
+    width: var(--kb-1u);
+}
+
+/*
+ * Alignment system (calc-based, 1u = 64px):
+ *   Tab = 80px = 1.25u
+ *   Row 2 total = 1.25u + 6×1u + 6×gap = 7.25u + 6×gap
+ *   B right = Y right  →  Shift = 2.25u + gap  (= 150px)
+ *   Ctrl/Win = 72px = 1.125u, Alt/4th = 64px = 1u
+ *   Space left = C left →  (1.125+1.125+1+1)u + 4×gap = 4.25u + 4×gap
+ *                        = Shift(2.25u+gap) + 2×1u + 3×gap ✓
+ *   Space = 3u + 2×gap
+ */
+
+/* Esc / grave: same 1u as regular keys */
+.key.w-esc,
+.key.w-grave {
+    width: var(--kb-1u);
+}
+
+/* Tab: 1.25u (80px) */
+.key.w-tab {
+    width: calc(var(--kb-1u) * 1.25);
+}
+
+/* Caps: 1.78125u (114px) */
+.key.w-caps {
+    width: calc(var(--kb-1u) * 1.78125);
+}
+
+/* Shift: 2.25u + gap (150px)  →  B right = Y right */
+/* padding-right absorbs the extra width vs Caps so text centers at the same position */
+.key.w-shift {
+    width: calc(var(--kb-1u) * 2.25 + var(--kb-gap));
+    padding-right: calc(var(--kb-1u) * 0.46875 + var(--kb-gap));
+}
+
+/* Ctrl / Win: 1.125u (72px) */
+.key.w-mod-lg {
+    width: calc(var(--kb-1u) * 1.125);
+}
+
+/* Alt / 4th key: 1u (64px) — uses default width, no class needed */
+
+/* Space: 3u + 2×gap  →  fills from C-left to B-right */
+.key.w-space {
+    width: calc(var(--kb-1u) * 3 + var(--kb-gap) * 2);
+}
+
+.key .ym {
+    font-size: clamp(16px, 1.6vw, 22px);
+    font-weight: 400;
+    line-height: 1
+}
+
+.key .sub {
+    font-size: clamp(8px, 0.8vw, 10px);
+    color: var(--ink-muted);
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+
+/* ── Key state colors ── */
+.key.st-n {
+    background: var(--fj-n-bg);
+    color: var(--fj-n-tx)
+}
+
+.key.st-cons {
+    background: var(--fj-cons-bg);
+    color: var(--fj-cons-tx)
+}
+
+.key.st-cons-a {
+    background: var(--fj-cons-a-bg);
+    color: var(--fj-cons-a-tx)
+}
+
+.key.st-vowel {
+    background: var(--fj-vowel-bg);
+    color: var(--fj-vowel-tx)
+}
+
+.key.st-vowel-a {
+    background: var(--fj-vowel-a-bg);
+    color: var(--fj-vowel-a-tx)
+}
+
+.key.st-mod {
+    background: var(--fj-mod-bg);
+    color: var(--fj-mod-tx)
+}
+
+.key.st-mod-a {
+    background: var(--fj-mod-a-bg);
+    color: var(--fj-mod-a-tx)
+}
+
+/* Hidden state for keys we want to reserve space for but not show */
+.key.hidden {
+    visibility: hidden;
+}
+
+/* Home position marker */
+.key.home::after {
+    content: "";
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 2px;
+    border-radius: 1px;
+    background: rgba(255, 255, 255, .3)
+}
+
+/* Interactive key flash */
+.key.key-flash-cons {
+    background: var(--fj-cons-a-bg) !important;
+    color: var(--fj-cons-a-tx) !important;
+    box-shadow: 0 0 14px var(--glow-blue);
+    transform: scale(1.08);
+    transition: all 60ms ease
+}
+
+.key.key-flash-vowel {
+    background: var(--fj-vowel-a-bg) !important;
+    color: var(--fj-vowel-a-tx) !important;
+    box-shadow: 0 0 14px var(--glow-pink);
+    transform: scale(1.08);
+    transition: all 60ms ease
+}
+
+.key.key-flash-mod {
+    background: var(--fj-mod-a-bg) !important;
+    color: var(--fj-mod-a-tx) !important;
+    box-shadow: 0 0 14px var(--glow-yellow);
+    transform: scale(1.08);
+    transition: all 60ms ease
+}
+
+/* Typing Game */
+.tg-grid {
+    display: flex;
+    justify-content: center;
+    gap: 16px
+}
+
+.tg-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px
+}
+
+.tg-k {
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    color: var(--ink-muted);
+    transition: all 200ms ease
+}
+
+.tg-k.done {
+    opacity: .3
+}
+
+.tg-k.active {
+    color: var(--ink-white);
+    font-weight: 700
+}
+
+.tg-r-cell {
+    display: flex;
+    gap: 2px;
+    justify-content: center;
+    font-family: "Outfit", sans-serif;
+    font-size: clamp(18px, 2vw, 26px);
+    letter-spacing: .03em
+}
+
+.tg-r {
+    color: var(--ink-muted)
+}
+
+.tg-r.done {
+    opacity: .4
+}
+
+.tg-r.tg-rv {
+    color: hsl(345 58% 55%);
+    font-weight: 700
+}
+
+.tg-r.tg-rc {
+    color: var(--accent);
+    font-weight: 700
+}
+
+.tg-prog {
+    font-size: 14px;
+    color: var(--ink-muted);
+    margin-top: 4px
+}
+
+.tg-done {
+    color: var(--accent);
+    font-size: clamp(16px, 2vw, 22px);
+    line-height: 1.7
+}
+
+/* Drill UI */
+.tg-kana {
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 700;
+    color: var(--ink-white);
+    line-height: 1;
+    display: block;
+    text-align: center;
+}
+
+.tg-romaji {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    font-family: "Outfit", sans-serif;
+    font-size: clamp(22px, 3vw, 32px);
+    letter-spacing: .04em;
+    margin-bottom: 12px;
+}
+
+.tg-section {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 4px;
+}
+
+.tg-hint {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+}
+
+.tg-progress {
+    font-size: 12px;
+    color: var(--ink-muted);
+}
+
+.key.tg-hl {
+    animation: tg-pulse-cons 1.2s ease-in-out infinite
+}
+
+.key.tg-hr {
+    animation: tg-pulse-vowel 1.2s ease-in-out infinite
+}
+
+@keyframes tg-pulse-cons {
+
+    0%,
+    100% {
+        box-shadow: 0 0 4px var(--glow-blue)
+    }
+
+    50% {
+        box-shadow: 0 0 14px var(--glow-blue-soft);
+        transform: scale(1.05)
+    }
+}
+
+@keyframes tg-pulse-vowel {
+
+    0%,
+    100% {
+        box-shadow: 0 0 4px var(--glow-pink)
+    }
+
+    50% {
+        box-shadow: 0 0 14px var(--glow-pink-soft);
+        transform: scale(1.05)
+    }
+}
+
+/* Drill error shake */
+@keyframes tg-shake {
+
+    0%,
+    100% {
+        transform: translateX(0)
+    }
+
+    15% {
+        transform: translateX(-4px)
+    }
+
+    30% {
+        transform: translateX(4px)
+    }
+
+    45% {
+        transform: translateX(-3px)
+    }
+
+    60% {
+        transform: translateX(3px)
+    }
+
+    75% {
+        transform: translateX(-2px)
+    }
+
+    90% {
+        transform: translateX(1px)
+    }
+}
+
+.key.tg-error {
+    animation: tg-shake 300ms ease;
+}
+
+.tg-k.tg-error {
+    animation: tg-shake 300ms ease;
+}
+
+/* FAQ styles */
+.faq-section {
+    max-width: 480px;
+    margin: 0;
+    padding-top: 0
+}
+
+.faq-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--soft);
+    margin-bottom: 12px;
+    letter-spacing: .04em
+}
+
+.faq-item {
+    padding: 0;
+    background: none;
+    border: none
+}
+
+.faq-item+.faq-item {
+    margin-top: 16px
+}
+
+.faq-q {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px
+}
+
+.faq-a {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--soft);
+    line-height: 1.7
+}
+
+/* resources */
+.res-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 480px;
+}
+
+.res-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: color 160ms ease
+}
+
+.res-item:hover {
+    color: var(--accent)
+}
+
+.res-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    opacity: .6
+}
+
+.res-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px
+}
+
+.res-title {
+    font-size: 14px;
+    font-weight: 600
+}
+
+.res-meta {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--soft);
+    opacity: .6
+}
+
+/* footer */
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid var(--line)
+}
+
+.nav-hint {
+    display: flex;
+    gap: 16px;
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--soft);
+    opacity: .45
+}
+
+.nav-hint kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 18px;
+    padding: 0 4px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 3px;
+    font-size: 16px;
+    color: var(--soft);
+    background: var(--prog-track);
+    margin-right: 4px
+}
+
+.brand {
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: .04em;
+    color: var(--soft);
+    opacity: .6
+}
+
+.brand em {
+    font-style: normal;
+    color: var(--soft)
+}
+
+/* Debug mode indicator */
+.debug-mode {
+    position: fixed;
+    bottom: 8px;
+    right: 8px;
+    padding: 4px 10px;
+    font-family: "Outfit", monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* ── Mobile ── */
+@media (max-width: 860px) {
+    .content-area {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        gap: 24px;
+    }
+
+    .text-zone {
+        text-align: center;
+        max-width: 100%;
+    }
+
+    .intro-slide {
+        align-items: center;
+        text-align: center;
+    }
+
+    .slide-body {
+        text-align: center;
+    }
+
+    .kb-zone {
+        order: 2;
+    }
+
+    .text-zone {
+        order: 1;
+    }
+}
+
+@media (max-width: 600px) {
+    .page {
+        padding: 16px 12px 16px;
+        width: 100%;
+        height: 100dvh;
+        min-height: unset;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+        padding-bottom: 16px;
+        flex-shrink: 0
+    }
+
+    .progress-nav {
+        flex-shrink: 0
+    }
+
+    .quest {
+        font-size: 14px
+    }
+
+    .tagline {
+        font-size: 14px
+    }
+
+    .prog-label {
+        font-size: 14px
+    }
+
+    .content-area {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+        gap: 12px;
+        padding-top: 2vh;
+    }
+
+    .text-zone {
+        flex: 0 0 auto;
+        height: auto;
+        min-height: unset;
+        display: grid;
+        place-content: center;
+        overflow: hidden;
+        order: 1;
+    }
+
+    .kb-zone {
+        flex-shrink: 0;
+        order: 2;
+        pointer-events: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .slide-heading .h3 {
+        font-size: 20px
+    }
+
+    .slide-heading .title {
+        font-size: 28px
+    }
+
+    .slide-body {
+        overflow: hidden;
+        font-size: 15px;
+        line-height: 1.65;
+        flex-shrink: 0
+    }
+
+    .slide-body br {
+        display: none
+    }
+
+    .key {
+        --kb-1u: clamp(24px, 6vw, 38px);
+        --kb-gap: 2px;
+        border-radius: 4px;
+    }
+
+    .key .ym {
+        font-size: clamp(9px, 2.5vw, 13px)
+    }
+
+    .key.home::after {
+        bottom: 3px;
+        width: 8px;
+        height: 1.5px
+    }
+
+    .kb .row {
+        gap: 2px
+    }
+
+    .kb {
+        gap: 3px
+    }
+
+    .footer {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding-top: 12px;
+        flex-shrink: 0;
+    }
+
+    .nav-hint {
+        display: none
+    }
+
+    .brand {
+        font-size: 13px
+    }
+
+    .faq-section {
+        max-width: 100%
+    }
+
+    .res-list {
+        max-width: 100%
+    }
+}

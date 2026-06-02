@@ -1,0 +1,259 @@
+---
+import TerminalLayout from "../../layouts/TerminalLayout.astro";
+import Header from "../../components/Header.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+
+const langItems = [
+    { key: "1", label: "日本語", value: "ja" },
+    { key: "2", label: "English", value: "en" },
+];
+---
+
+<TerminalLayout title="Setting | honjoh.dev" description="Site settings">
+    <Header slot="header" path={["setting"]} />
+
+    <div class="page-body">
+        <section class="setting-section">
+            <p class="section-label" id="lang-label">言語 / Language</p>
+            <nav
+                class="nav-menu"
+                id="lang-menu"
+                aria-label="Language selection"
+            >
+                {
+                    langItems.map((item, idx) => (
+                        <a
+                            class={`nav-item ${idx === 0 ? "nav-active" : ""}`}
+                            href="#"
+                            data-idx={idx}
+                            data-key={item.key}
+                            data-lang={item.value}
+                            id={`lang-${idx}`}
+                        >
+                            <span class="nav-key">{item.key}</span>
+                            <span class="nav-label">{item.label}</span>
+                            <span
+                                class="nav-check"
+                                id={`check-${item.value}`}
+                            />
+                        </a>
+                    ))
+                }
+            </nav>
+            <p class="saved-msg" id="saved-msg"></p>
+        </section>
+
+        <section class="setting-section">
+            <p class="section-label" id="theme-label">テーマ / Theme</p>
+            <nav class="nav-menu" id="theme-menu" aria-label="Theme selection">
+                <a
+                    class="nav-item"
+                    href="#"
+                    data-idx="0"
+                    data-key="1"
+                    data-theme="dark"
+                    id="theme-0"
+                >
+                    <span class="nav-key">1</span>
+                    <span class="nav-label" id="label-dark">Dark</span>
+                    <span class="nav-check" id="check-dark"></span>
+                </a>
+                <a
+                    class="nav-item"
+                    href="#"
+                    data-idx="1"
+                    data-key="2"
+                    data-theme="light"
+                    id="theme-1"
+                >
+                    <span class="nav-key">2</span>
+                    <span class="nav-label" id="label-light">Light</span>
+                    <span class="nav-check" id="check-light"></span>
+                </a>
+            </nav>
+            <p class="saved-msg" id="theme-saved-msg"></p>
+        </section>
+    </div>
+
+    <SiteFooter slot="footer">
+        <span><kbd>←</kbd> back</span>
+        <span><kbd>↑</kbd><kbd>↓</kbd> move</span>
+        <span><kbd>→</kbd><kbd>Enter</kbd> select</span>
+    </SiteFooter>
+</TerminalLayout>
+
+<style>
+    .setting-section {
+        width: 100%;
+        max-width: var(--max-width);
+    }
+
+    .section-label {
+        color: var(--dim);
+        font-size: 14px;
+        margin-bottom: 10px;
+        letter-spacing: 0.05em;
+    }
+
+    .nav-check {
+        margin-left: auto;
+        color: var(--accent);
+        font-size: 14px;
+    }
+
+    .saved-msg {
+        margin-top: 12px;
+        font-size: 14px;
+        color: var(--accent);
+        height: 1.2em;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+</style>
+
+<script>
+    import { getLang, setLang, t, settings, type Lang } from "../../lib/i18n";
+    import {
+        getTheme,
+        setTheme,
+        getSystemDefault,
+        type ThemeMode,
+    } from "../../lib/theme";
+
+    // Get all navigation items from both sections
+    const langItems = document.querySelectorAll<HTMLAnchorElement>(
+        "#lang-menu .nav-item",
+    );
+    const themeItems = document.querySelectorAll<HTMLAnchorElement>(
+        "#theme-menu .nav-item",
+    );
+
+    // Combine all items into one array for unified navigation
+    const allItems = [...Array.from(langItems), ...Array.from(themeItems)];
+
+    const savedMsg = document.getElementById(
+        "saved-msg",
+    ) as HTMLParagraphElement;
+    const themeSavedMsg = document.getElementById(
+        "theme-saved-msg",
+    ) as HTMLParagraphElement;
+
+    const checkJa = document.getElementById("check-ja") as HTMLSpanElement;
+    const checkEn = document.getElementById("check-en") as HTMLSpanElement;
+    const checkDark = document.getElementById("check-dark") as HTMLSpanElement;
+    const checkLight = document.getElementById(
+        "check-light",
+    ) as HTMLSpanElement;
+    const labelDark = document.getElementById("label-dark") as HTMLSpanElement;
+    const labelLight = document.getElementById(
+        "label-light",
+    ) as HTMLSpanElement;
+
+    let activeIdx = 0;
+
+    function updateChecks() {
+        const lang = getLang();
+        checkJa.textContent = lang === "ja" ? "✓" : "";
+        checkEn.textContent = lang === "en" ? "✓" : "";
+
+        const theme = getTheme();
+        checkDark.textContent = theme === "dark" ? "✓" : "";
+        checkLight.textContent = theme === "light" ? "✓" : "";
+
+        // Show (Auto) on the system default option
+        const sys = getSystemDefault();
+        labelDark.textContent = sys === "dark" ? "Dark (Auto)" : "Dark";
+        labelLight.textContent = sys === "light" ? "Light (Auto)" : "Light";
+    }
+
+    function setActive(idx: number) {
+        if (idx < 0 || idx >= allItems.length) return;
+        allItems[activeIdx].classList.remove("nav-active");
+        activeIdx = idx;
+        allItems[activeIdx].classList.add("nav-active");
+    }
+
+    function selectCurrent() {
+        const item = allItems[activeIdx];
+
+        // Check if it's a language item
+        if (item.dataset.lang) {
+            const lang = item.dataset.lang as Lang;
+            setLang(lang);
+            updateChecks();
+            savedMsg.textContent = t(settings, "settings.saved");
+            savedMsg.style.opacity = "1";
+            setTimeout(() => {
+                savedMsg.style.opacity = "0";
+            }, 1500);
+        }
+        // Check if it's a theme item
+        else if (item.dataset.theme) {
+            const theme = item.dataset.theme as ThemeMode;
+            setTheme(theme);
+            updateChecks();
+            themeSavedMsg.textContent = t(settings, "settings.saved");
+            themeSavedMsg.style.opacity = "1";
+            setTimeout(() => {
+                themeSavedMsg.style.opacity = "0";
+            }, 1500);
+        }
+    }
+
+    // Unified keyboard navigation for all items
+    document.addEventListener("keydown", (e: KeyboardEvent) => {
+        if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+        switch (e.key) {
+            case "ArrowDown":
+            case "j":
+                e.preventDefault();
+                setActive(activeIdx < allItems.length - 1 ? activeIdx + 1 : 0);
+                break;
+            case "ArrowUp":
+            case "k":
+                e.preventDefault();
+                setActive(activeIdx > 0 ? activeIdx - 1 : allItems.length - 1);
+                break;
+            case "ArrowRight":
+            case "Enter":
+            case " ":
+                e.preventDefault();
+                selectCurrent();
+                break;
+            case "ArrowLeft":
+            case "Escape":
+                e.preventDefault();
+                window.location.href = "/";
+                break;
+            case "1":
+            case "2":
+                // Find the item with matching key
+                allItems.forEach((item, idx) => {
+                    if (item.dataset.key === e.key) {
+                        e.preventDefault();
+                        setActive(idx);
+                        selectCurrent();
+                    }
+                });
+                break;
+        }
+    });
+
+    // Mouse interactions for all items
+    allItems.forEach((item, idx) => {
+        item.addEventListener("mouseenter", () => {
+            allItems[activeIdx].classList.remove("nav-active");
+            activeIdx = idx;
+            item.classList.add("nav-active");
+        });
+        item.addEventListener("click", (e) => {
+            e.preventDefault();
+            setActive(idx);
+            selectCurrent();
+        });
+    });
+
+    updateChecks();
+</script>

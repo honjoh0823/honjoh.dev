@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nav Button Samples v2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: hsl(230 20% 5.5%);
+            --ink: #e0e0e0;
+            --soft: #9a9a9a;
+            --accent: hsl(210 60% 60%);
+            --accent-bright: hsl(210 70% 68%);
+            --accent-dim: hsla(210, 60%, 60%, .12);
+            --accent-glow: hsla(210, 65%, 60%, .40);
+            --border-subtle: #444;
+            --ink-soft: #aaa;
+            --ink-muted: #666;
+            --k-n-bg: hsl(230 6% 15%);
+            --k-n-tx: hsl(230 5% 45%);
+            --k-la-bg: hsl(210 50% 30%);
+            --k-la-tx: hsl(210 65% 90%);
+            --k-ra-bg: hsl(345 45% 30%);
+            --k-ra-tx: hsl(345 55% 88%);
+            --glow-blue: hsla(210, 60%, 58%, .40);
+            --glow-pink: hsla(345, 50%, 50%, .35);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--ink);
+            font-family: "Outfit", sans-serif;
+            min-height: 100vh;
+            padding: 40px 20px 80px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--soft);
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: var(--ink-muted);
+            margin-bottom: 48px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 28px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, .02);
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 12px;
+            padding: 28px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            min-height: 160px;
+        }
+
+        .card-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--soft);
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
+
+        .card-desc {
+            font-size: 12px;
+            color: var(--ink-muted);
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .demo-area {
+            flex: 1;
+            display: grid;
+            place-items: center;
+            width: 100%;
+        }
+
+        .pair {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .pair-wide {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .pair-tight {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ===== A: Text Link + Arrow Slide ===== */
+        .btn-a {
+            background: none;
+            border: none;
+            color: var(--ink-soft);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 400;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 4px;
+            transition: color .2s ease;
+        }
+
+        .btn-a .arrow {
+            display: inline-block;
+            transition: transform .25s cubic-bezier(.4, 0, .2, 1);
+            font-size: 15px;
+        }
+
+        .btn-a:hover {
+            color: var(--accent-bright);
+        }
+
+        .btn-a:hover .arrow-r {
+            transform: translateX(5px);
+        }
+
+        .btn-a:hover .arrow-l {
+            transform: translateX(-5px);
+        }
+
+        .btn-a kbd {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+            font-size: 12px;
+            color: inherit;
+            background: rgba(255, 255, 255, .04);
+            font-family: inherit;
+            opacity: .7;
+            transition: opacity .2s;
+        }
+
+        .btn-a:hover kbd {
+            opacity: 1;
+        }
+
+        /* ===== B: Pill Accent ===== */
+        .btn-b {
+            background: var(--accent);
+            border: none;
+            border-radius: 999px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 8px 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all .2s ease;
+            letter-spacing: .03em;
+        }
+
+        .btn-b:hover {
+            background: var(--accent-bright);
+            box-shadow: 0 0 20px var(--accent-glow);
+            transform: translateY(-1px);
+        }
+
+        .btn-b kbd {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border: none;
+            border-radius: 3px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, .85);
+            background: rgba(255, 255, 255, .18);
+            font-family: inherit;
+        }
+
+        /* ===== C: Icon Circle ===== */
+        .btn-c {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: none;
+            border: 1px solid var(--border-subtle);
+            color: var(--ink-soft);
+            font-family: inherit;
+            font-size: 18px;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            transition: all .25s ease;
+        }
+
+        .btn-c:hover {
+            border-color: var(--accent);
+            color: var(--accent-bright);
+            background: var(--accent-dim);
+            box-shadow: 0 0 16px var(--accent-glow);
+        }
+
+        .btn-c .chevron {
+            transition: transform .2s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .btn-c:hover .chev-r {
+            transform: translateX(2px);
+        }
+
+        .btn-c:hover .chev-l {
+            transform: translateX(-2px);
+        }
+
+        /* ===== D: Keycap Single (SQUARE) ===== */
+        .btn-d {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            color: var(--ink-soft);
+            padding: 0;
+        }
+
+        .btn-d .keycap {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background: var(--k-n-bg);
+            color: var(--k-n-tx);
+            display: grid;
+            place-items: center;
+            font-size: 18px;
+            font-weight: 400;
+            transition: all .2s ease;
+        }
+
+        .btn-d .label {
+            font-size: 13px;
+            color: var(--ink-muted);
+            transition: color .2s;
+        }
+
+        .btn-d:hover .keycap {
+            background: var(--k-la-bg);
+            color: var(--k-la-tx);
+            box-shadow: 0 0 14px var(--glow-blue);
+            transform: scale(1.08);
+        }
+
+        .btn-d:hover .label {
+            color: var(--ink-soft);
+        }
+
+        /* ===== E: Ghost Border + Key Badge ===== */
+        .btn-e {
+            background: none;
+            border: 1px solid rgba(255, 255, 255, .10);
+            border-radius: 8px;
+            color: var(--ink-soft);
+            padding: 10px 18px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all .2s ease;
+        }
+
+        .btn-e .text {
+            font-weight: 400;
+        }
+
+        .btn-e .key-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border: 1px solid rgba(255, 255, 255, .14);
+            border-radius: 5px;
+            font-size: 13px;
+            background: rgba(255, 255, 255, .05);
+            color: var(--soft);
+            font-family: inherit;
+            transition: all .2s;
+        }
+
+        .btn-e:hover {
+            border-color: var(--accent);
+            color: var(--accent-bright);
+            background: var(--accent-dim);
+        }
+
+        .btn-e:hover .key-badge {
+            border-color: var(--accent);
+            color: var(--accent-bright);
+            background: hsla(210, 60%, 60%, .1);
+        }
+
+        /* ===== F: Dual Keycap ===== */
+        .btn-f {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            padding: 0;
+        }
+
+        .btn-f .cap {
+            width: 38px;
+            height: 38px;
+            border-radius: 7px;
+            background: var(--k-n-bg);
+            color: var(--k-n-tx);
+            display: grid;
+            place-items: center;
+            font-size: 13px;
+            font-weight: 400;
+            transition: all .15s ease;
+        }
+
+        .btn-f:hover .cap {
+            background: var(--k-la-bg);
+            color: var(--k-la-tx);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .3), 0 0 8px var(--glow-blue);
+        }
+
+        .btn-f:hover .cap:first-child {
+            transition-delay: 0s;
+        }
+
+        .btn-f:hover .cap:last-child {
+            transition-delay: .04s;
+        }
+
+        /* ===== G: Floating Chevron ===== */
+        .btn-g-wrap {
+            position: relative;
+            width: 100%;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8px;
+        }
+
+        .btn-g {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            color: var(--ink-muted);
+            transition: color .2s;
+            animation: pulse-g 2.5s ease-in-out infinite;
+        }
+
+        .btn-g svg {
+            width: 22px;
+            height: 22px;
+            transition: transform .2s;
+        }
+
+        .btn-g:hover {
+            color: var(--accent-bright);
+            animation: none;
+        }
+
+        .btn-g:hover svg.svg-r {
+            transform: translateX(4px);
+        }
+
+        .btn-g:hover svg.svg-l {
+            transform: translateX(-4px);
+        }
+
+        @keyframes pulse-g {
+
+            0%,
+            100% {
+                opacity: .35;
+            }
+
+            50% {
+                opacity: .75;
+            }
+        }
+
+        /* ===== H: Keyboard Row ===== */
+        .btn-h {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            padding: 0;
+        }
+
+        .btn-h .mini-key {
+            width: 28px;
+            height: 28px;
+            border-radius: 5px;
+            background: var(--k-n-bg);
+            color: var(--k-n-tx);
+            display: grid;
+            place-items: center;
+            font-size: 10px;
+            font-weight: 400;
+            transition: all .15s ease;
+        }
+
+        .btn-h .mini-key.next-key {
+            width: auto;
+            padding: 0 10px;
+            height: 28px;
+            font-size: 11px;
+        }
+
+        .btn-h .mini-key.arrow-key {
+            color: hsl(230 5% 50%);
+        }
+
+        .btn-h:hover .mini-key.arrow-key {
+            background: var(--k-la-bg);
+            color: var(--k-la-tx);
+            box-shadow: 0 0 10px var(--glow-blue);
+            transform: scale(1.08);
+        }
+
+        .btn-h:hover .mini-key.next-key {
+            color: hsl(230 5% 55%);
+        }
+
+        /* ===== I: Press to Continue ===== */
+        .btn-i {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            padding: 0;
+            color: var(--ink-muted);
+            font-size: 12px;
+            letter-spacing: .04em;
+            transition: color .2s;
+        }
+
+        .btn-i .press-key {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            background: var(--k-n-bg);
+            color: var(--k-n-tx);
+            font-size: 14px;
+            font-family: inherit;
+            transition: all .2s ease;
+            animation: breathe-i 3s ease-in-out infinite;
+        }
+
+        .btn-i:hover {
+            color: var(--accent);
+        }
+
+        .btn-i:hover .press-key {
+            background: var(--k-la-bg);
+            color: var(--k-la-tx);
+            box-shadow: 0 0 12px var(--glow-blue);
+            animation: none;
+        }
+
+        @keyframes breathe-i {
+
+            0%,
+            100% {
+                opacity: .5;
+            }
+
+            50% {
+                opacity: .9;
+            }
+        }
+
+        /* ===== J: Glass Morphism ===== */
+        .btn-j {
+            background: rgba(255, 255, 255, .04);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 10px;
+            padding: 8px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--ink-soft);
+            transition: all .25s ease;
+        }
+
+        .btn-j .glass-key {
+            width: 26px;
+            height: 26px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .10);
+            display: grid;
+            place-items: center;
+            font-size: 13px;
+            color: var(--soft);
+            transition: all .2s;
+        }
+
+        .btn-j:hover {
+            background: rgba(100, 170, 255, .08);
+            border-color: rgba(100, 170, 255, .25);
+            color: var(--accent-bright);
+        }
+
+        .btn-j:hover .glass-key {
+            background: rgba(100, 170, 255, .15);
+            border-color: rgba(100, 170, 255, .3);
+            color: var(--accent-bright);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        /* ===== K: Split Zones (Screen Edge) ===== */
+        .btn-k-wrap {
+            width: 100%;
+            height: 60px;
+            display: flex;
+            position: relative;
+        }
+
+        .btn-k {
+            flex: 1;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--ink-muted);
+            padding: 0 16px;
+            transition: all .2s;
+            position: relative;
+        }
+
+        .btn-k.btn-k-prev {
+            justify-content: flex-start;
+        }
+
+        .btn-k.btn-k-next {
+            justify-content: flex-end;
+        }
+
+        .btn-k .k-inner {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all .2s;
+        }
+
+        .btn-k::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            transition: width .3s ease, opacity .3s;
+            opacity: 0;
+        }
+
+        .btn-k.btn-k-prev::after {
+            left: 0;
+            background: linear-gradient(90deg, var(--accent-dim), transparent);
+        }
+
+        .btn-k.btn-k-next::after {
+            right: 0;
+            background: linear-gradient(-90deg, var(--accent-dim), transparent);
+        }
+
+        .btn-k:hover::after {
+            width: 80%;
+            opacity: 1;
+        }
+
+        .btn-k:hover {
+            color: var(--accent-bright);
+        }
+
+        .btn-k .k-arrow {
+            font-size: 16px;
+            transition: transform .2s;
+        }
+
+        .btn-k.btn-k-prev:hover .k-arrow {
+            transform: translateX(-4px);
+        }
+
+        .btn-k.btn-k-next:hover .k-arrow {
+            transform: translateX(4px);
+        }
+
+        .btn-k-divider {
+            width: 1px;
+            height: 24px;
+            background: rgba(255, 255, 255, .08);
+            align-self: center;
+        }
+
+        /* ===== L: Outlined Keycap 3D ===== */
+        .btn-l {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            padding: 0;
+            color: var(--ink-soft);
+        }
+
+        .btn-l .cap3d {
+            width: 40px;
+            height: 40px;
+            border-radius: 7px;
+            background: linear-gradient(180deg, hsl(230 6% 17%), hsl(230 6% 12%));
+            border: 1px solid rgba(255, 255, 255, .08);
+            box-shadow: 0 3px 0 hsl(230 6% 8%), 0 4px 8px rgba(0, 0, 0, .3);
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+            color: var(--k-n-tx);
+            transition: all .12s ease;
+        }
+
+        .btn-l .cap3d-label {
+            font-size: 13px;
+            color: var(--ink-muted);
+            transition: color .2s;
+        }
+
+        .btn-l:hover .cap3d {
+            background: linear-gradient(180deg, hsl(210 45% 34%), hsl(210 50% 26%));
+            border-color: rgba(100, 170, 255, .2);
+            color: var(--k-la-tx);
+            box-shadow: 0 3px 0 hsl(210 40% 16%), 0 4px 12px rgba(0, 0, 0, .4), 0 0 12px var(--accent-glow);
+            transform: translateY(-1px);
+        }
+
+        .btn-l:active .cap3d {
+            box-shadow: 0 1px 0 hsl(210 40% 16%), 0 2px 4px rgba(0, 0, 0, .3);
+            transform: translateY(2px);
+        }
+
+        .btn-l:hover .cap3d-label {
+            color: var(--ink-soft);
+        }
+
+        /* ===== M: Breadcrumb Progress ===== */
+        .btn-m-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-m {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: var(--k-n-bg);
+            border: none;
+            color: var(--k-n-tx);
+            display: grid;
+            place-items: center;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all .2s;
+        }
+
+        .btn-m:hover {
+            background: var(--k-la-bg);
+            color: var(--k-la-tx);
+            box-shadow: 0 0 10px var(--glow-blue);
+        }
+
+        .btn-m-dots {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .btn-m-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .12);
+            transition: all .2s;
+        }
+
+        .btn-m-dot.current {
+            width: 20px;
+            border-radius: 3px;
+            background: var(--accent);
+        }
+
+        /* ===== N: Tray Slider ===== */
+        .btn-n-wrap {
+            display: flex;
+            align-items: center;
+            background: var(--k-n-bg);
+            border-radius: 10px;
+            padding: 4px;
+            gap: 2px;
+        }
+
+        .btn-n {
+            height: 36px;
+            border-radius: 8px;
+            background: none;
+            border: none;
+            color: var(--k-n-tx);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 0 14px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            transition: all .2s;
+        }
+
+        .btn-n .n-key {
+            width: 22px;
+            height: 22px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, .04);
+            display: grid;
+            place-items: center;
+            font-size: 12px;
+            transition: all .2s;
+        }
+
+        .btn-n:hover {
+            background: rgba(255, 255, 255, .05);
+            color: var(--accent-bright);
+        }
+
+        .btn-n:hover .n-key {
+            background: var(--accent-dim);
+            color: var(--accent-bright);
+        }
+
+        .btn-n-sep {
+            width: 1px;
+            height: 18px;
+            background: rgba(255, 255, 255, .06);
+        }
+
+        .btn-n-center {
+            font-size: 11px;
+            color: var(--ink-muted);
+            padding: 0 8px;
+            white-space: nowrap;
+        }
+
+        /* ===== O: Neon Outline ===== */
+        .btn-o {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: 1px solid rgba(100, 170, 255, .2);
+            border-radius: 8px;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--accent);
+            transition: all .25s ease;
+            text-shadow: 0 0 8px rgba(100, 170, 255, .2);
+        }
+
+        .btn-o .o-key {
+            width: 26px;
+            height: 26px;
+            border: 1px solid rgba(100, 170, 255, .25);
+            border-radius: 5px;
+            display: grid;
+            place-items: center;
+            font-size: 13px;
+            background: rgba(100, 170, 255, .05);
+            transition: all .25s;
+        }
+
+        .btn-o:hover {
+            border-color: rgba(100, 170, 255, .5);
+            color: var(--accent-bright);
+            background: rgba(100, 170, 255, .06);
+            box-shadow: 0 0 20px rgba(100, 170, 255, .15), inset 0 0 20px rgba(100, 170, 255, .05);
+            text-shadow: 0 0 12px rgba(100, 170, 255, .4);
+        }
+
+        .btn-o:hover .o-key {
+            border-color: rgba(100, 170, 255, .5);
+            background: rgba(100, 170, 255, .12);
+            box-shadow: 0 0 10px rgba(100, 170, 255, .25);
+        }
+
+        /* ===== P: Typewriter Strike ===== */
+        .btn-p {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            padding: 0;
+            color: var(--ink-soft);
+            font-size: 14px;
+            position: relative;
+        }
+
+        .btn-p .p-cap {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--k-n-bg);
+            border: 2px solid rgba(255, 255, 255, .08);
+            display: grid;
+            place-items: center;
+            font-size: 14px;
+            color: var(--k-n-tx);
+            transition: all .15s ease;
+        }
+
+        .btn-p:hover .p-cap {
+            background: var(--k-la-bg);
+            border-color: rgba(100, 170, 255, .3);
+            color: var(--k-la-tx);
+            box-shadow: 0 0 14px var(--accent-glow);
+            transform: scale(1.1);
+        }
+
+        .btn-p .p-label {
+            font-size: 12px;
+            color: var(--ink-muted);
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            transition: color .2s;
+        }
+
+        .btn-p:hover .p-label {
+            color: var(--accent);
+        }
+
+        /* ===== Q: Magnetic Hover ===== */
+        .btn-q-wrap {
+            display: flex;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .btn-q {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--k-n-bg);
+            border: none;
+            color: var(--k-n-tx);
+            display: grid;
+            place-items: center;
+            font-size: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all .3s cubic-bezier(.2, 0, 0, 1);
+            position: relative;
+        }
+
+        .btn-q::before {
+            content: "";
+            position: absolute;
+            inset: -6px;
+            border-radius: 16px;
+            border: 1px solid transparent;
+            transition: border-color .3s;
+        }
+
+        .btn-q:hover {
+            background: var(--k-la-bg);
+            color: var(--k-la-tx);
+            transform: scale(1.15);
+            box-shadow: 0 0 24px var(--accent-glow), 0 8px 32px rgba(0, 0, 0, .4);
+        }
+
+        .btn-q:hover::before {
+            border-color: rgba(100, 170, 255, .15);
+        }
+
+        .btn-q:active {
+            transform: scale(.95);
+            box-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        /* ===== R: Minimal Dash ===== */
+        .btn-r-wrap {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-r {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            padding: 6px 0;
+            color: var(--ink-muted);
+            font-size: 13px;
+            position: relative;
+            transition: color .2s;
+        }
+
+        .btn-r::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--ink-muted);
+            opacity: .3;
+            transition: all .2s;
+        }
+
+        .btn-r:hover {
+            color: var(--accent-bright);
+        }
+
+        .btn-r:hover::after {
+            background: var(--accent);
+            opacity: .6;
+        }
+
+        .btn-r .r-key {
+            font-size: 14px;
+            transition: transform .2s;
+        }
+
+        .btn-r:hover .r-key-l {
+            transform: translateX(-3px);
+        }
+
+        .btn-r:hover .r-key-r {
+            transform: translateX(3px);
+        }
+
+        .btn-r-sep {
+            color: var(--ink-muted);
+            font-size: 11px;
+            opacity: .4;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>「← 前 / 次へ →」ボタン — デザインサンプル v2</h1>
+    <p class="subtitle">全パターン prev + next ペア ／ 正方形キー ／ 明るめカラー</p>
+
+    <div class="grid">
+
+        <!-- A: Text Link -->
+        <div class="card">
+            <span class="card-label">A — Text Link + Slide</span>
+            <div class="demo-area">
+                <div class="pair">
+                    <button class="btn-a"><span class="arrow arrow-l">←</span> 前 <kbd>←</kbd></button>
+                    <button class="btn-a"><kbd>→</kbd> 次へ <span class="arrow arrow-r">→</span></button>
+                </div>
+            </div>
+            <span class="card-desc">枠なし。ホバーで矢印がスライド</span>
+        </div>
+
+        <!-- B: Pill -->
+        <div class="card">
+            <span class="card-label">B — Pill Accent</span>
+            <div class="demo-area">
+                <div class="pair">
+                    <button class="btn-b"><kbd>←</kbd> 前</button>
+                    <button class="btn-b">次へ <kbd>→</kbd></button>
+                </div>
+            </div>
+            <span class="card-desc">丸い背景付き。アクセントカラー</span>
+        </div>
+
+        <!-- C: Circle -->
+        <div class="card">
+            <span class="card-label">C — Icon Circle</span>
+            <div class="demo-area">
+                <div class="pair-wide">
+                    <button class="btn-c"><span class="chevron chev-l">‹</span></button>
+                    <button class="btn-c"><span class="chevron chev-r">›</span></button>
+                </div>
+            </div>
+            <span class="card-desc">矢印だけ。ミニマル</span>
+        </div>
+
+        <!-- D: Keycap Single -->
+        <div class="card">
+            <span class="card-label">D — Keycap Single</span>
+            <div class="demo-area">
+                <div class="pair-wide">
+                    <button class="btn-d">
+                        <span class="label">前</span>
+                        <div class="keycap">←</div>
+                    </button>
+                    <button class="btn-d">
+                        <div class="keycap">→</div>
+                        <span class="label">次へ</span>
+                    </button>
+                </div>
+            </div>
+            <span class="card-desc">正方形キーキャップ。世界観統一</span>
+        </div>
+
+        <!-- E: Ghost + Badge -->
+        <div class="card">
+            <span class="card-label">E — Ghost + Key Badge</span>
+            <div class="demo-area">
+                <div class="pair">
+                    <button class="btn-e">
+                        <span class="key-badge">←</span>
+                        <span class="text">前</span>
+                    </button>
+                    <button class="btn-e">
+                        <span class="text">次へ</span>
+                        <span class="key-badge">→</span>
+                    </button>
+                </div>
+            </div>
+            <span class="card-desc">現状の発展形。キーバッジで操作を示唆</span>
+        </div>
+
+        <!-- F: Dual Keycap -->
+        <div class="card">
+            <span class="card-label">F — Dual Keycap</span>
+            <div class="demo-area">
+                <div class="pair-wide">
+                    <button class="btn-f">
+                        <div class="cap">←</div>
+                        <div class="cap">前</div>
+                    </button>
+                    <button class="btn-f">
+                        <div class="cap">次</div>
+                        <div class="cap">→</div>
+                    </button>
+                </div>
+            </div>
+            <span class="card-desc">2つのキーで表現。正方形</span>
+        </div>
+
+        <!-- G: Floating Chevron -->
+        <div class="card">
+            <span class="card-label">G — Floating Chevron</span>
+            <div class="demo-area">
+                <div class="btn-g-wrap">
+                    <button class="btn-g">
+                        <svg class="svg-l" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6" />
+                        </svg>
+                    </button>
+                    <button class="btn-g">
+                        <svg class="svg-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <span class="card-desc">両端に浮遊。パルスアニメ</span>
+        </div>
+
+        <!-- H: Keyboard Row -->
+        <div class="card">
+            <span class="card-label">H — Keyboard Row</span>
+            <div class="demo-area">
+                <div class="pair">
+                    <button class="btn-h">
+                        <div class="mini-key arrow-key">←</div>
+                        <div class="mini-key next-key">前</div>
+                    </button>
+                    <button class="btn-h">
+                        <div class="mini-key next-key">次へ</div>
+                        <div class="mini-key arrow-key">→</div>
+                    </button>
+                </div>
+            </div>
+            <span class="card-desc">キーボード行のミニチュア。→だけ光る</span>
+        </div>
+
+        <!-- I: Press to Continue -->
+        <div class="card">
+            <span class="card-label">I — Press to Continue</span>
+            <div class="demo-area">
+                <div class="pair-wide">
+                    <button class="btn-i">
+                        <span class="press-key">←</span>
+                    </button>
+                    <button class="btn-i">
+                        <span class="press-key">→</span>
+                        <span>press</span>
+                    </button>
+                </div>
+            </div>
+            <span class="card-desc">正方形キー。呼吸アニメ</span>
+        </div>
+
+        <!-- J: Glass Morphism -->
+        <div class="card">
+            <span class="card-label">J — Glass Morphism</span>
+            <div class="demo-area">
+                <div class="pair">
+                    <button class="btn-j">
+                        <span class="glass-key">←</span>
+                        <span>前</span>
+                    </button>
+                    <button class="btn-j">
+                        <span>次へ</span>
+                        <span class="glass-key">→</span>
+                    </button>
+                </div>
+            </div>
+            <span class="card-desc">すりガラス風。キーが浮かぶ</span>
+        </div>
+
+        <!-- K: Split Zones -->
+        <div class="card">
+            <span class="card-label">K — Split Zones</span>
+            <div class="demo-area">
+                <div class="btn-k-wrap">
+                    <button class="btn-k btn-k-prev">
+                        <span class="k-inner"><span class="k-arrow">←</span> 前</span>
+                    </button>
+                    <div class="btn-k-divider"></div>
+                    <button class="btn-k btn-k-next">
+                        <span class="k-inner">次へ <span class="k-arrow">→</span></span>
+                    </button>
+                </div>
+            </div>
+            <span class="card-desc">左右分割エリア。グラデーションで方向を示す</span>
+        </div>
+
+        <!-- L: 3D Keycap -->
+        <div class="card">
+            <span class="card-label">L — 3D Keycap</span>
+            <div class="demo-area">
+                <div class="pair-wide">
+                    <button class="btn-l">
+                        <span class="cap3d-label">前</span>
+                        <div class="cap3d">←</div>
+                    </button>
+                    <button class="btn-l">
+                        <div class="cap3d">→</div>
+                        <span class="cap3d-label">次へ</span>
+                    </button>
+                </div>
+            </div>
+            <span class="card-desc">3D押下感。shadow で奥行き表現</span>
+        </div>
+
+        <!-- M: Breadcrumb + Arrows -->
+        <div class="card">
+            <span class="card-label">M — Breadcrumb Progress</span>
+            <div class="demo-area">
+                <div class="btn-m-wrap">
+                    <button class="btn-m">←</button>
+                    <div class="btn-m-dots">
+                        <div class="btn-m-dot"></div>
+                        <div class="btn-m-dot"></div>
+                        <div class="btn-m-dot current"></div>
+                        <div class="btn-m-dot"></div>
+                        <div class="btn-m-dot"></div>
+                    </div>
+                    <button class="btn-m">→</button>
+                </div>
+            </div>
+            <span class="card-desc">ドットインジケーター付き。プログレス兼ナビ</span>
+        </div>
+
+        <!-- N: Tray Slider -->
+        <div class="card">
+            <span class="card-label">N — Tray Slider</span>
+            <div class="demo-area">
+                <div class="btn-n-wrap">
+                    <button class="btn-n"><span class="n-key">←</span> 前</button>
+                    <div class="btn-n-sep"></div>
+                    <span class="btn-n-center">3 / 18</span>
+                    <div class="btn-n-sep"></div>
+                    <button class="btn-n">次へ <span class="n-key">→</span></button>
+                </div>
+            </div>
+            <span class="card-desc">トレイ型。ページ番号も表示</span>
+        </div>
+
+        <!-- O: Neon Outline -->
+        <div class="card">
+            <span class="card-label">O — Neon Outline</span>
+            <div class="demo-area">
+                <div class="pair">
+                    <button class="btn-o">
+                        <span class="o-key">←</span>
+                        前
+                    </button>
+                    <button class="btn-o">
+                        次へ
+                        <span class="o-key">→</span>
+                    </button>
+                </div>
+            </div>
+            <span class="card-desc">ネオングロー。サイバー感</span>
+        </div>
+
+        <!-- P: Typewriter Strike -->
+        <div class="card">
+            <span class="card-label">P — Typewriter Circle</span>
+            <div class="demo-area">
+                <div class="pair-wide">
+                    <button class="btn-p">
+                        <span class="p-label">prev</span>
+                        <div class="p-cap">←</div>
+                    </button>
+                    <button class="btn-p">
+                        <div class="p-cap">→</div>
+                        <span class="p-label">next</span>
+                    </button>
+                </div>
+            </div>
+            <span class="card-desc">丸型キー。タイプライター風</span>
+        </div>
+
+        <!-- Q: Magnetic Hover -->
+        <div class="card">
+            <span class="card-label">Q — Magnetic Scale</span>
+            <div class="demo-area">
+                <div class="btn-q-wrap">
+                    <button class="btn-q">←</button>
+                    <button class="btn-q">→</button>
+                </div>
+            </div>
+            <span class="card-desc">大きめ正方形。ホバーで磁石のように吸い寄せ拡大</span>
+        </div>
+
+        <!-- R: Minimal Dash -->
+        <div class="card">
+            <span class="card-label">R — Minimal Underline</span>
+            <div class="demo-area">
+                <div class="btn-r-wrap">
+                    <button class="btn-r"><span class="r-key r-key-l">←</span> 前</button>
+                    <span class="btn-r-sep">/</span>
+                    <button class="btn-r">次へ <span class="r-key r-key-r">→</span></button>
+                </div>
+            </div>
+            <span class="card-desc">下線のみ。最も控えめ</span>
+        </div>
+
+    </div>
+
+    <!-- ===== SELECTED: Site-Native Key Design ===== -->
+    <h2
+        style="text-align:center; font-size:18px; font-weight:600; color:var(--accent); margin:56px 0 8px; letter-spacing:.04em;">
+        ★ 採用候補：サイト内キーデザイン流用</h2>
+    <p class="subtitle" style="margin-bottom:32px;">yamato サイトの .key.st-n と同じデザインを小さくしたもの。3つのページ状態を表示</p>
+
+    <div class="grid" style="max-width:1400px; margin:0 auto;">
+
+        <!-- S1: First page (next only) -->
+        <div class="card" style="border-color: rgba(100,170,255,.15);">
+            <span class="card-label">S — 最初のページ（次へ のみ）</span>
+            <div class="demo-area">
+                <div class="s-nav">
+                    <div class="s-spacer"></div>
+                    <button class="s-btn">
+                        <div class="s-key">→</div>
+                    </button>
+                </div>
+            </div>
+            <span class="card-desc">最初のページ。→ キーだけ表示</span>
+        </div>
+
+        <!-- S2: Middle page (both) -->
+        <div class="card" style="border-color: rgba(100,170,255,.15);">
+            <span class="card-label">S — 中間ページ（前 / 次へ）</span>
+            <div class="demo-area">
+                <div class="s-nav">
+                    <button class="s-btn">
+                        <div class="s-key">←</div>
+                    </button>
+                    <button class="s-btn">
+                        <div class="s-key">→</div>
+                    </button>
+                </div>
+            </div>
+            <span class="card-desc">中間ページ。両方向キー表示</span>
+        </div>
+
+        <!-- S3: Last page (prev only) -->
+        <div class="card" style="border-color: rgba(100,170,255,.15);">
+            <span class="card-label">S — 最後のページ（前 のみ）</span>
+            <div class="demo-area">
+                <div class="s-nav">
+                    <button class="s-btn">
+                        <div class="s-key">←</div>
+                    </button>
+                    <div class="s-spacer"></div>
+                </div>
+            </div>
+            <span class="card-desc">最後のページ。← キーだけ表示</span>
+        </div>
+
+    </div>
+
+    <style>
+        /* ===== S: Site-Native Key (yamato .key.st-n replica, smaller) ===== */
+        .s-nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .s-spacer {
+            width: 36px;
+            height: 36px;
+        }
+
+        .s-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            display: grid;
+            place-items: center;
+        }
+
+        .s-key {
+            /* Exact replica of .key.st-n from yamato.css, ~70% scale */
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            background: hsl(230 5% 12%);
+            /* --k-n-bg from site */
+            color: hsl(230 5% 32%);
+            /* --k-n-tx from site */
+            display: grid;
+            place-items: center;
+            font-family: "Outfit", sans-serif;
+            font-size: 15px;
+            font-weight: 400;
+            line-height: 1;
+            border: none;
+            box-shadow: none;
+            transition: all 160ms ease;
+            /* same transition as site */
+        }
+
+        .s-btn:hover .s-key {
+            background: hsl(210 55% 27%);
+            /* --k-la-bg from site */
+            color: hsl(210 60% 88%);
+            /* --k-la-tx from site */
+            box-shadow: 0 0 14px hsla(210, 55%, 55%, .35);
+            /* --glow-blue from site */
+            transform: scale(1.08);
+        }
+    </style>
+
+</body>
+
+</html>

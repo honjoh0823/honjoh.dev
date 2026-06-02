@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESIGN 21 // CHAT ANIMATIONS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0c0a08;
+            --fg: #d5cbb8;
+            --dim: #6b6050;
+            --accent: #e8c47c;
+            --accent-dim: rgba(232, 196, 124, 0.15);
+            --border: #1e1a14;
+            --font: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: var(--font);
+            font-size: 14px;
+            min-height: 100vh;
+            padding: 2rem 3rem;
+        }
+
+        .proposal-title {
+            font-size: 0.7rem;
+            color: #4a4030;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .proposal-label {
+            font-size: 0.65rem;
+            color: var(--accent);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            opacity: 0.6;
+        }
+
+        .proposal-note {
+            font-size: 0.75rem;
+            color: var(--dim);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            padding: 0.8rem 1rem;
+            border-left: 2px solid var(--border);
+        }
+
+        .mockup-frame {
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            margin-bottom: 3rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .mockup-frame::before {
+            content: '';
+            position: absolute;
+            top: 40%;
+            left: 30%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(232, 196, 124, 0.025) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .mockup-inner {
+            display: flex;
+            flex-direction: column;
+            height: 560px;
+            padding: 3rem 4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .site-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.12em;
+            color: #ede4d0;
+        }
+
+        .tagline {
+            color: var(--dim);
+            font-size: 0.8rem;
+            font-weight: 300;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 1rem;
+        }
+
+        .bc-line {
+            margin-bottom: 2rem;
+            font-size: 0.8rem;
+            color: var(--dim);
+        }
+
+        .hint-bar {
+            margin-top: 0.6rem;
+            font-size: 0.7rem;
+            color: #4a4030;
+            display: flex;
+            gap: 2ch;
+        }
+
+        .hint-bar kbd {
+            display: inline-block;
+            padding: 0 4px;
+            border: 1px solid #2a2418;
+            border-radius: 2px;
+            color: #5a503e;
+            font-family: inherit;
+            font-size: inherit;
+            margin: 0 0.3ch;
+            background: rgba(232, 196, 124, 0.03);
+        }
+
+        .chat-log {
+            flex: 1;
+            overflow-y: auto;
+            max-width: 60ch;
+        }
+
+        .chat-log::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-log::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-log::-webkit-scrollbar-thumb {
+            background: #2a2418;
+            border-radius: 2px;
+        }
+
+        .welcome {
+            color: var(--dim);
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .welcome .a {
+            color: var(--accent);
+        }
+
+        .entry {
+            line-height: 1.7;
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+            opacity: 0;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        .entry.u::before {
+            content: '❯ ';
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .entry.u {
+            color: var(--fg);
+        }
+
+        .entry.ai {
+            color: var(--dim);
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Typing indicator - non-verbal, three dots */
+        .typing {
+            display: inline-flex;
+            gap: 5px;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            opacity: 0;
+            animation: fadeIn 0.2s forwards;
+        }
+
+        .typing .dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: dotPulse 1.4s ease-in-out infinite;
+        }
+
+        .typing .dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes dotPulse {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .prompt-area {
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1ch;
+            max-width: 60ch;
+        }
+
+        .prompt-area .ps {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .prompt-area input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--fg);
+            font-family: var(--font);
+            font-size: 14px;
+            caret-color: var(--accent);
+        }
+
+        .prompt-area input::placeholder {
+            color: #3d3628;
+        }
+
+        /* Button for demo control */
+        .demo-control {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 0.8rem 1.2rem;
+            background: var(--accent-dim);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-family: var(--font);
+            font-size: 0.75rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+            z-index: 100;
+        }
+
+        .demo-control:hover {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        /* Speed variants */
+        .v1 .entry {
+            animation-duration: 0.2s;
+        }
+
+        .v2 .entry {
+            animation-duration: 0.5s;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="proposal-title">DESIGN 21 — CHAT ANIMATION STUDY</div>
+
+    <!-- ═══════════════════ V1: FAST ═══════════════════ -->
+    <div class="proposal-label">V1 — FAST (200ms fade-in)</div>
+    <div class="proposal-note">
+        即座に表示。スピード感重視。レスポンスが速い印象を与える。
+    </div>
+    <div class="mockup-frame">
+        <div class="mockup-inner">
+            <header>
+                <span class="site-name">HONJOH.DEV</span>
+                <span class="tagline">Honjoh Nobuhiro</span>
+            </header>
+            <div class="bc-line">honjoh.dev &gt; chat</div>
+            <div class="chat-log v1" id="log1">
+                <div class="welcome"><span class="a">honjoh.ai</span> — Honjoh Nobuhiro の AI です。お気軽にどうぞ。</div>
+            </div>
+            <div class="prompt-area">
+                <span class="ps">❯</span>
+                <input type="text" placeholder="ask anything..." id="input1">
+            </div>
+            <div class="hint-bar">
+                <span><kbd>Enter</kbd> send</span>
+                <span><kbd>←</kbd> back</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════ V2: MODERATE ═══════════════════ -->
+    <div class="proposal-label">V2 — MODERATE (500ms fade-in + non-verbal loading)</div>
+    <div class="proposal-note">
+        言語に依存しない3ドットのローディング表示。人間的なリズムを演出し、適度な待機感を与える。
+    </div>
+    <div class="mockup-frame">
+        <div class="mockup-inner">
+            <header>
+                <span class="site-name">HONJOH.DEV</span>
+                <span class="tagline">Honjoh Nobuhiro</span>
+            </header>
+            <div class="bc-line">honjoh.dev &gt; chat</div>
+            <div class="chat-log v2" id="log2">
+                <div class="welcome"><span class="a">honjoh.ai</span> — Honjoh Nobuhiro の AI です。お気軽にどうぞ。</div>
+            </div>
+            <div class="prompt-area">
+                <span class="ps">❯</span>
+                <input type="text" placeholder="ask anything..." id="input2">
+            </div>
+            <div class="hint-bar">
+                <span><kbd>Enter</kbd> send</span>
+                <span><kbd>←</kbd> back</span>
+            </div>
+        </div>
+    </div>
+
+
+
+    <button class="demo-control" onclick="runAllDemos()">▶ PLAY ALL DEMOS</button>
+
+    <div style="font-size: 0.6rem; color: #2a2418; text-align: right; margin-top: 1rem;">
+        Gemini 3 Pro — #21 CHAT ANIMATION STUDY
+    </div>
+
+    <script>
+        const sampleQ = "自己紹介をして";
+        const sampleA = "はじめまして。Honjoh Nobuhiro のAIアシスタントです。彼はソフトウェアエンジニアで、キーボード配列や自動化ツールの開発に取り組んでいます。";
+
+        // V1: Fast fade-in
+        async function demoV1() {
+            const log = document.getElementById('log1');
+            const input = document.getElementById('input1');
+
+            // Clear existing
+            const welcome = log.querySelector('.welcome');
+            log.innerHTML = '';
+            log.appendChild(welcome);
+
+            // User message
+            const userDiv = document.createElement('div');
+            userDiv.className = 'entry u';
+            userDiv.textContent = sampleQ;
+            log.appendChild(userDiv);
+
+            await sleep(800);
+
+            // AI response (fast)
+            const aiDiv = document.createElement('div');
+            aiDiv.className = 'entry ai';
+            aiDiv.textContent = sampleA;
+            log.appendChild(aiDiv);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // V2: Moderate with typing indicator
+        async function demoV2() {
+            const log = document.getElementById('log2');
+            const input = document.getElementById('input2');
+
+            const welcome = log.querySelector('.welcome');
+            log.innerHTML = '';
+            log.appendChild(welcome);
+
+            const userDiv = document.createElement('div');
+            userDiv.className = 'entry u';
+            userDiv.textContent = sampleQ;
+            log.appendChild(userDiv);
+
+            await sleep(800);
+
+            // Typing indicator with three dots
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'typing';
+            typingDiv.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+            log.appendChild(typingDiv);
+            log.scrollTop = log.scrollHeight;
+
+            await sleep(1200);
+
+            // Remove typing, show response
+            typingDiv.remove();
+            const aiDiv = document.createElement('div');
+            aiDiv.className = 'entry ai';
+            aiDiv.textContent = sampleA;
+            log.appendChild(aiDiv);
+            log.scrollTop = log.scrollHeight;
+        }
+
+
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function runAllDemos() {
+            await demoV1();
+            await sleep(2000);
+            await demoV2();
+        }
+
+        // Auto-play on load
+        window.addEventListener('load', () => {
+            setTimeout(runAllDemos, 1000);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,70 @@
+---
+interface Props {
+    path: string[];
+}
+
+const { path } = Astro.props;
+const breadcrumb = path.join(" > ");
+const isTopPage = path.length === 0;
+---
+
+<header class="page-header">
+    <div class="header-top">
+        <a href="/" class="site-name">honjoh.dev</a>
+        <span class="tagline"><span class="status-dot" aria-hidden="true"></span>Online</span>
+    </div>
+    <div class="bc-line">
+        {isTopPage ? "Nobuhiro Honjoh" : `> ${breadcrumb}`}
+    </div>
+</header>
+
+<style>
+    .page-header {
+        position: relative;
+        z-index: 1;
+    }
+
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 1rem;
+    }
+
+    .site-name {
+        font-weight: 700;
+        font-size: 1.1rem;
+        letter-spacing: 0.12em;
+        color: var(--fg-bright);
+        text-decoration: none;
+        border-bottom: none;
+    }
+
+    .site-name:hover {
+        color: var(--accent);
+        border-bottom: none;
+    }
+
+    .tagline {
+        color: var(--dim);
+        font-size: 0.8rem;
+        font-weight: 300;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5ch;
+    }
+
+    .status-dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: #39c26a;
+        box-shadow: 0 0 0 1px color-mix(in srgb, #39c26a 45%, transparent);
+    }
+
+    .bc-line {
+        font-size: 0.8rem;
+        color: var(--dim);
+        margin-bottom: 2rem;
+    }
+</style>

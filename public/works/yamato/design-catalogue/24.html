@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESIGN 27 // STEADY PROMPT</title>
+    <style>
+        :root {
+            --bg: #0c110d;
+            --fg: #d4dfd4;
+            --dim: #738678;
+            --accent: #9acaab;
+            --accent-dim: rgba(154, 202, 171, 0.12);
+            --line: #1d2820;
+            --font: "JetBrains Mono", "Cascadia Mono", "SFMono-Regular", monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: var(--font);
+            font-size: 14px;
+            line-height: 1.62;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 2.3rem 3.2rem;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            right: 10%;
+            top: 14%;
+            width: 42vw;
+            height: 42vw;
+            background: radial-gradient(circle, rgba(154, 202, 171, 0.09) 0%, rgba(154, 202, 171, 0) 68%);
+            pointer-events: none;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.9rem;
+            z-index: 1;
+        }
+
+        .brand {
+            letter-spacing: 0.12em;
+            font-weight: 700;
+        }
+
+        .state {
+            color: var(--dim);
+            font-size: 0.78rem;
+        }
+
+        .path {
+            color: var(--dim);
+            margin-bottom: 1.75rem;
+            z-index: 1;
+        }
+
+        main {
+            flex: 1;
+            max-width: 66ch;
+            z-index: 1;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            padding: 0.56rem 0.8rem;
+            cursor: pointer;
+            transition: background 0.14s ease;
+        }
+
+        .row.active {
+            background: var(--accent-dim);
+        }
+
+        .n {
+            width: 3ch;
+            color: var(--dim);
+            font-weight: 700;
+        }
+
+        .row.active .n,
+        .row.active .name {
+            color: var(--accent);
+        }
+
+        .name {
+            letter-spacing: 0.05em;
+            text-transform: lowercase;
+        }
+
+        .suffix {
+            margin-left: auto;
+            color: var(--dim);
+            font-size: 0.8rem;
+        }
+
+        .preview {
+            color: var(--dim);
+            padding: 1.05rem 0 0 calc(3ch + 0.8rem);
+            min-height: 3.2rem;
+        }
+
+        .micro-log {
+            margin-top: 0.55rem;
+            margin-left: calc(3ch + 0.8rem);
+            color: var(--dim);
+            font-size: 0.82rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.28rem;
+        }
+
+        .micro-log .u {
+            color: var(--fg);
+        }
+
+        .prompt {
+            margin-top: auto;
+            border-top: 1px solid var(--line);
+            padding-top: 0.9rem;
+            display: flex;
+            gap: 1ch;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .ps {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        #input {
+            flex: 1;
+            background: transparent;
+            border: 0;
+            outline: 0;
+            color: var(--fg);
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        #input::placeholder {
+            color: #5c7464;
+        }
+
+        .keys {
+            margin-top: 0.5rem;
+            color: #5c7464;
+            font-size: 0.72rem;
+            z-index: 1;
+        }
+
+        .tag {
+            position: fixed;
+            right: 1rem;
+            bottom: 0.72rem;
+            color: #304137;
+            font-size: 0.62rem;
+            z-index: 1;
+        }
+
+        @media (max-width: 720px) {
+            body {
+                padding: 1.2rem;
+                font-size: 13px;
+            }
+
+            .suffix {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">HONJOH.DEV</div>
+        <div class="state">STEADY PROMPT</div>
+    </header>
+
+    <div id="path" class="path">home &gt; works</div>
+
+    <main>
+        <ul id="menu">
+            <li class="row active" data-path="home > works" data-preview="Project list with concise intent and outcome." data-u="show your latest project" data-a="You can start with Yamato layout and move to tooling examples.">
+                <span class="n">1</span><span class="name">works</span><span class="suffix">projects</span>
+            </li>
+            <li class="row" data-path="home > articles" data-preview="Technical writing with practical emphasis." data-u="find article about layout design" data-a="I can suggest articles by topic and difficulty.">
+                <span class="n">2</span><span class="name">articles</span><span class="suffix">writing</span>
+            </li>
+            <li class="row" data-path="home > about" data-preview="A short profile written for clarity first." data-u="who is honjoh" data-a="Engineer and creator focusing on keyboard-first UX.">
+                <span class="n">3</span><span class="name">about</span><span class="suffix">profile</span>
+            </li>
+            <li class="row" data-path="home > chat" data-preview="Direct conversation mode with no transition." data-u="help me choose a keyboard layout" data-a="Tell me your language mix and I can suggest a starting point.">
+                <span class="n">4</span><span class="name">chat</span><span class="suffix">assistant</span>
+            </li>
+            <li class="row" data-path="home > setting" data-preview="Preferences to keep the shell personal." data-u="switch tone to concise" data-a="Applied. Responses will stay compact and practical.">
+                <span class="n">5</span><span class="name">setting</span><span class="suffix">config</span>
+            </li>
+        </ul>
+        <div id="preview" class="preview">Project list with concise intent and outcome.</div>
+        <div class="micro-log">
+            <div id="log-u" class="u">❯ show your latest project</div>
+            <div id="log-a">You can start with Yamato layout and move to tooling examples.</div>
+        </div>
+    </main>
+
+    <div class="prompt">
+        <span class="ps">❯</span>
+        <input id="input" type="text" placeholder="ask anything..." aria-label="chat input">
+    </div>
+    <div class="keys">j/k: move   1-5: jump   /: focus prompt   enter: send</div>
+    <div class="tag">GPT-5 Codex // #27</div>
+
+    <script>
+        const rows = [...document.querySelectorAll(".row")];
+        const pathEl = document.getElementById("path");
+        const previewEl = document.getElementById("preview");
+        const logU = document.getElementById("log-u");
+        const logA = document.getElementById("log-a");
+        const input = document.getElementById("input");
+        let index = 0;
+
+        function update(next) {
+            rows[index].classList.remove("active");
+            index = next;
+            const row = rows[index];
+            row.classList.add("active");
+            pathEl.textContent = row.dataset.path;
+            previewEl.textContent = row.dataset.preview;
+            logU.textContent = "❯ " + row.dataset.u;
+            logA.textContent = row.dataset.a;
+            if (document.activeElement !== input || input.value.trim() === "") {
+                input.value = row.dataset.u;
+            }
+        }
+
+        document.addEventListener("keydown", (e) => {
+            const nav = ["ArrowUp", "ArrowDown", "j", "k", "Escape", "/"];
+            if (document.activeElement === input && !nav.includes(e.key) && !/^[1-5]$/.test(e.key) && e.key !== "Enter") {
+                return;
+            }
+            if (e.key === "ArrowDown" || e.key === "j") {
+                e.preventDefault();
+                update((index + 1) % rows.length);
+            } else if (e.key === "ArrowUp" || e.key === "k") {
+                e.preventDefault();
+                update((index - 1 + rows.length) % rows.length);
+            } else if (/^[1-5]$/.test(e.key)) {
+                e.preventDefault();
+                update(Number(e.key) - 1);
+            } else if (e.key === "/" && document.activeElement !== input) {
+                e.preventDefault();
+                input.focus();
+            } else if (e.key === "Enter" && document.activeElement === input) {
+                e.preventDefault();
+                logU.textContent = "❯ " + input.value.trim();
+                logA.textContent = "Received. I will answer in this context.";
+            } else if (e.key === "Escape") {
+                input.blur();
+            }
+        });
+
+        rows.forEach((row, i) => {
+            row.addEventListener("mouseenter", () => update(i));
+            row.addEventListener("click", () => update(i));
+        });
+
+        update(0);
+    </script>
+</body>
+</html>

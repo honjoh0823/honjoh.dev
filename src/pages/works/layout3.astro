@@ -1,0 +1,994 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const yamatoMap: Record<string, string> = {
+  q: "M",
+  w: "Y",
+  e: "R",
+  r: "W",
+  t: "P",
+  y: "X",
+  u: "L",
+  i: "Q",
+  o: "C",
+  p: "'",
+  a: "K",
+  s: "S",
+  d: "T",
+  f: "N",
+  g: "H",
+  h: "F",
+  j: "A",
+  k: "O",
+  l: "I",
+  ";": "E",
+  z: "Z",
+  x: "D",
+  c: "B",
+  v: "G",
+  b: "J",
+  n: "V",
+  m: "U",
+  ",": "-",
+  ".": ",",
+  "/": ".",
+};
+
+const leftHandKeys = new Set([
+  "q",
+  "w",
+  "e",
+  "r",
+  "t",
+  "a",
+  "s",
+  "d",
+  "f",
+  "g",
+  "z",
+  "x",
+  "c",
+  "v",
+  "b",
+]);
+
+const stageNames = ["母音", "ホーム", "行ごと"];
+
+const drills = [
+  { stage: 0, display: "あ い う え お", romaji: "AIUEO" },
+  { stage: 1, display: "あ お い え  あ お い え", romaji: "AOIEAOIE" },
+  { stage: 2, display: "か さ た な  は ま", romaji: "KASATANAHAMA" },
+];
+
+const toneLevel = {
+  vowel: new Set(["A", "I", "U", "E", "O"]),
+  core: new Set(["K", "S", "T", "N", "H", "M", "Y", "R", "W"]),
+  punch: new Set(["P"]),
+  voiced: new Set(["Z", "D", "B", "G", "J", "V"]),
+};
+
+function yamatoTone(y: string) {
+  if (toneLevel.voiced.has(y)) return 1;
+  if (toneLevel.punch.has(y)) return 2;
+  if (toneLevel.core.has(y)) return 3;
+  if (toneLevel.vowel.has(y)) return 4;
+  return 2;
+}
+
+function mappedKey(q: string) {
+  const y = yamatoMap[q] ?? "";
+  const isMapped = y.length > 0;
+  return {
+    type: isMapped ? "mapped" : "plain",
+    q,
+    y,
+    tone: isMapped ? yamatoTone(y) : 2,
+    side: leftHandKeys.has(q) ? "left" : "right",
+  };
+}
+
+const keyboardRows = [
+  {
+    class: "row-1",
+    keys: [
+      mappedKey("q"),
+      mappedKey("w"),
+      mappedKey("e"),
+      mappedKey("r"),
+      mappedKey("t"),
+      mappedKey("y"),
+      mappedKey("u"),
+      mappedKey("i"),
+      mappedKey("o"),
+      mappedKey("p"),
+      mappedKey("["),
+      mappedKey("]"),
+    ],
+  },
+  {
+    class: "row-2",
+    keys: [
+      mappedKey("a"),
+      mappedKey("s"),
+      mappedKey("d"),
+      mappedKey("f"),
+      mappedKey("g"),
+      mappedKey("h"),
+      mappedKey("j"),
+      mappedKey("k"),
+      mappedKey("l"),
+      mappedKey(";"),
+      mappedKey("'"),
+    ],
+  },
+  {
+    class: "row-3",
+    keys: [
+      mappedKey("z"),
+      mappedKey("x"),
+      mappedKey("c"),
+      mappedKey("v"),
+      mappedKey("b"),
+      mappedKey("n"),
+      mappedKey("m"),
+      mappedKey(","),
+      mappedKey("."),
+      mappedKey("/"),
+    ],
+  },
+];
+
+const firstDrill = drills[0];
+---
+
+<Layout
+  title="layout3 mood sample | honjoh.dev"
+  description="大和配列 layout3 の雰囲気検証用モック。"
+>
+  <main class="layout3" id="layout3">
+    <section class="stage-card" aria-label="Yamato layout typing sample">
+      <header class="hero">
+        <p class="hero-sub">日本語のための配列</p>
+        <h1>大和配列</h1>
+        <p class="hero-claim">1ヶ月の習得で、入力速度は2倍へ。</p>
+      </header>
+
+      <section class="stage-line" aria-label="practice stages">
+        {
+          stageNames.map((name, idx) => (
+            <span class={`stage-chip ${idx === firstDrill.stage ? "is-current" : ""}`}>
+              {name}
+            </span>
+          ))
+        }
+      </section>
+
+      <section class="prompt-style-line" aria-label="prompt style selector">
+        <button class="prompt-style-btn is-active" data-style="focus" type="button">1 Focus</button>
+        <button class="prompt-style-btn" data-style="rail" type="button">2 Rail</button>
+        <button class="prompt-style-btn" data-style="stack" type="button">3 Stack</button>
+        <button class="prompt-style-btn" data-style="beat" type="button">4 Beat</button>
+      </section>
+
+      <section class="prompt-stage" id="prompt-stage" data-style="focus" aria-live="polite">
+        <article class="prompt-box mode-focus is-active" data-panel="focus">
+          <p class="focus-ja" id="focus-ja">{firstDrill.display}</p>
+          <p class="focus-ro">
+            <span id="focus-done" class="focus-done"></span><span id="focus-cursor" class="focus-cursor">A</span><span
+              id="focus-left"
+              class="focus-left"
+            >IUEO</span>
+          </p>
+        </article>
+
+        <article class="prompt-box mode-rail" data-panel="rail">
+          <p class="rail-ja" id="rail-ja">{firstDrill.display}</p>
+          <div class="rail-body">
+            <div class="rail-progress">
+              <span id="rail-fill"></span>
+            </div>
+            <p class="rail-ro" id="rail-ro">AIUEO</p>
+          </div>
+        </article>
+
+        <article class="prompt-box mode-stack" data-panel="stack">
+          <div class="stack-ja-card">
+            <p class="stack-ja" id="stack-ja">{firstDrill.display}</p>
+          </div>
+          <div class="stack-ro-card">
+            <span id="stack-done" class="stack-done"></span><span id="stack-cursor" class="stack-cursor">A</span><span
+              id="stack-left"
+              class="stack-left"
+            >IUEO</span>
+          </div>
+        </article>
+
+        <article class="prompt-box mode-beat" data-panel="beat">
+          <p class="beat-ja" id="beat-ja">{firstDrill.display}</p>
+          <p class="beat-ro" id="beat-ro">AIUEO</p>
+          <div class="beat-dots" id="beat-dots"></div>
+        </article>
+      </section>
+
+      <section class="keyboard-shell" aria-label="keyboard guide">
+        {
+          keyboardRows.map((row) => (
+            <div class={`kb-row ${row.class}`}>
+              {row.keys.map((key) => (
+                <div
+                  class={`kb-key ${key.type === "mapped" ? "is-mapped" : "is-plain"} is-${key.side} ${key.type === "mapped" ? `tone-${key.tone}` : ""}`}
+                  data-qwerty={key.q}
+                  data-yamato={key.type === "mapped" ? key.y : undefined}
+                >
+                  {key.type === "mapped" ? (
+                    <>
+                      <span class="key-y">{key.y}</span>
+                      <span class="key-q">{key.q.toUpperCase()}</span>
+                    </>
+                  ) : (
+                    <span class="key-label">{key.q}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          ))
+        }
+      </section>
+
+      <footer class="mini-stats" aria-label="minimal stats">
+        <p>正打 <span id="stat-correct">00</span></p>
+        <p>ミス <span id="stat-miss">00</span></p>
+      </footer>
+
+      <p class="toast" id="toast" hidden>clear</p>
+    </section>
+  </main>
+</Layout>
+
+<script define:vars={{ drills, yamatoMap }}>
+  const promptStage = document.getElementById("prompt-stage");
+  const styleButtons = Array.from(document.querySelectorAll(".prompt-style-btn"));
+  const stylePanels = Array.from(document.querySelectorAll(".prompt-box[data-panel]"));
+
+  const focusJa = document.getElementById("focus-ja");
+  const focusDone = document.getElementById("focus-done");
+  const focusCursor = document.getElementById("focus-cursor");
+  const focusLeft = document.getElementById("focus-left");
+
+  const railJa = document.getElementById("rail-ja");
+  const railFill = document.getElementById("rail-fill");
+  const railRo = document.getElementById("rail-ro");
+
+  const stackJa = document.getElementById("stack-ja");
+  const stackDone = document.getElementById("stack-done");
+  const stackCursor = document.getElementById("stack-cursor");
+  const stackLeft = document.getElementById("stack-left");
+
+  const beatJa = document.getElementById("beat-ja");
+  const beatRo = document.getElementById("beat-ro");
+  const beatDots = document.getElementById("beat-dots");
+
+  const statCorrect = document.getElementById("stat-correct");
+  const statMiss = document.getElementById("stat-miss");
+  const toast = document.getElementById("toast");
+  const stageChips = Array.from(document.querySelectorAll(".stage-chip"));
+  const keys = Array.from(document.querySelectorAll(".kb-key.is-mapped"));
+
+  const reverseMap = {};
+  for (const [qwerty, yamato] of Object.entries(yamatoMap)) {
+    reverseMap[yamato.toUpperCase()] = qwerty;
+  }
+
+  let drillIndex = 0;
+  let charIndex = 0;
+  let correct = 0;
+  let miss = 0;
+  let waitingNext = false;
+  let promptStyle = "focus";
+
+  function currentDrill() {
+    return drills[drillIndex];
+  }
+
+  function romajiRaw() {
+    return currentDrill().romaji.replace(/\s+/g, "").toUpperCase();
+  }
+
+  function clearKeyState() {
+    keys.forEach((key) => {
+      key.classList.remove("is-next");
+      key.classList.remove("is-hit");
+      key.classList.remove("is-miss");
+    });
+  }
+
+  function keyByQwerty(qwerty) {
+    return keys.find((key) => key.dataset.qwerty === qwerty);
+  }
+
+  function formatCount(value) {
+    return String(value).padStart(2, "0");
+  }
+
+  function updateStats() {
+    statCorrect.textContent = formatCount(correct);
+    statMiss.textContent = formatCount(miss);
+  }
+
+  function updatePrompt() {
+    const romaji = romajiRaw();
+    const safeIndex = Math.min(charIndex, romaji.length);
+    const done = romaji.slice(0, safeIndex);
+    const cursor = romaji[safeIndex] ?? "";
+    const left = romaji.slice(safeIndex + 1);
+    const display = currentDrill().display;
+
+    focusJa.textContent = display;
+    focusDone.textContent = done;
+    focusCursor.textContent = cursor;
+    focusLeft.textContent = left;
+
+    railJa.textContent = display;
+    railRo.innerHTML = romaji
+      .split("")
+      .map((char, idx) => {
+        const state = idx < safeIndex ? "is-done" : idx === safeIndex ? "is-current" : "";
+        return `<span class="rail-char ${state}">${char}</span>`;
+      })
+      .join("");
+    const ratio = romaji.length > 0 ? Math.min(safeIndex / romaji.length, 1) : 0;
+    railFill.style.width = `${ratio * 100}%`;
+
+    stackJa.textContent = display;
+    stackDone.textContent = done;
+    stackCursor.textContent = cursor;
+    stackLeft.textContent = left;
+
+    beatJa.textContent = display;
+    beatRo.innerHTML = romaji
+      .split("")
+      .map((char, idx) => {
+        const state = idx < safeIndex ? "is-done" : idx === safeIndex ? "is-current" : "";
+        return `<span class="beat-char ${state}">${char}</span>`;
+      })
+      .join("");
+    beatDots.innerHTML = romaji
+      .split("")
+      .map((_, idx) => {
+        const state = idx < safeIndex ? "is-done" : idx === safeIndex ? "is-current" : "";
+        return `<span class="beat-dot ${state}"></span>`;
+      })
+      .join("");
+  }
+
+  function setPromptStyle(nextStyle) {
+    promptStyle = nextStyle;
+    promptStage.dataset.style = nextStyle;
+    styleButtons.forEach((button) => {
+      const active = button.dataset.style === nextStyle;
+      button.classList.toggle("is-active", active);
+    });
+    stylePanels.forEach((panel) => {
+      panel.classList.toggle("is-active", panel.dataset.panel === nextStyle);
+    });
+  }
+
+  function updateStage() {
+    const stage = currentDrill().stage;
+    stageChips.forEach((chip, idx) => {
+      chip.classList.toggle("is-current", idx === stage);
+    });
+  }
+
+  function markNextKey() {
+    keys.forEach((key) => key.classList.remove("is-next"));
+    const romaji = romajiRaw();
+    const nextChar = romaji[charIndex];
+    if (!nextChar) return;
+    const nextQwerty = reverseMap[nextChar];
+    if (!nextQwerty) return;
+    const nextKey = keyByQwerty(nextQwerty);
+    if (nextKey) nextKey.classList.add("is-next");
+  }
+
+  function flashKey(qwerty, className, duration = 140) {
+    const key = keyByQwerty(qwerty);
+    if (!key) return;
+    key.classList.add(className);
+    window.setTimeout(() => key.classList.remove(className), duration);
+  }
+
+  function showToast(text) {
+    toast.textContent = text;
+    toast.hidden = false;
+    window.setTimeout(() => {
+      toast.hidden = true;
+    }, 850);
+  }
+
+  function loadDrill(nextIndex) {
+    drillIndex = (nextIndex + drills.length) % drills.length;
+    charIndex = 0;
+    waitingNext = false;
+    clearKeyState();
+    updatePrompt();
+    updateStage();
+    markNextKey();
+  }
+
+  function advanceDrillSoon() {
+    waitingNext = true;
+    showToast("clear");
+    window.setTimeout(() => {
+      loadDrill(drillIndex + 1);
+    }, 260);
+  }
+
+  function onKeydown(event) {
+    if (event.ctrlKey || event.altKey || event.metaKey) return;
+    if (waitingNext) return;
+
+    if (event.key === "1") {
+      event.preventDefault();
+      setPromptStyle("focus");
+      return;
+    }
+    if (event.key === "2") {
+      event.preventDefault();
+      setPromptStyle("rail");
+      return;
+    }
+    if (event.key === "3") {
+      event.preventDefault();
+      setPromptStyle("stack");
+      return;
+    }
+    if (event.key === "4") {
+      event.preventDefault();
+      setPromptStyle("beat");
+      return;
+    }
+
+    const pressed = event.key?.toLowerCase();
+    if (!pressed || pressed.length !== 1) return;
+
+    const pressedKey = keyByQwerty(pressed);
+    if (!pressedKey) return;
+
+    const romaji = romajiRaw();
+    const expectedChar = romaji[charIndex];
+    const expectedQwerty = reverseMap[expectedChar];
+
+    if (pressed === expectedQwerty) {
+      correct += 1;
+      charIndex += 1;
+      flashKey(pressed, "is-hit");
+      if (charIndex >= romaji.length) {
+        updateStats();
+        markNextKey();
+        advanceDrillSoon();
+        return;
+      }
+    } else {
+      miss += 1;
+      flashKey(pressed, "is-miss", 180);
+    }
+
+    updateStats();
+    updatePrompt();
+    markNextKey();
+  }
+
+  document.addEventListener("keydown", onKeydown);
+
+  styleButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const nextStyle = button.dataset.style;
+      if (!nextStyle) return;
+      setPromptStyle(nextStyle);
+    });
+  });
+
+  setPromptStyle("focus");
+  updateStats();
+  loadDrill(0);
+</script>
+
+<style>
+  .layout3 {
+    min-height: 100dvh;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    padding: 14px;
+    background:
+      radial-gradient(circle at 16% 14%, rgba(255, 255, 255, 0.6), transparent 44%),
+      radial-gradient(circle at 82% 84%, rgba(255, 255, 255, 0.42), transparent 38%),
+      linear-gradient(145deg, #fff8f4, #f5e7dd);
+  }
+
+  .stage-card {
+    width: min(92vw, 1260px);
+    max-height: calc(100dvh - 22px);
+    display: grid;
+    grid-template-rows: auto auto auto auto 1fr auto;
+    gap: clamp(8px, 1.15vh, 12px);
+    position: relative;
+    padding: clamp(6px, 0.9vw, 12px) 0;
+    color: #4a372a;
+  }
+
+  .hero {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: 2px;
+  }
+
+  .hero-sub {
+    color: #8c6d59;
+    font-size: clamp(0.8rem, 1vw, 0.92rem);
+    margin-bottom: 2px;
+  }
+
+  .hero h1 {
+    font-family: "Noto Serif JP", serif;
+    font-size: clamp(1.58rem, 2.2vw, 2.2rem);
+    line-height: 1.18;
+    letter-spacing: 0.08em;
+  }
+
+  .hero-claim {
+    margin-top: 6px;
+    color: #7a5a48;
+    font-size: clamp(0.84rem, 1.02vw, 0.95rem);
+  }
+
+  .stage-line {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .stage-chip {
+    border-radius: 999px;
+    padding: 3px 10px;
+    border: 1px solid rgba(109, 72, 52, 0.2);
+    background: rgba(255, 255, 255, 0.6);
+    color: #826150;
+    font-size: 0.74rem;
+  }
+
+  .stage-chip.is-current {
+    background: #ef8e7f;
+    border-color: transparent;
+    color: #fff;
+  }
+
+  .prompt-style-line {
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+
+  .prompt-style-btn {
+    border: 1px solid rgba(109, 72, 52, 0.22);
+    background: rgba(255, 255, 255, 0.56);
+    color: #835e4b;
+    border-radius: 999px;
+    padding: 3px 9px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.66rem;
+    cursor: pointer;
+    transition: all 0.16s ease;
+  }
+
+  .prompt-style-btn.is-active {
+    background: #eb8f82;
+    border-color: transparent;
+    color: #fff;
+  }
+
+  .prompt-stage {
+    min-height: clamp(108px, 16.4vh, 178px);
+    position: relative;
+  }
+
+  .prompt-box {
+    display: none;
+    width: 100%;
+    height: 100%;
+  }
+
+  .prompt-box.is-active {
+    display: grid;
+  }
+
+  .mode-focus {
+    place-items: center;
+    align-content: center;
+    gap: 7px;
+  }
+
+  .focus-ja {
+    font-family: "Noto Serif JP", serif;
+    font-size: clamp(1rem, 1.36vw, 1.4rem);
+    letter-spacing: 0.2em;
+  }
+
+  .focus-ro {
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(0.9rem, 1.1vw, 1.08rem);
+    letter-spacing: 0.11em;
+  }
+
+  .focus-done {
+    color: #b6947d;
+  }
+
+  .focus-cursor {
+    color: #3f2d22;
+    border-bottom: 2px solid rgba(149, 89, 63, 0.35);
+  }
+
+  .focus-left {
+    color: #82685a;
+  }
+
+  .mode-rail {
+    align-content: center;
+    justify-items: center;
+    gap: 10px;
+    padding: 2px 0;
+  }
+
+  .rail-ja {
+    font-family: "Noto Serif JP", serif;
+    font-size: clamp(0.92rem, 1.1vw, 1.16rem);
+    letter-spacing: 0.16em;
+  }
+
+  .rail-body {
+    width: min(70ch, 72vw);
+    display: grid;
+    gap: 8px;
+  }
+
+  .rail-progress {
+    height: 7px;
+    border-radius: 999px;
+    background: rgba(145, 110, 92, 0.16);
+    overflow: hidden;
+    border: 1px solid rgba(120, 82, 62, 0.14);
+  }
+
+  .rail-progress span {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #9a6a54, #d39a7a);
+    transition: width 0.14s ease;
+  }
+
+  .rail-ro {
+    display: flex;
+    justify-content: center;
+    gap: 0.42em;
+    font-family: "JetBrains Mono", monospace;
+    letter-spacing: 0.02em;
+    color: #8e715f;
+  }
+
+  .rail-char {
+    font-size: clamp(0.84rem, 1.02vw, 0.98rem);
+    opacity: 0.48;
+  }
+
+  .rail-char.is-done {
+    opacity: 0.86;
+  }
+
+  .rail-char.is-current {
+    opacity: 1;
+    color: #4c3528;
+    transform: translateY(-2px);
+  }
+
+  .mode-stack {
+    align-content: center;
+    justify-items: center;
+    gap: 9px;
+  }
+
+  .stack-ja-card,
+  .stack-ro-card {
+    width: min(58ch, 66vw);
+    border-radius: 12px;
+    border: 1px solid rgba(120, 82, 62, 0.16);
+    background: rgba(255, 255, 255, 0.7);
+    display: grid;
+    place-items: center;
+    padding: 8px 10px;
+  }
+
+  .stack-ja {
+    font-family: "Noto Serif JP", serif;
+    font-size: clamp(0.96rem, 1.2vw, 1.2rem);
+    letter-spacing: 0.16em;
+  }
+
+  .stack-ro-card {
+    background: rgba(248, 238, 228, 0.65);
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(0.82rem, 1vw, 0.98rem);
+    letter-spacing: 0.08em;
+  }
+
+  .stack-done {
+    color: #b08f7a;
+  }
+
+  .stack-cursor {
+    color: #3f2d22;
+    background: rgba(200, 154, 128, 0.22);
+    border-radius: 4px;
+    padding: 0 2px;
+  }
+
+  .stack-left {
+    color: #7d6152;
+  }
+
+  .mode-beat {
+    align-content: center;
+    justify-items: center;
+    gap: 8px;
+  }
+
+  .beat-ja {
+    font-family: "Noto Serif JP", serif;
+    font-size: clamp(1rem, 1.24vw, 1.24rem);
+    letter-spacing: 0.17em;
+  }
+
+  .beat-ro {
+    display: flex;
+    gap: 0.3em;
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(0.82rem, 0.96vw, 0.95rem);
+  }
+
+  .beat-char {
+    opacity: 0.52;
+    color: #8f7361;
+    transition: transform 0.12s ease, opacity 0.12s ease;
+  }
+
+  .beat-char.is-done {
+    opacity: 0.9;
+  }
+
+  .beat-char.is-current {
+    opacity: 1;
+    color: #4e3629;
+    transform: scale(1.08);
+  }
+
+  .beat-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    min-height: 10px;
+  }
+
+  .beat-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 1px solid rgba(120, 82, 62, 0.26);
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  .beat-dot.is-done {
+    background: rgba(210, 144, 111, 0.72);
+    border-color: transparent;
+  }
+
+  .beat-dot.is-current {
+    background: rgba(165, 100, 73, 0.92);
+    border-color: transparent;
+    transform: scale(1.18);
+  }
+
+  .keyboard-shell {
+    min-height: 0;
+    display: grid;
+    gap: 10px;
+    align-content: center;
+    padding: 0;
+  }
+
+  .kb-row {
+    display: flex;
+    gap: clamp(6px, 0.62vw, 10px);
+    justify-content: center;
+  }
+
+  .kb-key {
+    flex: 0 0 clamp(56px, 3.8vw, 74px);
+    min-height: clamp(52px, 7.1vh, 82px);
+    border-radius: 9px;
+    border: 1px solid rgba(120, 82, 62, 0.2);
+    display: grid;
+    place-items: center;
+    transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+  }
+
+  .kb-key.is-mapped {
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  .kb-key.is-plain {
+    background: rgba(246, 238, 232, 0.56);
+    border-color: rgba(120, 82, 62, 0.12);
+  }
+
+  .key-y {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 600;
+    font-size: clamp(0.86rem, 1.15vw, 1.12rem);
+    line-height: 1;
+  }
+
+  .key-q {
+    margin-top: 2px;
+    font-family: "JetBrains Mono", monospace;
+    color: #8f7566;
+    font-size: clamp(0.55rem, 0.7vw, 0.74rem);
+    line-height: 1;
+  }
+
+  .key-label {
+    font-family: "JetBrains Mono", monospace;
+    color: #9f897d;
+    font-size: clamp(0.58rem, 0.76vw, 0.76rem);
+    line-height: 1;
+    text-transform: lowercase;
+  }
+
+  .kb-key.is-mapped.is-left {
+    border-color: rgba(113, 147, 196, 0.4);
+  }
+
+  .kb-key.is-mapped.is-right {
+    border-color: rgba(205, 144, 114, 0.4);
+  }
+
+  .kb-key.is-mapped.is-left .key-y {
+    color: #426895;
+  }
+
+  .kb-key.is-mapped.is-right .key-y {
+    color: #95593f;
+  }
+
+  .kb-key.is-mapped.is-left .key-q {
+    color: #6f89a8;
+  }
+
+  .kb-key.is-mapped.is-right .key-q {
+    color: #ac7a61;
+  }
+
+  .kb-key.is-mapped.is-left.tone-1 {
+    background: rgba(239, 246, 255, 0.96);
+  }
+
+  .kb-key.is-mapped.is-left.tone-2 {
+    background: rgba(227, 239, 255, 0.96);
+  }
+
+  .kb-key.is-mapped.is-left.tone-3 {
+    background: rgba(212, 231, 255, 0.96);
+  }
+
+  .kb-key.is-mapped.is-left.tone-4 {
+    background: rgba(195, 221, 255, 0.96);
+  }
+
+  .kb-key.is-mapped.is-right.tone-1 {
+    background: rgba(255, 247, 240, 0.96);
+  }
+
+  .kb-key.is-mapped.is-right.tone-2 {
+    background: rgba(255, 237, 225, 0.96);
+  }
+
+  .kb-key.is-mapped.is-right.tone-3 {
+    background: rgba(255, 225, 208, 0.96);
+  }
+
+  .kb-key.is-mapped.is-right.tone-4 {
+    background: rgba(255, 212, 191, 0.96);
+  }
+
+  .kb-key.is-next {
+    border-color: rgba(206, 117, 100, 0.55);
+    background: rgba(245, 168, 153, 0.28);
+    transform: translateY(-1px);
+  }
+
+  .kb-key.is-hit {
+    border-color: rgba(111, 182, 132, 0.7);
+    background: rgba(148, 219, 170, 0.4);
+  }
+
+  .kb-key.is-miss {
+    border-color: rgba(229, 104, 104, 0.75);
+    background: rgba(241, 131, 131, 0.45);
+  }
+
+  .mini-stats {
+    display: inline-flex;
+    justify-self: end;
+    gap: 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(109, 72, 52, 0.16);
+    background: rgba(255, 255, 255, 0.84);
+    padding: 6px 10px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.78rem;
+    color: #886958;
+  }
+
+  .mini-stats span {
+    color: #51382a;
+    margin-left: 0.4ch;
+  }
+
+  .toast {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    padding: 5px 9px;
+    border-radius: 999px;
+    border: 1px solid rgba(109, 72, 52, 0.16);
+    background: rgba(255, 255, 255, 0.88);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+    color: #7e5f4f;
+  }
+
+  @media (max-width: 1300px) {
+    .stage-card {
+      width: min(95vw, 1120px);
+    }
+  }
+
+  @media (max-width: 980px) {
+    .layout3 {
+      padding: 8px;
+    }
+
+    .stage-card {
+      width: calc(100vw - 10px);
+      max-height: calc(100dvh - 16px);
+      gap: 8px;
+      padding: 4px 0;
+    }
+
+    .kb-key {
+      flex-basis: clamp(30px, 8.5vw, 44px);
+      min-height: clamp(33px, 5.2vh, 48px);
+      border-radius: 7px;
+    }
+
+    .mini-stats {
+      font-size: 0.68rem;
+      padding: 4px 8px;
+    }
+  }
+</style>

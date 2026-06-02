@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Portfolio - honjoh.dev</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            background: #1a1a1e;
+            color: #e0e0e0;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #a8a29e;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 3rem;
+            font-size: 0.9rem;
+        }
+
+        .theme-section {
+            margin-bottom: 4rem;
+        }
+
+        .theme-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #e0e0e0;
+            border-bottom: 2px solid #333;
+            padding-bottom: 0.5rem;
+        }
+
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .palette-card {
+            background: #242428;
+            border: 1px solid #3a3a3e;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .palette-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .palette-header {
+            padding: 1.5rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .palette-name {
+            font-size: 1.1rem;
+        }
+
+        .palette-variant {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            font-weight: 400;
+        }
+
+        .color-swatches {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .swatch {
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .swatch-color {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .swatch-label {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        /* Demo Section */
+        .demo-section {
+            margin: 0;
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .demo-title {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .demo-content {
+            padding: 1.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .demo-prompt {
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-subtitle {
+            opacity: 0.7;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .demo-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .demo-menu-item {
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .demo-menu-item.focused {
+            font-weight: 600;
+        }
+
+        /* ASH VARIATIONS (DARK) */
+
+        /* Ash - Classic */
+        .ash-classic .palette-header {
+            background: linear-gradient(135deg, #a8a29e 0%, #78716c 100%);
+            color: #1c1917;
+        }
+
+        .ash-classic .swatch:nth-child(1) {
+            background: #1c1917;
+            color: #e7e5e4;
+        }
+
+        .ash-classic .swatch:nth-child(2) {
+            background: #a8a29e;
+            color: #1c1917;
+        }
+
+        .ash-classic .swatch:nth-child(3) {
+            background: #292524;
+            color: #e7e5e4;
+        }
+
+        .ash-classic .swatch:nth-child(4) {
+            background: #78716c;
+            color: #fafaf9;
+        }
+
+        .ash-classic .demo-content {
+            background: #1c1917;
+            border: 1px solid #a8a29e;
+            color: #e7e5e4;
+        }
+
+        .ash-classic .demo-menu-item.focused {
+            background: #a8a29e;
+            color: #1c1917;
+        }
+
+        /* Ash - Warm */
+        .ash-warm .palette-header {
+            background: linear-gradient(135deg, #d4a574 0%, #a87c50 100%);
+            color: #1a1412;
+        }
+
+        .ash-warm .swatch:nth-child(1) {
+            background: #1a1412;
+            color: #ede8e3;
+        }
+
+        .ash-warm .swatch:nth-child(2) {
+            background: #d4a574;
+            color: #1a1412;
+        }
+
+        .ash-warm .swatch:nth-child(3) {
+            background: #272119;
+            color: #ede8e3;
+        }
+
+        .ash-warm .swatch:nth-child(4) {
+            background: #a87c50;
+            color: #faf8f5;
+        }
+
+        .ash-warm .demo-content {
+            background: #1a1412;
+            border: 1px solid #d4a574;
+            color: #ede8e3;
+        }
+
+        .ash-warm .demo-menu-item.focused {
+            background: #d4a574;
+            color: #1a1412;
+        }
+
+        /* Ash - Cool */
+        .ash-cool .palette-header {
+            background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+            color: #0f1419;
+        }
+
+        .ash-cool .swatch:nth-child(1) {
+            background: #0f1419;
+            color: #e2e8f0;
+        }
+
+        .ash-cool .swatch:nth-child(2) {
+            background: #94a3b8;
+            color: #0f1419;
+        }
+
+        .ash-cool .swatch:nth-child(3) {
+            background: #1a2027;
+            color: #e2e8f0;
+        }
+
+        .ash-cool .swatch:nth-child(4) {
+            background: #64748b;
+            color: #f1f5f9;
+        }
+
+        .ash-cool .demo-content {
+            background: #0f1419;
+            border: 1px solid #94a3b8;
+            color: #e2e8f0;
+        }
+
+        .ash-cool .demo-menu-item.focused {
+            background: #94a3b8;
+            color: #0f1419;
+        }
+
+        /* Ash - Olive */
+        .ash-olive .palette-header {
+            background: linear-gradient(135deg, #a3a688 0%, #7a7862 100%);
+            color: #18170f;
+        }
+
+        .ash-olive .swatch:nth-child(1) {
+            background: #18170f;
+            color: #e8e7df;
+        }
+
+        .ash-olive .swatch:nth-child(2) {
+            background: #a3a688;
+            color: #18170f;
+        }
+
+        .ash-olive .swatch:nth-child(3) {
+            background: #252318;
+            color: #e8e7df;
+        }
+
+        .ash-olive .swatch:nth-child(4) {
+            background: #7a7862;
+            color: #f5f5ed;
+        }
+
+        .ash-olive .demo-content {
+            background: #18170f;
+            border: 1px solid #a3a688;
+            color: #e8e7df;
+        }
+
+        .ash-olive .demo-menu-item.focused {
+            background: #a3a688;
+            color: #18170f;
+        }
+
+        /* LINEN VARIATIONS (LIGHT) */
+
+        /* Linen - Classic */
+        .linen-classic .palette-header {
+            background: linear-gradient(135deg, #57534e 0%, #44403c 100%);
+            color: #fafaf9;
+        }
+
+        .linen-classic .swatch:nth-child(1) {
+            background: #fafaf9;
+            color: #292524;
+        }
+
+        .linen-classic .swatch:nth-child(2) {
+            background: #57534e;
+            color: #fafaf9;
+        }
+
+        .linen-classic .swatch:nth-child(3) {
+            background: #f5f5f4;
+            color: #292524;
+        }
+
+        .linen-classic .swatch:nth-child(4) {
+            background: #44403c;
+            color: #fafaf9;
+        }
+
+        .linen-classic .demo-content {
+            background: #fafaf9;
+            border: 1px solid #57534e;
+            color: #292524;
+        }
+
+        .linen-classic .demo-menu-item.focused {
+            background: #57534e;
+            color: #fafaf9;
+        }
+
+        /* Linen - Warm */
+        .linen-warm .palette-header {
+            background: linear-gradient(135deg, #78614a 0%, #5c4a37 100%);
+            color: #fdf9f5;
+        }
+
+        .linen-warm .swatch:nth-child(1) {
+            background: #fdf9f5;
+            color: #2d2119;
+        }
+
+        .linen-warm .swatch:nth-child(2) {
+            background: #78614a;
+            color: #fdf9f5;
+        }
+
+        .linen-warm .swatch:nth-child(3) {
+            background: #f8f3ed;
+            color: #2d2119;
+        }
+
+        .linen-warm .swatch:nth-child(4) {
+            background: #5c4a37;
+            color: #fdf9f5;
+        }
+
+        .linen-warm .demo-content {
+            background: #fdf9f5;
+            border: 1px solid #78614a;
+            color: #2d2119;
+        }
+
+        .linen-warm .demo-menu-item.focused {
+            background: #78614a;
+            color: #fdf9f5;
+        }
+
+        /* Linen - Cool */
+        .linen-cool .palette-header {
+            background: linear-gradient(135deg, #475569 0%, #334155 100%);
+            color: #f8fafc;
+        }
+
+        .linen-cool .swatch:nth-child(1) {
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        .linen-cool .swatch:nth-child(2) {
+            background: #475569;
+            color: #f8fafc;
+        }
+
+        .linen-cool .swatch:nth-child(3) {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .linen-cool .swatch:nth-child(4) {
+            background: #334155;
+            color: #f8fafc;
+        }
+
+        .linen-cool .demo-content {
+            background: #f8fafc;
+            border: 1px solid #475569;
+            color: #1e293b;
+        }
+
+        .linen-cool .demo-menu-item.focused {
+            background: #475569;
+            color: #f8fafc;
+        }
+
+        /* Linen - Sand */
+        .linen-sand .palette-header {
+            background: linear-gradient(135deg, #b8a68e 0%, #8d7962 100%);
+            color: #fffcf7;
+        }
+
+        .linen-sand .swatch:nth-child(1) {
+            background: #fffcf7;
+            color: #2a2217;
+        }
+
+        .linen-sand .swatch:nth-child(2) {
+            background: #b8a68e;
+            color: #2a2217;
+        }
+
+        .linen-sand .swatch:nth-child(3) {
+            background: #faf6ef;
+            color: #2a2217;
+        }
+
+        .linen-sand .swatch:nth-child(4) {
+            background: #8d7962;
+            color: #fffcf7;
+        }
+
+        .linen-sand .demo-content {
+            background: #fffcf7;
+            border: 1px solid #b8a68e;
+            color: #2a2217;
+        }
+
+        .linen-sand .demo-menu-item.focused {
+            background: #b8a68e;
+            color: #2a2217;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Color Portfolio</h1>
+        <p class="subtitle">honjoh.dev — ash & linen variations</p>
+
+        <!-- ASH THEMES -->
+        <section class="theme-section">
+            <h2 class="theme-title">� Ash Variations (Dark)</h2>
+            <div class="palette-grid">
+                <!-- Ash Classic -->
+                <div class="palette-card ash-classic">
+                    <div class="palette-header">
+                        <span class="palette-name">Ash</span>
+                        <span class="palette-variant">Classic</span>
+                    </div>
+                    <div class="color-swatches">
+                        <div class="swatch">
+                            <div class="swatch-color">#1c1917</div>
+                            <div class="swatch-label">Background</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#a8a29e</div>
+                            <div class="swatch-label">Primary</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#292524</div>
+                            <div class="swatch-label">Surface</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#78716c</div>
+                            <div class="swatch-label">Accent</div>
+                        </div>
+                    </div>
+                    <div class="demo-section">
+                        <div class="demo-title">Preview</div>
+                        <div class="demo-content">
+                            <div class="demo-prompt">> honjoh.dev</div>
+                            <div class="demo-subtitle">Nobuhiro Honjoh | Designer, Engineer, Entrepreneur</div>
+                            <div class="demo-menu">
+                                <div class="demo-menu-item focused">works</div>
+                                <div class="demo-menu-item">blog</div>
+                                <div class="demo-menu-item">chat</div>
+                                <div class="demo-menu-item">about</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ash Warm -->
+                <div class="palette-card ash-warm">
+                    <div class="palette-header">
+                        <span class="palette-name">Ash</span>
+                        <span class="palette-variant">Warm</span>
+                    </div>
+                    <div class="color-swatches">
+                        <div class="swatch">
+                            <div class="swatch-color">#1a1412</div>
+                            <div class="swatch-label">Background</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#d4a574</div>
+                            <div class="swatch-label">Primary</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#272119</div>
+                            <div class="swatch-label">Surface</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#a87c50</div>
+                            <div class="swatch-label">Accent</div>
+                        </div>
+                    </div>
+                    <div class="demo-section">
+                        <div class="demo-title">Preview</div>
+                        <div class="demo-content">
+                            <div class="demo-prompt">> honjoh.dev</div>
+                            <div class="demo-subtitle">Nobuhiro Honjoh | Designer, Engineer, Entrepreneur</div>
+                            <div class="demo-menu">
+                                <div class="demo-menu-item focused">works</div>
+                                <div class="demo-menu-item">blog</div>
+                                <div class="demo-menu-item">chat</div>
+                                <div class="demo-menu-item">about</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ash Cool -->
+                <div class="palette-card ash-cool">
+                    <div class="palette-header">
+                        <span class="palette-name">Ash</span>
+                        <span class="palette-variant">Cool</span>
+                    </div>
+                    <div class="color-swatches">
+                        <div class="swatch">
+                            <div class="swatch-color">#0f1419</div>
+                            <div class="swatch-label">Background</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#94a3b8</div>
+                            <div class="swatch-label">Primary</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#1a2027</div>
+                            <div class="swatch-label">Surface</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#64748b</div>
+                            <div class="swatch-label">Accent</div>
+                        </div>
+                    </div>
+                    <div class="demo-section">
+                        <div class="demo-title">Preview</div>
+                        <div class="demo-content">
+                            <div class="demo-prompt">> honjoh.dev</div>
+                            <div class="demo-subtitle">Nobuhiro Honjoh | Designer, Engineer, Entrepreneur</div>
+                            <div class="demo-menu">
+                                <div class="demo-menu-item focused">works</div>
+                                <div class="demo-menu-item">blog</div>
+                                <div class="demo-menu-item">chat</div>
+                                <div class="demo-menu-item">about</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ash Olive -->
+                <div class="palette-card ash-olive">
+                    <div class="palette-header">
+                        <span class="palette-name">Ash</span>
+                        <span class="palette-variant">Olive</span>
+                    </div>
+                    <div class="color-swatches">
+                        <div class="swatch">
+                            <div class="swatch-color">#18170f</div>
+                            <div class="swatch-label">Background</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#a3a688</div>
+                            <div class="swatch-label">Primary</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#252318</div>
+                            <div class="swatch-label">Surface</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#7a7862</div>
+                            <div class="swatch-label">Accent</div>
+                        </div>
+                    </div>
+                    <div class="demo-section">
+                        <div class="demo-title">Preview</div>
+                        <div class="demo-content">
+                            <div class="demo-prompt">> honjoh.dev</div>
+                            <div class="demo-subtitle">Nobuhiro Honjoh | Designer, Engineer, Entrepreneur</div>
+                            <div class="demo-menu">
+                                <div class="demo-menu-item focused">works</div>
+                                <div class="demo-menu-item">blog</div>
+                                <div class="demo-menu-item">chat</div>
+                                <div class="demo-menu-item">about</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LINEN THEMES -->
+        <section class="theme-section">
+            <h2 class="theme-title">☀️ Linen Variations (Light)</h2>
+            <div class="palette-grid">
+                <!-- Linen Classic -->
+                <div class="palette-card linen-classic">
+                    <div class="palette-header">
+                        <span class="palette-name">Linen</span>
+                        <span class="palette-variant">Classic</span>
+                    </div>
+                    <div class="color-swatches">
+                        <div class="swatch">
+                            <div class="swatch-color">#fafaf9</div>
+                            <div class="swatch-label">Background</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#57534e</div>
+                            <div class="swatch-label">Primary</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#f5f5f4</div>
+                            <div class="swatch-label">Surface</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#44403c</div>
+                            <div class="swatch-label">Accent</div>
+                        </div>
+                    </div>
+                    <div class="demo-section">
+                        <div class="demo-title">Preview</div>
+                        <div class="demo-content">
+                            <div class="demo-prompt">> honjoh.dev</div>
+                            <div class="demo-subtitle">Nobuhiro Honjoh | Designer, Engineer, Entrepreneur</div>
+                            <div class="demo-menu">
+                                <div class="demo-menu-item focused">works</div>
+                                <div class="demo-menu-item">blog</div>
+                                <div class="demo-menu-item">chat</div>
+                                <div class="demo-menu-item">about</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Linen Warm -->
+                <div class="palette-card linen-warm">
+                    <div class="palette-header">
+                        <span class="palette-name">Linen</span>
+                        <span class="palette-variant">Warm</span>
+                    </div>
+                    <div class="color-swatches">
+                        <div class="swatch">
+                            <div class="swatch-color">#fdf9f5</div>
+                            <div class="swatch-label">Background</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#78614a</div>
+                            <div class="swatch-label">Primary</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#f8f3ed</div>
+                            <div class="swatch-label">Surface</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#5c4a37</div>
+                            <div class="swatch-label">Accent</div>
+                        </div>
+                    </div>
+                    <div class="demo-section">
+                        <div class="demo-title">Preview</div>
+                        <div class="demo-content">
+                            <div class="demo-prompt">> honjoh.dev</div>
+                            <div class="demo-subtitle">Nobuhiro Honjoh | Designer, Engineer, Entrepreneur</div>
+                            <div class="demo-menu">
+                                <div class="demo-menu-item focused">works</div>
+                                <div class="demo-menu-item">blog</div>
+                                <div class="demo-menu-item">chat</div>
+                                <div class="demo-menu-item">about</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Linen Cool -->
+                <div class="palette-card linen-cool">
+                    <div class="palette-header">
+                        <span class="palette-name">Linen</span>
+                        <span class="palette-variant">Cool</span>
+                    </div>
+                    <div class="color-swatches">
+                        <div class="swatch">
+                            <div class="swatch-color">#f8fafc</div>
+                            <div class="swatch-label">Background</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#475569</div>
+                            <div class="swatch-label">Primary</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#f1f5f9</div>
+                            <div class="swatch-label">Surface</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#334155</div>
+                            <div class="swatch-label">Accent</div>
+                        </div>
+                    </div>
+                    <div class="demo-section">
+                        <div class="demo-title">Preview</div>
+                        <div class="demo-content">
+                            <div class="demo-prompt">> honjoh.dev</div>
+                            <div class="demo-subtitle">Nobuhiro Honjoh | Designer, Engineer, Entrepreneur</div>
+                            <div class="demo-menu">
+                                <div class="demo-menu-item focused">works</div>
+                                <div class="demo-menu-item">blog</div>
+                                <div class="demo-menu-item">chat</div>
+                                <div class="demo-menu-item">about</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Linen Sand -->
+                <div class="palette-card linen-sand">
+                    <div class="palette-header">
+                        <span class="palette-name">Linen</span>
+                        <span class="palette-variant">Sand</span>
+                    </div>
+                    <div class="color-swatches">
+                        <div class="swatch">
+                            <div class="swatch-color">#fffcf7</div>
+                            <div class="swatch-label">Background</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#b8a68e</div>
+                            <div class="swatch-label">Primary</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#faf6ef</div>
+                            <div class="swatch-label">Surface</div>
+                        </div>
+                        <div class="swatch">
+                            <div class="swatch-color">#8d7962</div>
+                            <div class="swatch-label">Accent</div>
+                        </div>
+                    </div>
+                    <div class="demo-section">
+                        <div class="demo-title">Preview</div>
+                        <div class="demo-content">
+                            <div class="demo-prompt">> honjoh.dev</div>
+                            <div class="demo-subtitle">Nobuhiro Honjoh | Designer, Engineer, Entrepreneur</div>
+                            <div class="demo-menu">
+                                <div class="demo-menu-item focused">works</div>
+                                <div class="demo-menu-item">blog</div>
+                                <div class="demo-menu-item">chat</div>
+                                <div class="demo-menu-item">about</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+
+</html>

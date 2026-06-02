@@ -1,581 +1,446 @@
 ---
-import Layout from "../../layouts/Layout.astro";
+import TerminalLayout from "../../layouts/TerminalLayout.astro";
+import Header from "../../components/Header.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
 ---
 
-<Layout
-    title="Chat - honjoh.dev"
+<TerminalLayout
+    title="Chat | honjoh.dev"
     description="Talk to Honjoh's AI representative"
+    class="chat-page"
 >
-    <main class="terminal" id="terminal">
-        <!-- Scanline overlay -->
-        <div class="scanline"></div>
+    <Header slot="header" path={["chat"]} />
 
-        <!-- Header -->
-        <header class="page-header">
-            <a href="/" class="back-link" id="back-link" title="Back to home">
-                <span class="back-arrow">←</span>
-                <span class="breadcrumb-path">honjoh.dev</span>
-                <span class="breadcrumb-sep">/</span>
-                <span class="breadcrumb-current">chat</span>
-            </a>
-            <div class="status-indicator">
-                <span class="status-dot"></span>
-                <span class="status-text">online</span>
-            </div>
-        </header>
+    <!-- Chat log -->
+    <div class="chat-log" id="chat-log"></div>
 
-        <!-- Chat area -->
-        <div class="chat-area" id="chat-area">
-            <!-- Welcome message -->
-            <div class="message message-system" id="welcome-msg">
-                <div class="message-content">
-                    <p class="welcome-line">
-                        Welcome to <span class="accent">honjoh.dev</span>
-                    </p>
-                    <p class="welcome-sub">
-                        You're now connected to Honjoh's AI representative.
-                    </p>
-                    <p class="welcome-sub">
-                        Feel free to ask anything — about my work, services, or
-                        ideas.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Input area -->
-        <div class="input-area">
-            <div class="input-wrapper">
-                <span class="input-prompt">❯</span>
+    <!-- Input -->
+    <div class="chat-input-area" slot="footer">
+        <SiteFooter>
+            <div class="prompt-area" slot="prompt">
+                <span class="prompt-symbol">❯</span>
                 <input
                     type="text"
                     id="chat-input"
-                    class="chat-input"
-                    placeholder="Type a message..."
+                    class="prompt-input"
+                    placeholder="ask anything..."
                     autocomplete="off"
                     autofocus
                 />
-                <button
-                    class="send-btn"
-                    id="send-btn"
-                    title="Send message"
-                    aria-label="Send"
-                >
-                    <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                    >
-                        <path d="M22 2L11 13"></path>
-                        <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
-                    </svg>
-                </button>
+                <div class="cmd-palette" id="cmd-palette" style="display:none">
+                    <!-- populated by JS -->
+                </div>
             </div>
-            <div class="input-hint">
-                <span class="hint-item"><kbd>Enter</kbd> send</span>
-                <span class="hint-sep">│</span>
-                <span class="hint-item"><kbd>←</kbd> back</span>
-            </div>
-        </div>
-
-        <!-- Vignette (inherited from terminal theme) -->
-    </main>
-</Layout>
+            <span><kbd>Enter</kbd> send</span>
+            <span><kbd>/</kbd> command</span>
+            <span><kbd>←</kbd> back</span>
+        </SiteFooter>
+    </div>
+</TerminalLayout>
 
 <style>
-    /* === Terminal Theme (consistent with top page) === */
-    .terminal {
-        position: relative;
+    /* Chat page: full height, scrollable log */
+    :global(.chat-page) {
         height: 100vh;
-        background: #0a0e14;
-        color: #b3b1ad;
-        font-family: "JetBrains Mono", "Consolas", "Monaco", monospace;
-        font-size: 14px;
-        line-height: 1.6;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
+        min-height: unset;
     }
 
-    /* Scanline */
-    .scanline {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 100;
-        background: repeating-linear-gradient(
-            0deg,
-            transparent,
-            transparent 2px,
-            rgba(0, 0, 0, 0.03) 2px,
-            rgba(0, 0, 0, 0.03) 4px
-        );
-    }
-
-    /* Header */
-    .page-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 12px 20px;
-        background: #0d1117;
-        border-bottom: 1px solid #1a1f29;
-        flex-shrink: 0;
-        z-index: 10;
-    }
-
-    .back-link {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #b3b1ad;
-        text-decoration: none;
-        border: none;
-        font-family: inherit;
-        font-size: 13px;
-        transition: color 0.15s ease;
-    }
-
-    .back-link:hover {
-        color: #e6e1cf;
-        border: none;
-    }
-
-    .back-arrow {
-        color: #39bae6;
-        font-weight: 700;
-    }
-
-    .breadcrumb-path {
-        color: #39bae6;
-    }
-
-    .breadcrumb-sep {
-        color: #4a5568;
-        margin: 0 0.1em;
-    }
-
-    .breadcrumb-current {
-        color: #e6e1cf;
-    }
-
-    .status-indicator {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 12px;
-    }
-
-    .status-dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: #7dd3a0;
-        box-shadow: 0 0 6px rgba(125, 211, 160, 0.5);
-        animation: pulse-dot 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse-dot {
-        0%,
-        100% {
-            opacity: 1;
-        }
-        50% {
-            opacity: 0.5;
-        }
-    }
-
-    .status-text {
-        color: #7dd3a0;
-        letter-spacing: 0.05em;
-    }
-
-    /* Chat area */
-    .chat-area {
+    .chat-log {
         flex: 1;
         overflow-y: auto;
-        padding: 20px;
+        max-width: var(--max-width);
+        position: relative;
+        z-index: 1;
         display: flex;
         flex-direction: column;
-        gap: 16px;
-        scroll-behavior: smooth;
+        gap: 0;
     }
 
-    .chat-area::-webkit-scrollbar {
+    .chat-log::-webkit-scrollbar {
         width: 4px;
     }
-
-    .chat-area::-webkit-scrollbar-track {
+    .chat-log::-webkit-scrollbar-track {
         background: transparent;
     }
-
-    .chat-area::-webkit-scrollbar-thumb {
-        background: #2a2f3a;
+    .chat-log::-webkit-scrollbar-thumb {
+        background: var(--border-strong);
         border-radius: 2px;
     }
 
-    /* Messages */
-    .message {
-        display: flex;
-        max-width: 80%;
-        animation: msg-in 0.3s ease-out;
+    /* Welcome */
+    :global(.chat-welcome) {
+        color: var(--dim);
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.7;
     }
 
-    @keyframes msg-in {
-        from {
-            opacity: 0;
-            transform: translateY(8px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    :global(.chat-welcome .accent) {
+        color: var(--accent);
     }
 
-    .message-system {
-        max-width: 100%;
-        align-self: center;
+    /* Messages — A3 style: color contrast only */
+    :global(.chat-entry) {
+        line-height: 1.7;
+        font-size: 0.85rem;
+        margin-bottom: 0.8rem;
     }
 
-    .message-system .message-content {
-        background: transparent;
-        border: 1px solid #1a1f29;
-        border-radius: 8px;
-        padding: 20px 24px;
-        text-align: center;
+    :global(.chat-entry-user) {
+        color: var(--fg);
     }
 
-    .welcome-line {
-        font-size: 15px;
-        color: #e6e1cf;
-        margin-bottom: 8px;
+    :global(.chat-entry-ai) {
+        color: var(--dim);
     }
 
-    .welcome-sub {
-        font-size: 12px;
-        color: #4a5568;
-        line-height: 1.8;
+    :global(.chat-entry-system) {
+        color: var(--dim);
+        font-size: 0.8rem;
     }
 
-    .accent {
-        color: #39bae6;
-        font-weight: 500;
+    /* Typing indicator - V2: non-verbal visual dots */
+    :global(.typing-indicator) {
+        display: inline-flex;
+        gap: 5px;
+        align-items: center;
     }
 
-    /* User messages */
-    .message-user {
-        align-self: flex-end;
-    }
-
-    .message-user .message-content {
-        background: rgba(57, 186, 230, 0.12);
-        border: 1px solid rgba(57, 186, 230, 0.2);
-        border-radius: 12px 12px 4px 12px;
-        padding: 10px 14px;
-        color: #e6e1cf;
-        font-size: 13px;
-    }
-
-    /* AI messages */
-    .message-ai {
-        align-self: flex-start;
-    }
-
-    .message-ai .message-content {
-        background: #12161d;
-        border: 1px solid #1a1f29;
-        border-radius: 12px 12px 12px 4px;
-        padding: 10px 14px;
-        color: #b3b1ad;
-        font-size: 13px;
-    }
-
-    .message-ai .message-sender {
-        font-size: 11px;
-        color: #ffb454;
-        margin-bottom: 4px;
-        font-weight: 500;
-    }
-
-    /* Typing indicator */
-    .typing-indicator {
-        display: flex;
-        gap: 4px;
-        padding: 4px 0;
-    }
-
-    .typing-indicator span {
-        width: 5px;
-        height: 5px;
+    :global(.typing-indicator .dot) {
+        width: 4px;
+        height: 4px;
         border-radius: 50%;
-        background: #4a5568;
-        animation: typing-bounce 1.2s ease-in-out infinite;
+        background: var(--accent);
+        animation: dotPulse 1.4s ease-in-out infinite;
     }
 
-    .typing-indicator span:nth-child(2) {
-        animation-delay: 0.15s;
+    :global(.typing-indicator .dot:nth-child(1)) {
+        animation-delay: 0s;
     }
 
-    .typing-indicator span:nth-child(3) {
-        animation-delay: 0.3s;
+    :global(.typing-indicator .dot:nth-child(2)) {
+        animation-delay: 0.2s;
     }
 
-    @keyframes typing-bounce {
+    :global(.typing-indicator .dot:nth-child(3)) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes dotPulse {
         0%,
-        60%,
         100% {
-            transform: translateY(0);
-            opacity: 0.4;
+            opacity: 0.3;
         }
-        30% {
-            transform: translateY(-4px);
+        50% {
             opacity: 1;
         }
     }
 
     /* Input area */
-    .input-area {
-        padding: 12px 20px;
-        background: #0d1117;
-        border-top: 1px solid #1a1f29;
-        flex-shrink: 0;
+    .chat-input-area {
+        position: relative;
+        z-index: 1;
     }
 
-    .input-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: #161b22;
-        border: 1px solid #2a2f3a;
-        border-radius: 8px;
-        padding: 8px 12px;
-        transition: border-color 0.15s ease;
-    }
-
-    .input-wrapper:focus-within {
-        border-color: rgba(57, 186, 230, 0.4);
-    }
-
-    .input-prompt {
-        color: #39bae6;
-        font-weight: 700;
-        font-size: 14px;
-        user-select: none;
-        flex-shrink: 0;
-    }
-
-    .chat-input {
-        flex: 1;
-        background: transparent;
-        border: none;
-        outline: none;
-        color: #e6e1cf;
-        font-family: inherit;
-        font-size: 13px;
-        line-height: 1.6;
-        caret-color: #39bae6;
-    }
-
-    .chat-input::placeholder {
-        color: #3a3f4a;
-    }
-
-    .send-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        border: none;
-        border-radius: 6px;
-        background: rgba(57, 186, 230, 0.15);
-        color: #39bae6;
-        cursor: pointer;
-        transition: all 0.15s ease;
-        flex-shrink: 0;
-    }
-
-    .send-btn:hover {
-        background: rgba(57, 186, 230, 0.25);
-        color: #73d0ff;
-    }
-
-    .send-btn:active {
-        transform: scale(0.95);
-    }
-
-    .input-hint {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        margin-top: 8px;
-        font-size: 11px;
-        color: #3a3f4a;
-        user-select: none;
-    }
-
-    .hint-item {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .hint-sep {
-        color: #2a2f3a;
-    }
-
-    kbd {
-        display: inline-block;
-        padding: 1px 5px;
-        background: #2a2f3a;
-        border: 1px solid #3a3f4a;
-        border-radius: 3px;
-        color: #b3b1ad;
-        font-family: inherit;
-        font-size: 10px;
-        line-height: 1.4;
-    }
-
-    /* Vignette */
-    .terminal::after {
-        content: "";
-        position: fixed;
-        top: 0;
+    /* Command palette */
+    .cmd-palette {
+        position: absolute;
+        bottom: calc(100% + 8px);
         left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 99;
-        background: radial-gradient(
-            ellipse at center,
-            transparent 50%,
-            rgba(0, 0, 0, 0.4) 100%
-        );
+        right: 0;
+        max-width: var(--max-width);
+        border: 1px solid var(--border);
+        background: var(--bg);
+        z-index: 10;
+    }
+
+    :global(.cmd-header) {
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+        color: var(--dim);
+        letter-spacing: 0.08em;
+    }
+
+    :global(.cmd-item) {
+        display: flex;
+        align-items: center;
+        gap: 1.5ch;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: background 0.1s;
+    }
+
+    :global(.cmd-item:hover),
+    :global(.cmd-item.cmd-active) {
+        background: var(--accent-dim);
+    }
+
+    :global(.cmd-name) {
+        color: var(--fg);
+        font-weight: 500;
+    }
+
+    :global(.cmd-match) {
+        color: var(--accent);
+        font-weight: 700;
+    }
+
+    :global(.cmd-desc) {
+        color: var(--dim);
+        font-size: 0.8rem;
+        margin-left: auto;
     }
 
     /* Responsive */
     @media (max-width: 640px) {
-        .chat-area {
-            padding: 16px 12px;
-        }
-
-        .message {
-            max-width: 90%;
-        }
-
-        .message-system .message-content {
-            padding: 16px;
-        }
-
-        .welcome-sub {
-            font-size: 11px;
-        }
-
-        .input-hint {
-            display: none;
+        .chat-log {
+            padding: 0;
         }
     }
 </style>
 
 <script>
-    // --- OpenClaw Chat API ---
+    import { getLang, t, chat, common } from "../../lib/i18n";
+
+    // --- API config ---
     const isDev =
         window.location.hostname === "localhost" ||
         window.location.hostname === "127.0.0.1";
-    const API_URL = isDev
-        ? "http://localhost:3001/api/chat"
-        : "https://api.honjoh.dev/api/chat";
+    const BASE_URL = isDev ? "http://localhost:3002" : "https://api.honjoh.dev";
 
-    // Session persistence (per browser tab)
-    let sessionId: string | null = sessionStorage.getItem("chat-session-id");
+    let sessionId: string | null = localStorage.getItem("chat-session-id");
 
-    // Fallback mock for when API is unavailable
+    // --- Conversation history (for /send) ---
+    const STORAGE_KEY = "chat-history";
+    const conversationHistory: { role: "user" | "ai"; text: string }[] = [];
+
+    function saveHistory() {
+        try {
+            localStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify(conversationHistory),
+            );
+        } catch (_) {
+            /* quota exceeded — silently ignore */
+        }
+    }
+
+    function loadHistory(): { role: "user" | "ai"; text: string }[] {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            return raw ? JSON.parse(raw) : [];
+        } catch (_) {
+            return [];
+        }
+    }
+
+    function clearHistory() {
+        conversationHistory.length = 0;
+        localStorage.removeItem(STORAGE_KEY);
+    }
+
     function getMockResponse(): string {
-        return "I'm currently in preview mode — the AI backend is starting up. Please try again shortly!";
+        return t(chat, "chat.error");
     }
 
     async function callChatAPI(
         message: string,
     ): Promise<{ reply: string; sessionId: string }> {
-        const res = await fetch(API_URL, {
+        const res = await fetch(`${BASE_URL}/api/chat`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message, sessionId }),
         });
-
-        if (!res.ok) {
-            throw new Error(`API error: ${res.status}`);
-        }
-
+        if (!res.ok) throw new Error(`API error: ${res.status}`);
         const data = await res.json();
-
-        // Persist session
         if (data.sessionId && data.sessionId !== sessionId) {
             sessionId = data.sessionId;
-            sessionStorage.setItem("chat-session-id", sessionId!);
+            localStorage.setItem("chat-session-id", sessionId!);
         }
-
         return data;
     }
 
-    // --- DOM elements ---
-    const chatArea = document.getElementById("chat-area") as HTMLDivElement;
+    // --- DOM ---
+    const chatLog = document.getElementById("chat-log") as HTMLDivElement;
     const chatInput = document.getElementById("chat-input") as HTMLInputElement;
-    const sendBtn = document.getElementById("send-btn") as HTMLButtonElement;
 
-    // --- Message rendering ---
-    function addMessage(text: string, type: "user" | "ai") {
-        const msg = document.createElement("div");
-        msg.className = `message message-${type}`;
+    // --- Welcome message ---
+    // --- Welcome + restore ---
+    (function init() {
+        const el = document.createElement("div");
+        el.className = "chat-welcome";
+        el.innerHTML = `<span class="accent">honjoh.ai</span> — Honjoh Nobuhiro の AI です。お気軽にどうぞ。`;
+        chatLog.appendChild(el);
 
-        const content = document.createElement("div");
-        content.className = "message-content";
-
-        if (type === "ai") {
-            const sender = document.createElement("div");
-            sender.className = "message-sender";
-            sender.textContent = "honjoh.ai";
-            content.appendChild(sender);
+        // Restore saved messages
+        const saved = loadHistory();
+        if (saved.length > 0) {
+            saved.forEach((m) => {
+                const msg = document.createElement("div");
+                msg.className = `chat-entry chat-entry-${m.role}`;
+                msg.textContent = m.text;
+                chatLog.appendChild(msg);
+                conversationHistory.push(m);
+            });
+            chatLog.scrollTop = chatLog.scrollHeight;
         }
+    })();
 
-        const p = document.createElement("p");
-        p.textContent = text;
-        content.appendChild(p);
+    // --- Message rendering (A3: color contrast only) ---
+    function addEntry(text: string, type: "user" | "ai") {
+        const el = document.createElement("div");
+        el.className = `chat-entry chat-entry-${type}`;
+        el.textContent = text;
+        chatLog.appendChild(el);
+        chatLog.scrollTop = chatLog.scrollHeight;
+        conversationHistory.push({ role: type, text });
+        saveHistory();
+    }
 
-        msg.appendChild(content);
-        chatArea.appendChild(msg);
-        chatArea.scrollTop = chatArea.scrollHeight;
+    function addSystem(text: string): HTMLDivElement {
+        const el = document.createElement("div");
+        el.className = "chat-entry chat-entry-system";
+        el.textContent = text;
+        chatLog.appendChild(el);
+        chatLog.scrollTop = chatLog.scrollHeight;
+        return el;
     }
 
     function showTyping(): HTMLDivElement {
-        const msg = document.createElement("div");
-        msg.className = "message message-ai";
-        msg.id = "typing-msg";
+        const el = document.createElement("div");
+        el.className = "chat-entry chat-entry-ai";
+        el.id = "typing-msg";
+        el.innerHTML =
+            '<span class="typing-indicator"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';
+        chatLog.appendChild(el);
+        chatLog.scrollTop = chatLog.scrollHeight;
+        return el;
+    }
 
-        const content = document.createElement("div");
-        content.className = "message-content";
+    // --- /send command ---
+    function handleSendCommand() {
+        if (conversationHistory.length === 0) {
+            addSystem("送信する会話がありません。");
+            return;
+        }
 
-        const sender = document.createElement("div");
-        sender.className = "message-sender";
-        sender.textContent = "honjoh.ai";
-        content.appendChild(sender);
+        const summary = conversationHistory
+            .map((m) => `${m.role === "user" ? "you" : "ai"}: ${m.text}`)
+            .join("\n");
 
-        const dots = document.createElement("div");
-        dots.className = "typing-indicator";
-        dots.innerHTML = "<span></span><span></span><span></span>";
-        content.appendChild(dots);
+        addSystem(`送信内容 (${conversationHistory.length} messages):`);
+        const confirmEl = addSystem("[y] 送信する  [n] キャンセル");
 
-        msg.appendChild(content);
-        chatArea.appendChild(msg);
-        chatArea.scrollTop = chatArea.scrollHeight;
-        return msg;
+        function handleConfirm(e: KeyboardEvent) {
+            if (e.key === "y" || e.key === "Y") {
+                document.removeEventListener("keydown", handleConfirm);
+                confirmEl.remove();
+                doSend();
+            } else if (e.key === "n" || e.key === "N" || e.key === "Escape") {
+                document.removeEventListener("keydown", handleConfirm);
+                confirmEl.remove();
+                addSystem("キャンセルしました。");
+                chatInput.focus();
+            }
+        }
+
+        async function doSend() {
+            const sending = addSystem("送信中...");
+            try {
+                const res = await fetch(`${BASE_URL}/api/notify`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ messages: conversationHistory }),
+                });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                sending.remove();
+                addSystem("送信しました。");
+            } catch (err) {
+                sending.remove();
+                addSystem("送信に失敗しました。");
+                console.error("[notify] error:", err);
+            }
+            chatInput.focus();
+        }
+
+        document.addEventListener("keydown", handleConfirm);
+    }
+
+    // --- Command palette ---
+    const COMMANDS = [
+        { name: "/send", desc: "管理者にチャット内容を送信" },
+        { name: "/clear", desc: "チャット履歴をクリア" },
+    ];
+
+    const cmdPalette = document.getElementById("cmd-palette") as HTMLDivElement;
+    let cmdActiveIdx = 0;
+    let cmdFiltered: typeof COMMANDS = [];
+
+    function renderPalette(filter: string) {
+        cmdFiltered = COMMANDS.filter((c) =>
+            c.name.startsWith(filter.toLowerCase()),
+        );
+        if (cmdFiltered.length === 0) {
+            cmdPalette.style.display = "none";
+            return;
+        }
+        cmdActiveIdx = 0;
+        const header = `<div class="cmd-header">commands</div>`;
+        const items = cmdFiltered
+            .map((c, i) => {
+                const matchLen = filter.length;
+                const matched = c.name.slice(0, matchLen);
+                const rest = c.name.slice(matchLen);
+                const nameHtml = `<span class="cmd-match">${matched}</span>${rest}`;
+                return `<div class="cmd-item${i === 0 ? " cmd-active" : ""}" data-idx="${i}"><span class="cmd-name">${nameHtml}</span><span class="cmd-desc">${c.desc}</span></div>`;
+            })
+            .join("");
+        cmdPalette.innerHTML = `${header}${items}`;
+        cmdPalette.style.display = "block";
+
+        cmdPalette.querySelectorAll(".cmd-item").forEach((el) => {
+            el.addEventListener("click", () => {
+                const idx = Number((el as HTMLElement).dataset.idx);
+                selectCommand(idx);
+            });
+        });
+    }
+
+    function hidePalette() {
+        cmdPalette.style.display = "none";
+        cmdFiltered = [];
+    }
+
+    function updateActiveItem() {
+        cmdPalette.querySelectorAll(".cmd-item").forEach((el, i) => {
+            el.classList.toggle("cmd-active", i === cmdActiveIdx);
+        });
+    }
+
+    function selectCommand(idx: number) {
+        const cmd = cmdFiltered[idx];
+        if (!cmd) return;
+        chatInput.value = "";
+        hidePalette();
+        executeCommand(cmd.name);
+    }
+
+    function executeCommand(name: string) {
+        switch (name) {
+            case "/send":
+                handleSendCommand();
+                break;
+            case "/clear":
+                clearHistory();
+                chatLog.innerHTML = "";
+                const el = document.createElement("div");
+                el.className = "chat-welcome";
+                el.innerHTML = `<span class="accent">honjoh.ai</span> — Honjoh Nobuhiro の AI です。お気軽にどうぞ。`;
+                chatLog.appendChild(el);
+                addSystem("チャット履歴をクリアしました。");
+                break;
+        }
     }
 
     // --- Send message ---
@@ -584,23 +449,26 @@ import Layout from "../../layouts/Layout.astro";
     async function sendMessage() {
         const text = chatInput.value.trim();
         if (!text || isProcessing) return;
+        chatInput.value = "";
+        hidePalette();
+
+        const matchedCmd = COMMANDS.find((c) => c.name === text);
+        if (matchedCmd) {
+            executeCommand(matchedCmd.name);
+            return;
+        }
 
         isProcessing = true;
-        chatInput.value = "";
-
-        // Add user message
-        addMessage(text, "user");
-
-        // Show typing indicator
+        addEntry(text, "user");
         const typingMsg = showTyping();
 
         try {
             const data = await callChatAPI(text);
             typingMsg.remove();
-            addMessage(data.reply, "ai");
+            addEntry(data.reply, "ai");
         } catch (err) {
             typingMsg.remove();
-            addMessage(getMockResponse(), "ai");
+            addEntry(getMockResponse(), "ai");
             console.error("[chat] API error:", err);
         }
 
@@ -609,31 +477,79 @@ import Layout from "../../layouts/Layout.astro";
     }
 
     // --- Event listeners ---
+    chatInput.addEventListener("input", () => {
+        const val = chatInput.value;
+        if (val.startsWith("/") && val.length >= 1) {
+            renderPalette(val);
+        } else {
+            hidePalette();
+        }
+    });
+
     chatInput.addEventListener("keydown", (e: KeyboardEvent) => {
+        if (cmdPalette.style.display !== "none" && cmdFiltered.length > 0) {
+            if (e.key === "ArrowUp") {
+                e.preventDefault();
+                cmdActiveIdx =
+                    (cmdActiveIdx - 1 + cmdFiltered.length) %
+                    cmdFiltered.length;
+                updateActiveItem();
+                return;
+            }
+            if (e.key === "ArrowDown") {
+                e.preventDefault();
+                cmdActiveIdx = (cmdActiveIdx + 1) % cmdFiltered.length;
+                updateActiveItem();
+                return;
+            }
+            if (e.key === "Enter") {
+                e.preventDefault();
+                selectCommand(cmdActiveIdx);
+                return;
+            }
+            if (e.key === "Escape") {
+                e.preventDefault();
+                hidePalette();
+                return;
+            }
+        }
+
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             sendMessage();
         }
     });
 
-    sendBtn.addEventListener("click", () => {
-        sendMessage();
-    });
-
-    // Keyboard navigation (← to go back, only when input is not focused or empty)
     document.addEventListener("keydown", (e: KeyboardEvent) => {
-        const target = e.target as HTMLElement;
         if (e.ctrlKey || e.altKey || e.metaKey) return;
 
+        if (e.key === "/" && document.activeElement !== chatInput) {
+            e.preventDefault();
+            chatInput.focus();
+            chatInput.value = "/";
+            chatInput.dispatchEvent(new Event("input"));
+            return;
+        }
+
         if (e.key === "ArrowLeft" || e.key === "Escape") {
-            // Only navigate back if input is empty
-            if (chatInput.value.trim() === "") {
+            if (
+                chatInput.value.trim() === "" &&
+                cmdPalette.style.display === "none"
+            ) {
                 e.preventDefault();
                 window.location.href = "/";
             }
         }
     });
 
-    // Focus input on page load
-    chatInput.focus();
+    // Check for initial query from top page prompt
+    const params = new URLSearchParams(window.location.search);
+    const initialQuery = params.get("q");
+    if (initialQuery) {
+        window.history.replaceState({}, "", "/chat");
+        chatInput.value = initialQuery;
+        sendMessage();
+    } else {
+        chatInput.focus();
+    }
 </script>

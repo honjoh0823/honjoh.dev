@@ -1,0 +1,258 @@
+---
+import TerminalLayout from "../../layouts/TerminalLayout.astro";
+import Header from "../../components/Header.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+    const posts = await getCollection("article");
+    return posts.map((post) => ({
+        params: { slug: post.id },
+        props: { post },
+    }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.data.title,
+    description: post.data.description,
+    datePublished: post.data.date,
+    author: {
+        "@type": "Person",
+        name: "Nobuhiro Honjoh",
+        alternateName: "本城靖大",
+        url: "https://honjoh.dev",
+    },
+    publisher: {
+        "@type": "Person",
+        name: "Nobuhiro Honjoh",
+    },
+    url: `https://honjoh.dev/article/${post.id}`,
+    ...(post.data.image && { image: `https://honjoh.dev${post.data.image}` }),
+};
+---
+
+<TerminalLayout
+    title={`${post.data.title} | honjoh.dev`}
+    description={post.data.description}
+    jsonLd={articleJsonLd}
+>
+    <Header slot="header" path={["article", post.id]} />
+
+    <div class="page-body">
+        <article class="article">
+            {
+                post.data.image && (
+                    <div class="article-hero">
+                        <img
+                            src={post.data.image}
+                            alt={post.data.title}
+                            loading="lazy"
+                        />
+                    </div>
+                )
+            }
+
+            <header class="article-header">
+                <h1 class="article-title">{post.data.title}</h1>
+                <div class="article-meta">
+                    <time class="meta-date" datetime={post.data.date}
+                        >{post.data.date}</time
+                    >
+                    <span class="meta-sep">·</span>
+                    <span class="meta-author">Honjoh Nobuhiro</span>
+                </div>
+            </header>
+
+            <div class="article-content">
+                <Content />
+            </div>
+        </article>
+    </div>
+
+    <SiteFooter slot="footer">
+        <span><kbd>←</kbd> back</span>
+    </SiteFooter>
+</TerminalLayout>
+
+<style>
+    /* Article */
+    .article {
+        animation: fadeIn 0.4s ease forwards;
+        width: 100%;
+    }
+
+    .article-hero {
+        margin-bottom: 2rem;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        border: 1px solid var(--border);
+    }
+
+    .article-hero img {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 3 / 2;
+        object-fit: cover;
+        display: block;
+    }
+
+    .article-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .article-title {
+        font-size: clamp(1.3rem, 4vw, 1.8rem);
+        font-weight: 700;
+        color: var(--fg-bright);
+        font-family: inherit;
+        line-height: 1.4;
+        margin-bottom: 0.75rem;
+    }
+
+    .article-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: var(--dim);
+    }
+
+    .meta-sep {
+        color: var(--border-strong);
+    }
+
+    /* Article content — markdown rendering */
+    .article-content {
+        color: var(--fg);
+        font-size: 14px;
+        line-height: 1.9;
+    }
+
+    .article-content :global(h2) {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--fg-bright);
+        margin-top: 2.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border);
+        font-family: inherit;
+    }
+
+    .article-content :global(h3) {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--fg-bright);
+        margin-top: 2rem;
+        margin-bottom: 0.75rem;
+        font-family: inherit;
+    }
+
+    .article-content :global(p) {
+        margin-bottom: 1.25rem;
+    }
+
+    .article-content :global(strong) {
+        color: var(--fg-bright);
+        font-weight: 600;
+    }
+
+    .article-content :global(em) {
+        color: var(--warn);
+        font-style: italic;
+    }
+
+    .article-content :global(a) {
+        color: var(--accent);
+        text-decoration: none;
+        border-bottom: 1px solid rgba(232, 196, 124, 0.3);
+        transition: border-color 0.15s ease;
+    }
+
+    .article-content :global(a:hover) {
+        border-bottom-color: var(--accent);
+    }
+
+    .article-content :global(ul),
+    .article-content :global(ol) {
+        margin-bottom: 1.25rem;
+        padding-left: 1.5rem;
+    }
+
+    .article-content :global(li) {
+        margin-bottom: 0.4rem;
+    }
+
+    .article-content :global(li::marker) {
+        color: var(--accent);
+    }
+
+    .article-content :global(blockquote) {
+        border-left: 3px solid var(--accent);
+        padding: 0.75rem 1rem;
+        margin: 1.5rem 0;
+        background: var(--accent-dim);
+        border-radius: 0 var(--radius-md) var(--radius-md) 0;
+        color: var(--dim);
+    }
+
+    .article-content :global(code) {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-strong);
+        border-radius: 3px;
+        padding: 0.15em 0.4em;
+        font-size: 0.9em;
+        color: var(--warn);
+        font-family: inherit;
+    }
+
+    .article-content :global(pre) {
+        background: var(--bg-header);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 1rem 1.25rem;
+        margin: 1.5rem 0;
+        overflow-x: auto;
+        font-size: 14px;
+    }
+
+    .article-content :global(pre code) {
+        background: none;
+        border: none;
+        padding: 0;
+        color: var(--fg);
+    }
+
+    .article-content :global(hr) {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 2rem 0;
+    }
+
+    .article-content :global(img) {
+        max-width: 100%;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border);
+        margin: 1.5rem 0;
+    }
+</style>
+
+<script>
+    document.addEventListener("keydown", (e: KeyboardEvent) => {
+        const tag = (e.target as HTMLElement).tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+        if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+        if (e.key === "ArrowLeft" || e.key === "Escape") {
+            e.preventDefault();
+            window.location.href = "/article";
+        }
+    });
+</script>
